@@ -1,0 +1,34 @@
+@name alone
+@persist [EE Ow H]:entity Smoth I360 Rad Tag
+
+interval(200)
+
+if (first()){
+    
+    runOnTick(1)
+    EE=entity()
+    Ow=owner()
+    Smoth=25
+    Rad=50
+    Tag=15
+    
+    particleGravity(vec(0))
+    
+    
+    H=holoCreate(1)
+    holoColor(1,vec(0,255,0))
+    holoPos(1,EE:toWorld(vec(0,0,25)))
+    holoModel(1,"hq_sphere")
+    holoScale(1,vec(0.8))
+
+    
+}
+
+particle(2,5,0,"sprites/light_glow02_add_noz",randvec(50,255),holoEntity(1):toWorld(vec(0,0,5)),holoEntity(1):up()*20)
+
+
+I360=(I360+0.5)%360
+EndPos=EE:pos()+vec(sin(I360)*Rad,cos(I360)*Rad,cos(I360)*Tag)
+
+Elevation=H:pos()+(EndPos-H:pos())/Smoth
+holoPos(1,Elevation)

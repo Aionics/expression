@@ -1,0 +1,21 @@
+@name 123
+@inputs 
+@outputs 
+@persist [Players]:array
+@trigger 
+
+if (first()) {
+    findIncludeClass("player")
+    findInSphere(entity():pos(), 10000)
+    Players = findToArray()
+    for (I=1, Players:count()) {
+        runOnKeys(Players[I, entity], 1)
+    }
+}
+
+if( keyClk() ){ 
+    local TargetPlayer = keyClk()
+    local KeyPressed = keyClkPressed()
+    
+    print(TargetPlayer, "pressed :", KeyPressed)
+}

@@ -1,0 +1,26 @@
+@name testdddsadadsasdvvvvv
+@persist Holo:entity Ind O:entity Delta:vector Ang:angle RotAng:angle
+
+if (first()) {
+    Chip = entity()
+    Pos = Chip:pos()
+    O = owner()
+    Scale = 2
+    Ind = 0
+    Holo = holoCreate(Ind)
+    holoModel(Ind, "models/props_c17/signpole001.mdl")
+#    holoModel(Ind, "models/props_wasteland/dockplank01b.mdl")
+    Holo:setTrails(10,0,1,"trails/tube",vec(255),255)
+    Delta = vec(200,0,0)
+    Ang = ang(0,0,90)
+    RotAng = ang(10,10,0)
+    holoPos(Ind, O:pos()+Delta) 
+}
+
+interval(100)
+Ang = (holoEntity(Ind):pos()-owner():pos()):normalized():toAngle()
+Ang=Ang+ang(90,0,0)
+Delta = Delta:rotate(RotAng)
+holoPos(Ind, O:pos()+Delta)
+# holoAng(Ind, ang(Delta:normalized()))
+holoAng(Ind, Ang)

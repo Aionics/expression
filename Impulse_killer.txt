@@ -1,0 +1,11 @@
+@name Impulse_killer
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+interval(1)
+
+P=findExcludeEntity()
+
+

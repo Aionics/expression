@@ -1,0 +1,205 @@
+@name 00.Flart Da Table Test
+@persist Music:string Search:string Data:string FS:string FE:string FSF FEF LK:string
+@persist NS:string NE:string NSF NEF NAME:string AS1:string AS2:string AES:string AE ASF AEF ARTIST:string
+@persist A EE:entity SMTH:string MOVE
+@persist [TIS1 TIS2]:string TIE:string TSF TEF SEC MIN TIME:string TI [MINS SECS]:string
+@persist [COL1 COL2 COL3] [HO1 HO2]:entity NUM
+@model models/holograms/cube.mdl
+# Model part
+runOnTick(1)
+if (A >= 180) {A=0} else {A=A+1}
+if(first()|duped()){
+    EE=entity()
+    SEC=-1
+    MIN=0
+    
+    COL1=teamColor(owner():team()):x()
+    COL2=teamColor(owner():team()):y()
+    COL3=teamColor(owner():team()):z()
+    MOVE=12
+    
+    holoCreate(1,EE:toWorld(vec(-MOVE,0,0)),vec(1.1),EE:angles(),vec(100),"hq_rcube_thin")
+    holoParent(1,EE)
+    holoMaterial(1,"phoenix_storms/mat/mat_phx_carbonfiber")
+    
+    HO1=holoEntity(1)
+    
+    holoCreate(2,EE:toWorld(vec(MOVE,0,0)),vec(1.105),EE:angles(),vec(100),"hq_rcube_thin")
+    holoParent(2,EE)
+    holoMaterial(2,"phoenix_storms/mat/mat_phx_carbonfiber")
+    
+    HO2=holoEntity(2)
+       
+    holoCreate(3,EE:toWorld(vec(-12,5.86,0)),vec(0.8,0.8,0.3),EE:toWorld(ang(0,0,-90)),vec(100))
+    holoParent(3,HO1)
+    holoModel(3,"hq_sphere")
+    holoMaterial(3,"phoenix_storms/mat/mat_phx_carbonfiber")
+    
+    holoCreate(4,EE:toWorld(vec(12,5.86,0)),vec(0.805,0.805,0.305),EE:toWorld(ang(0,0,-90)),vec(100))
+    holoParent(4,HO2)
+    holoModel(4,"hq_sphere")
+    holoMaterial(4,"phoenix_storms/mat/mat_phx_carbonfiber")
+    
+    holoCreate(5,EE:toWorld(vec(-12,0,0)),vec(1.09,1.09,1.2),EE:toWorld(ang(0,0,-90)),vec(0,255,255),"hq_stube_thin")
+    holoMaterial(5,"lights/white")
+    holoParent(5,HO1)
+    
+    holoCreate(6,EE:toWorld(vec(12,0,0)),vec(1.095,1.095,1.205),EE:toWorld(ang(0,0,-90)),vec(0,255,255),"hq_stube_thin")
+    holoMaterial(6,"lights/white")
+    holoParent(6,HO2)
+    
+    holoCreate(7,EE:toWorld(vec(-12,7.5,0)),vec(0.9,0.9,1.2),EE:toWorld(ang(0,0,-90)),vec(0,255,255),"hq_torus")
+    holoMaterial(7,"lights/white")
+    holoParent(7,HO1)
+    
+    holoCreate(8,EE:toWorld(vec(12,7.5,0)),vec(0.905,0.905,1.205),EE:toWorld(ang(0,0,-90)),vec(0,255,255),"hq_torus")
+    holoMaterial(8,"lights/white")
+    holoParent(8,HO2)
+        
+    EE:noCollideAll(1)
+    EE:propGravity(0)
+    EE:setMaterial("lights/white")
+}
+#Command part
+
+runOnChat(1)
+if (first()){
+    entity():propNotSolid(0)
+    entity():noCollideAll(0)
+FS=toChar(34)+"url"+toChar(34)+":"+toChar(34)
+FE=toChar(34)+","+toChar(34)
+NS=toChar(34)+"title"+toChar(34)+":"+toChar(34)
+NE=toChar(34)+","+toChar(34)
+AS1=toChar(34)+"artist"+toChar(34)+":"+toChar(34)
+AS2=toChar(34)+"artist"+toChar(34)+":"+toChar(34)
+AES=toChar(34)+","+toChar(34)
+TIS1=toChar(34)+"duration"+toChar(34)+":"
+TIE=","+toChar(34)
+}
+if (chatClk(owner())) {switch(lastSaid()) {
+    case "fdpplay "+lastSaid():explode("fdpplay "):string(2),
+    hideChat(1)
+    Music=lastSaid():explode("fdpplay "):string(2):replace(" ","+"):replace("'","%27")
+    print("[FDP] Searching "+lastSaid():explode("fdpplay "):string(2)+"...")
+    break
+
+    case "fdpreturn",
+    hideChat(1)
+    entity():setPos(owner():pos()+vec(0,0,100))
+    break
+    
+    case "fdppause",
+    soundURLpause("1")
+    hideChat(1)
+    setName("Flart Da Player \n >Paused<")
+    stoptimer("Sec")
+    break
+    
+    case "fdpresume",
+    soundURLplay("1")
+    hideChat(1)
+    timer("Sec",1000)
+    break
+}
+}
+if (changed(Music)&Music!="") {
+    soundURLdelete("1")
+    NUM=0
+    httpRequest("https://api.vk.com/method/audio.search?q="+Music+"&access_token=dfe8bf7bd3e86ab3d9d114bbd88f6adbad61e69adf27c47a5783045b2332403bbc0261e6776808b2f623e")
+    #print("https://api.vk.com/method/audio.search?q="+Music+"&access_token=dfe8bf7bd3e86ab3d9d114bbd88f6adbad61e69adf27c47a5783045b2332403bbc0261e6776808b2f623e\n")
+}
+runOnHTTP(1)
+if (httpClk()&NUM==0) {
+    Data=httpData()
+    FSF=Data:find(FS)
+    FEF=Data:find(FE,FSF)
+    ASF=Data:find(AS1)
+    #ASF=Data:find(AS2,ASF)
+    ASE=Data:find(AES,ASF)
+    NSF=Data:find(NS,ASF)
+    NEF=Data:find(NE,NSF)
+    TSF=Data:find(TIS1)
+    #TSF=Data:find(TIS1,TSF)
+    TEF=Data:find(TIE,TSF)
+    TIME=Data:sub(TSF,TEF):replace(toChar(34),""):replace(",",""):replace("duration:","")
+    SEC=TIME:toNumber()%60
+    MIN=floor(TIME:toNumber()/60,0.1)
+    ARTIST=Data:sub(ASF,ASE):replace(toChar(34)+"artist"+toChar(34)+":",""):upper()
+    Name=Data:sub(NSF,NEF):replace(toChar(34)+"title"+toChar(34)+":",""):upper()
+    Search=Data:sub(FSF,FEF):replace(toChar(34)+"url"+toChar(34)+":"+toChar(34),""):replace(toChar(34),""):replace(toChar(92),"")
+    #print(Search)
+    if (ASF==0) {ARTIST="ERR"}
+    if (NSF==0) {Name="ERR"}
+    if (ASF!=0&NSF!=0&FSF!=0) {
+        print("[FDP] Found!")
+    }
+    else {
+    print("[FDP] Error!")
+    SEC=-1
+    MIN=0
+    exit()
+}
+    setName("Flart Da Player \n"+"Song: "+Name+"\n"+"Artist: "+ARTIST+"\n"+"Time: "+">"+toString(MIN)+":"+toString(SEC)+"<")
+    soundURLdelete("1")
+    #soundURLpause(1)
+    SMTH=Name
+    timer("Sound",3000)
+}
+elseif (httpClk()&NUM==1) {
+    Data=httpData()
+    #print(Data)
+    soundURLload("1",Data,1,0,entity())
+    timer("Music",3000)
+}
+runOnTick(1)
+if (clk("Music")) {
+    soundURLplay("1")
+    print("[FDP] Now playing!")
+    timer("Sec",1000)
+}
+if (clk("Sound")) {
+    NUM=1
+    httpRequest("http://rlu.ru/index.sema?a=api&del=1&link="+Search) 
+    #print("http://rlu.ru/index.sema?a=api&del=1&link="+Search)
+    print("[FDP] Loading...")
+}
+if (clk("Sec")) {
+    SEC=SEC-1
+    if (SEC<10) {
+    setName("Flart Da Player \n"+"Song: "+SMTH+"\n"+"Artist: "+ARTIST+"\n"+"Time: "+">"+toString(MIN)+":"+"0"+toString(SEC)+"<")
+} else {
+        setName("Flart Da Player \n"+"Song: "+SMTH+"\n"+"Artist: "+ARTIST+"\n"+"Time: "+">"+toString(MIN)+":"+toString(SEC)+"<")
+}
+    timer("Sec",1000)
+}
+if (SEC==-1&MIN!=0) {
+    MIN=MIN-1
+    SEC=59
+        setName("Flart Da Player \n"+"Song: "+SMTH+"\n"+"Artist: "+ARTIST+"\n"+"Time: "+">"+toString(MIN)+":"+toString(SEC)+"<")
+}
+if (SEC==-1&MIN==0) {
+    setName("Flart Da Player \n >Sleeping now<")
+    stopAllTimers()
+    if(MOVE!=0) {
+        MOVE=MOVE-1
+        holoPos(1,EE:toWorld(vec(-sin(MOVE)*12,0,0)))
+        holoPos(2,EE:toWorld(vec(sin(MOVE)*12,0,0)))
+        }
+    for (I=5,8) {
+holoEntity(I):setColor(vec(0))
+}
+EE:setColor(vec(0))
+}
+else {
+    if(MOVE!=90) {
+        MOVE=MOVE+1
+        holoPos(1,EE:toWorld(vec(-sin(MOVE)*12,0,0)))
+        holoPos(2,EE:toWorld(vec(sin(MOVE)*12,0,0)))
+        }
+    for (I=5,8) {
+holoEntity(I):setColor(vec(sin(A)*COL1,sin(A)*COL2,sin(A)*COL3))
+}
+holoPos(3,HO1:toWorld(vec(0,5.86+sin(A*20)*2/5+0.5,0)))
+holoPos(4,HO2:toWorld(vec(0,5.86+sin(A*20)*2/5+0.5,0)))
+EE:setColor(vec(sin(A)*COL1,sin(A)*COL2,sin(A)*COL3))
+}

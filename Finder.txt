@@ -1,0 +1,24 @@
+@name Finder
+@inputs 
+@outputs [P1 O]:entity
+@persist  Pos:vector X Y
+@trigger 
+
+interval(1)
+if(first()){
+    O=owner()
+    LS=O:lastSaid()
+    P1=findPlayerByName("mat")
+    holoCreate(1)
+    holoModel(1,"models/holograms/pyramid.mdl")
+    holoScale(1,vec(0.25,0.25,2))
+    holoColor(1,vec(255,20,0))
+
+
+#holoParent(1,O)
+}
+    X=O:pos():x()+O:eye():x()*70
+Y=O:pos():y()+O:eye():y()*70
+    Pos=vec(X,Y,O:pos():z())
+holoPos(1,Pos+vec(0,0,30))
+holoAng(1,(P1:pos()+vec(0,0,40)-holoEntity(1):pos()):toAngle()+ang(90,0,0))

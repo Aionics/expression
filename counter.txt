@@ -1,0 +1,19 @@
+@name counter
+@inputs 
+@outputs X I
+@persist 
+@trigger 
+
+if(first()){
+    X=1
+    I=1
+    runOnTick(1)
+
+}
+if(I<333953){
+    I++
+    X=X+I
+}elseif(I==333953){
+    print(X)
+}elseif(I>333953){
+}

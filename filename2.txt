@@ -1,0 +1,7 @@
+@persist T
+runOnTick(10)
+owner():aimEntity():setMaterial("debug/debugdrawflat")
+T++
+#if(T>500){selfDestruct()}
+
+

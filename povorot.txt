@@ -1,0 +1,20 @@
+@name povorot
+@inputs A D
+@outputs 
+@persist TargetProp:entity
+@trigger 
+
+if (first()) {
+    runOnTick(1)
+    TargetProp = entity():isWeldedTo()
+
+}
+if ( A || D ) {
+    if (D) {D=-1}
+
+    local Direction = A + D
+        
+    TargetProp:applyAngForce(ang(0, Direction, 0) * 500000)
+}
+
+

@@ -1,0 +1,95 @@
+@name 
+@inputs 
+@outputs 
+@persist [EE Cross Light]:entity Sin
+@trigger 
+@model models/props_junk/metal_paintcan001a.mdl
+
+interval(50)
+if (first()) {
+    EE = entity()
+    EE:setMaterial("phoenix_storms/FuturisticTrackRamp_1-2")
+    
+    Sin = 0
+    
+    Cross = holoCreate(1)
+    holoAlpha(1, 0)
+    holoParent(1, EE)
+    holoPos(1, EE:pos() + EE:up()*30)
+    
+    
+    holoCreate(2)
+    holoPos(2, holoEntity(1):pos())
+    holoParent(2, 1)
+    holoScale(2, vec(2,0.7,0.7))
+    holoColor(2, vec(255,255,190))
+    
+    holoCreate(3)
+    holoPos(3, holoEntity(1):pos())
+    holoParent(3, 1)
+    holoScale(3, vec(0.7,0.7,2))
+    holoColor(3, vec(255,255,190))
+    
+    holoCreate(4)
+    holoPos(4, holoEntity(1):pos())
+    holoParent(4, 1)
+    holoScale(4, vec(2,0.7,0.7) * -1.01)
+    holoColor(4, vec(0,0,0))
+    
+    holoCreate(5)
+    holoPos(5, holoEntity(1):pos())
+    holoParent(5, 1)
+    holoScale(5, vec(0.7,0.7,2) * -1.01)
+    holoColor(5, vec(0,0,0))
+    
+    Light = holoCreate(6)
+    holoPos(6, EE:pos() - vec(0,0,10))
+    holoParent(6, EE)
+    holoModel(6, "models/effects/vol_light128x128.mdl")
+    holoAng(6, ang(0,0,180))
+    holoAlpha(6, 10)
+    holoScale(6, vec(0.3, 0.3, 0.5))
+    
+    
+    holoDisableShading(2, 1)
+    holoDisableShading(3, 1)
+    
+    Quad = EE:drawQuad("particle/fire",EE:pos() + vec(0,0,-5),ang(0,0,0),vec(255,255,180),255,300,300)
+    Quad:parentTo(EE)
+    Quad = EE:drawQuad("particle/fire",EE:pos() + vec(0,0,-5),ang(0,0,0),vec(255,255,255),255,100,100)
+    Quad:parentTo(EE)
+}
+
+findIncludeClass("player")
+findInSphere(EE:pos(), 100)
+local Players = findToArray()
+
+for(I=1, Players:count()) {
+    local Player = Players[I, entity]
+    local MaxHealth = Player:maxHealth()
+    local CurrentHealth = Player:health()
+    if (CurrentHealth < MaxHealth) {
+        Player:heal(1)
+        particle(
+            random(0.5,2),
+            random(30,60),
+            random(10,20),
+            "particle/particle_glow_05_addnofog",
+            vec(220, 255, 140),
+            Player:pos() + vec(0,0,random(10,40)) + vec(random(-10,10), random(-10,10), 0),
+            vec(0,0,random(20,50)),
+            1,
+            2,
+            255,
+            0
+        )
+    }
+}
+
+
+Sin = Sin == 360 ? 0 : Sin+1
+
+Cross:setAng(ang(0,Sin*2,0))
+Light:setAng(ang(0,-Sin*2,180))
+Cross:setPos(EE:pos() + EE:up() * 50 + EE:up() * sin(Sin * 5) * 5)
+

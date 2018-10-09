@@ -1,0 +1,18 @@
+@name test
+@inputs 
+@outputs 
+@persist Direction:vector Holo:entity
+@trigger 
+
+interval(200)
+
+if(first()) {
+    Holo=holoCreate(1)
+    holoPos(1,entity(1):pos()+vec(0,0,50))
+    Direction=owner():eye()    
+}
+
+
+#Ranger=rangerOffset(number distance,vector from,vector direction)
+Ranger=rangerOffset(20,Holo:pos(),Direction)
+holoPos(1, Ranger:pos())

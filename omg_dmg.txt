@@ -1,0 +1,13 @@
+@name omg dmg
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+interval( 10)
+if(owner():keyPressed("T")){
+    owner():shootTo(owner():pos()+vec(0,0,50),owner():aimPos()-(owner():pos()+vec(0,0,50)),10,15000,200,"")
+  #  entitySpawn("prop_combine_ball",owner():aimPos()+vec(0,0,40),0)
+    }
+ 
+

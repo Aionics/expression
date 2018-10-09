@@ -1,0 +1,113 @@
+@name rifle
+@inputs 
+@outputs 
+@persist [O E Beam]:entity Ar:array
+@trigger 
+
+if(first()){
+    runOnTick(1)
+    O=owner()
+    E=entity()
+    
+   particleGravity(vec(0))
+     holoCreate(1)
+    holoModel(1,"models/Mechanics/robotics/a2.mdl")
+    holoMaterial(1,"models/debug/debugwhite")
+    holoColor(1,vec(20))
+    holoPos(1,E:pos()+vec(0,0,50))
+    holoScale(1,vec(1.2,1,1))
+    
+    holoCreate(2)
+    holoModel(2,"models/Mechanics/robotics/a2.mdl")
+    holoMaterial(2,"models/debug/debugwhite")
+    holoColor(2,vec(20))
+    holoPos(2,holoEntity(1):toWorld(vec(55,0,0)))
+    holoScale(2,vec(1.2,0.5,0.5))
+    
+    holoCreate(3)
+    holoModel(3,"models/Mechanics/robotics/a2.mdl")
+    holoMaterial(3,"models/debug/debugwhite")
+    holoColor(3,vec(20))
+    holoPos(3,holoEntity(1):toWorld(vec(80,0,0)))
+    holoScale(3,vec(0.25,0.7,0.7))
+    
+    holoCreate(5)
+    holoModel(5,"models/Mechanics/robotics/a2.mdl")
+    holoMaterial(5,"models/debug/debugwhite")
+    holoColor(5,vec(20))
+    holoPos(5,holoEntity(1):toWorld(vec(0,0,8)))
+    holoScale(5,vec(0.4,0.25,0.25))
+    
+    holoCreate(4)
+    holoModel(4,"models/Mechanics/robotics/a2.mdl")
+    holoMaterial(4,"models/debug/debugwhite")
+    holoColor(4,vec(20))
+    holoPos(4,holoEntity(1):toWorld(vec(-30,0,-5)))
+    holoScale(4,vec(0.4,0.8,0.8))
+    holoAng(4,ang(90,0,0))
+    
+    holoParent(1,4)
+    holoParent(2,4)
+    holoParent(3,4)
+    holoParent(5,4)
+    findIncludeClass("prop_physics")
+    findIncludeClass("wire")
+    findIncludeClass("vehicle")
+    
+    #holoVisible(1,O,0)
+    #holoVisible(2,O,0)
+    #holoVisible(4,O,0)
+    #holoVisible(5,O,0)
+}
+Weapon=O:weapon()
+if(changed(Weapon)&Weapon:type()=="weapon_stunstick"){
+    print(1)
+    holoParentAttachment(4,O,"anim_attachment_RH")
+    holoAng(4,O:eyeAngles()+ang(90,0,0))
+    holoPos(4,O:toWorld(vec(10,0,50)))
+    }
+At1=O:keyAttack1()
+At2=O:keyAttack2()
+
+if(changed(At2)&At2){
+    Beam=holoEntity(3):drawBeam("cable/redlaser",holoEntity(3):pos(),O:aimPos(),vec(255,0,0),50,1)
+}
+if(changed(At2)&!At2){
+    Beam:remove(0)
+}
+if(Beam){Beam:setBeamEndPos(O:aimPos())}
+if(changed(At1)&At1&Weapon:type()=="weapon_stunstick"){
+    Beam2=drawBeam("cable/crystal_beam1",holoEntity(3):pos(),O:aimPos(),vec(255,255,255),255,40,10,20)
+    Beam2:remove(0.2)
+   
+    effectSpawn("explosion",holoEntity(3):pos(),5)
+    effectSpawn("explosion",O:aimPos(),5)
+    
+    particle(2,10,500,"sprites/heatwave",vec(255),O:aimPos(),vec(0))   
+    for(I=1,random(3,7)){
+        S="particle/smokesprites_000"+round(random(1,9)):toString()
+        particle(random(1,6),random(30,50),random(100,250),S,vec(255),holoEntity(3):pos()+randvec(-60,60),O:eye()*100)   
+    }
+    findInSphere(O:aimPos(),200)
+    Ar=findToArray()
+    for(I=1,Ar:count()){
+        Ar[I,entity]:propFreeze(0) 
+        Ar[I,entity]:constraintBreak() 
+        Ar[I,entity]:setVel((Ar[I,entity]:pos()-O:aimPos()):normalized()*1000+vec(0,0,100))
+    }
+}    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+

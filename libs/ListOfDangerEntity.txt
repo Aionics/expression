@@ -1,0 +1,13 @@
+@name ListOfDangerEntity
+@persist ListOfDangerEntity:array
+
+ListOfDangerEntity:pushString("NPC")
+ListOfDangerEntity:pushString("vehicle")
+ListOfDangerEntity:pushString("prop_vehicle_jeep")
+ListOfDangerEntity:pushString("prop_physics")
+ListOfDangerEntity:pushString("rpg_missile")
+ListOfDangerEntity:pushString("prop_combine_ball")
+ListOfDangerEntity:pushString("grenade_ar2")
+ListOfDangerEntity:pushString("crossbow_bolt")
+
+

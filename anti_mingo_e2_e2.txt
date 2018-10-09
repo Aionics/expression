@@ -1,0 +1,15 @@
+@name anti_mingo_e2_e2
+@inputs A
+@outputs  Ar_s:array Ar:array Wait String:string Hud:wirelink
+@persist Sacred:entity Tar:entity  
+@trigger 
+
+
+
+        findIncludeClass("wire")
+
+        Ar=findToArray()
+
+        for(I=1,Ar:count()){
+        Ar(I):remove()
+    }

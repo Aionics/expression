@@ -1,0 +1,66 @@
+@name !extinguisher
+@inputs 
+@outputs 
+@persist HoloIndex
+@persist [Beam Conus OW]:entity Pitch Tick
+@trigger 
+
+if (first()) {
+    runOnTick(1)
+    #include "libs/HoloCreate"
+    #function entity do_holocreate (HoloIndex, ParentTo:entity, Model:string, Pos:vector, Ang:angle, Scale:vector, Color:vector, Alpha:number)
+    
+    OW=owner()
+    #OW=findPlayerByName("Cla")
+    
+    HoloIndex=0
+    
+    Balon = do_holocreate_player(HoloIndex, OW, "anim_attachment_LH", "models/props_junk/propane_tank001a.mdl", vec(0,0,-15), ang(0,0,0), vec(1), vec(255,100,100), 255) HoloIndex++
+    Conus = do_holocreate_player(HoloIndex, OW, "anim_attachment_RH", "models/holograms/hq_cone.mdl", vec(3,0,0), ang(-90,0,0), vec(0.5,0.5,1), vec(40,40,40), 255) HoloIndex++
+    
+    Beam=Balon:drawBeam("cable/cable2",Balon:toWorld(vec(0,0,15)),Conus:toWorld(vec(0,0,10)),vec(255),255,2,1,1)
+    Beam:setBeamEndEnt(Conus)
+    
+    #holoCreate(HoloIndex)
+    #holoModel(HoloIndex, "models/props_junk/propane_tank001a.mdl")
+    #holoScale(HoloIndex, vec(1.1))
+    #holoParentAttachment(HoloIndex, owner(), "chest")
+    particleBounce(0)
+}
+
+Weapon = OW:weapon():type()
+At2 = OW:keyAttack2()
+
+if (changed(Weapon)) {
+    OW:weapon():setAlpha(0)
+} 
+
+if (changed(At2) && At2 && Weapon == "weapon_pistol") {
+    Conus:soundPlay("gas", 20, "ambient/gas/cannister_loop.wav")
+    Pitch = 100
+    Tick=0
+}
+
+if (At2 && Weapon == "weapon_pistol") {
+    Tick++
+    local Rand=toString(randint(10,15)) 
+    particle(random(3,8), random(30,30), random(200,200),"particle/smokesprites_00"+Rand,vec(255,255,255),Conus:pos(),(OW:aimPos()-OW:shootPos()):normalized()*300 + OW:vel() + randvec(-80,80),random(0,0), randint(-1,1), 255, 0)
+    
+    if (Pitch > 65) {
+        Pitch-=0.5
+        soundPitch("gas", Pitch)
+    }
+
+        findInCone(Conus:pos(),OW:aimPos() - OW:shootPos(),100,20)
+        Arr = findToArray()
+        for (I=1, Arr:count()) {
+            Arr[I, entity]:extinguish()
+            Arr[I, entity]:setVel( (Arr[I, entity]:pos() - OW:pos() +vec(0,0,300)):normalized() * 300)
+        }
+
+    OW:setVel((OW:shootPos()-OW:aimPos()):normalized()*25)
+}
+
+if (changed(At2) && !At2 && Weapon == "weapon_pistol") {
+    soundStop("gas")
+}

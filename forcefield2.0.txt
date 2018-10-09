@@ -1,0 +1,51 @@
+@name forcefield2.0
+@inputs 
+@outputs
+@persist A:array FR:array P:array N
+@trigger 
+runOnTick(1)
+if (first()|duped()) {
+    N=1
+    
+    findIncludeClass("player")
+    findIncludeClass("vehicle")
+    findIncludeClass("grenade")
+    findIncludeClass("crossbow_bolt")
+    findIncludeClass("prop_physics")
+    findIncludeClass("rpg")
+    findExcludePlayer(owner())
+#[
+holoCreate(1) 
+holoPos(1,entity():pos()+vec(0,0,0)) 
+holoScale(1,vec(100,100,100)) 
+holoModel(1,"hq_hdome_thin") 
+holoParent(1,entity()) 
+holoColor(1,vec(100,100,100)) 
+holoMaterial(1,"models/props_combine/stasisshield_sheet")]#
+}
+
+findInSphere(entity():pos(),100)
+A=findToArray()
+if (A:count()!=0) {
+for (I=0,A:count(),1) {
+    A[I,entity]:playerNoclip(0)
+    A[I,entity]:extinguish()
+    A[I,entity]:propFreeze(0)
+    A[I,entity]:setVel((A[I,entity]:pos()-entity():pos()))
+#    explosion(1000000000,50,A[I,entity]:pos())
+}
+for(I=1,A:count()){
+A[I,entity]=noentity()
+}
+}
+runOnChat(1)
+if (chatClk(owner())) {switch(owner():lastSaid()) {
+    case "+"+owner():lastSaid():explode("+"):string(2),
+    findExcludePlayer(owner():lastSaid():explode("+"):string(2))
+    break
+    
+    case "-"+owner():lastSaid():explode("-"):string(2),
+    findAllowPlayer(owner():lastSaid():explode("-"):string(2))
+    break
+}
+}

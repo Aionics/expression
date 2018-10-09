@@ -1,0 +1,27 @@
+@name Gran_game
+@inputs 
+@outputs 
+@persist T A G:entity
+@trigger 
+
+interval(10)
+
+if(owner():keyPressed("R")){
+A=1
+}
+
+if(changed(A)&A){    
+G=propSpawn("models/Items/grenadeAmmo.mdl",entity():toWorld(vec(0,0,10)),ang(0,0,90),0)
+
+#timer("Expl",3000)
+}
+if(A){
+T++
+if(T>=30){
+explosion(300,2000,G:pos()+vec(0,0,5))
+owner():soundPlay(2,9000,"alarms/klaxon1.wav")
+effectSpawn("StunstickImpact",entity():pos(),20)
+T=0
+A=0
+}
+}

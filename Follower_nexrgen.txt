@@ -1,0 +1,185 @@
+@name Follower_nextgen
+@model models/props_lab/reciever01a.mdl
+@outputs Rot1 Color:vector T
+#@model models/balloons/balloon_classicheart.mdl
+@persist On T Rad1 Rad2 Sm1 Sm2 Rot1 Rot2 Rot3 Rot4 Rot5 I [H1 H2 H3 H4]:entity 
+#made by Aionicsq
+
+interval(1)
+E=entity()
+O=owner()
+
+
+
+T=T+2
+if (T>700){T=0}
+Color=hsv2rgb(T,1,1)
+O:setColor(Color)
+E:setColor(Color)
+
+
+
+
+
+if(first()){
+    
+    On=1
+    
+    Rad1=100
+    Rad2=30
+    Sm1=10
+    Sm2=5
+    Rot1=0
+    Rot2=120
+    Rot3=240
+    Rot4=180
+    Rot5=0   
+    
+#    for (I=1,3) {
+#        H(I)=holoCreate(I)
+#        H1:setTrails(15,0,0.5,"trails/tube",vec(180,180,255),255)
+#        holoPos(1,O:toWorld(vec(0,0,25)))
+#        holoModel(1,"models/dav0r/hoverball.mdl")
+#        holoMaterial(1,"models/cs_italy/light_orange")
+#        lightCreate(1,H1:pos(),Color,2000,5)
+#        lightParent(1,H1)
+#        interval(500
+
+
+
+
+
+
+
+
+    H1=holoCreate(1)
+    H1:setTrails(15,0,0.5,"trails/tube",vec(180,180,255),255)
+    holoPos(1,O:toWorld(vec(0,0,25)))
+    holoModel(1,"models/dav0r/hoverball.mdl")
+    holoMaterial(1,"models/debug/debugwhite")
+    #lightCreate(1,H1:pos(),Color,2000,5)
+    #lightParent(1,H1)
+ #q   interval(2000)
+      
+    H2=holoCreate(2)
+    H2:setTrails(15,0,0.5,"trails/tube",vec(180,180,255),255)
+    holoPos(2,O:toWorld(vec(0,0,25)))
+    holoModel(2,"models/dav0r/hoverball.mdl")
+    holoMaterial(2,"models/debug/debugwhite")
+    #lightCreate(2,H2:pos(),Color,2000,5)
+    #lightParent(2,H2)
+#    interval(2000)
+       
+    H3=holoCreate(3)
+    H3:setTrails(15,0,0.5,"trails/tube",vec(180,180,255),255)
+    holoPos(3,O:toWorld(vec(0,0,25)))
+    holoModel(3,"models/dav0r/hoverball.mdl")
+    holoMaterial(3,"models/debug/debugwhite")
+    #lightCreate(3,H3:pos(),Color,2000,5)
+    #lightParent(3,H3)
+#    interval(10000)
+         
+    E:setMass(1000)  
+}
+
+
+#lightColor(1,Color)
+#ightColor(2,Color)
+#lightColor(3,Color)
+holoColor(1,Color)
+holoColor(2,Color)
+holoColor(3,Color)
+if(On){
+
+    At1=O:keyAttack1()
+    At2=O:keyAttack2()
+    R=O:keyReload()
+#    T=O:keyPressed("T")
+   
+            if (I<13&I>0){
+            I=I+0.1
+            holoScale(4,vec(I,I,I))
+            }
+            
+            if (I>=13){I=0}
+
+
+    if(!At2) {
+        
+
+        Rot1=(Rot1+1)%360        
+        Rot2=(Rot2+1)%360        
+        Rot3=(Rot3+1)%360
+               
+        EndPos1=O:shootPos()+vec(sin(Rot1)*Rad1,cos(Rot1)*Rad1,cos(Rot1*2)*Rad1/5)
+        EndPos2=O:shootPos()+vec(sin(Rot2)*Rad1,cos(Rot2)*Rad1,cos(Rot2*2)*Rad1/5)
+        EndPos3=O:shootPos()+vec(sin(Rot3)*Rad1,cos(Rot3)*Rad1,cos(Rot3*2)*Rad1/5)
+    
+        El=H1:pos()+(EndPos1-H1:pos())/Sm1        
+        H1:setPos(El)
+        El=H2:pos()+(EndPos2-H2:pos())/Sm1        
+        H2:setPos(El)
+        El=H3:pos()+(EndPos3-H3:pos())/Sm1        
+        H3:setPos(El)
+        
+        
+        
+        
+    }else{
+        #E=propSpawn("models/props_junk/harspoon002a.mdlaq",(owner():shootPos()+vec(0,0,40)),owner():eyeAngles(),1)
+        H1:setPos(O:aimPos()+vec(0,0,20))  
+        
+        Rot4=(Rot4+4)%360        
+        Rot5=(Rot5+4)%360
+        EndPos2=H1:pos()+vec(sin(Rot4)*Rad2,cos(Rot4)*Rad2,cos(Rot4*3)*Rad2/2)
+        EndPos3=H1:pos()+vec(sin(Rot5)*Rad2,cos(Rot5)*Rad2,cos(Rot5*3)*Rad2/2)
+        El=H2:pos()+(EndPos2-H2:pos())/Sm2       
+        H2:setPos(El)
+        El=H3:pos()+(EndPos3-H3:pos())/Sm2       
+        H3:setPos(El)
+        
+        if(changed(R)&R) {
+            
+            
+        #explosion(500,200,H1:pos()+vec(0,0,50))
+        
+        
+        H4=holoCreate(4)        
+        holoPos(4,H1:pos())
+        holoModel(4,"models/Combine_Helicopter/helicopter_bomb01.mdl")
+        holoMaterial(4,"models/alyx/emptool_glow")
+        
+        I=0.1
+        
+        }
+        
+               
+        
+        if(changed(At1)&At1){
+            O:setPos(H1:pos())
+           
+        }
+    }
+ #   if(changed(R)&R) {
+        
+ #       P=propSpawn("models/props_c17/oildrum001_explosive.mdl",E:pos(),1)
+        #P=propSpawn("models/props_c17/oildrum001_explosive.mdl",G:pos(),1)
+#q        P:propBreak()
+        #P:applyAngForce(O:eyeAngles())
+    }
+    
+ if(owner():health()<155&owner():health()>10) {
+     #O=entitySpawn("item_healthvial",O:pos(),1)
+       
+  #      O=entitySpawn("item_battery",1)
+    }
+    if(owner():armor()<80&owner():armor()>=10) {
+       # O=entitySpawn("item_battery",O:pos(),1)
+       
+      
+    }
+#}
+
+Color:toString()
+
+#Made by Aionics

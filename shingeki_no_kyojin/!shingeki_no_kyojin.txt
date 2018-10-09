@@ -1,0 +1,267 @@
+@name !shingeki_no_kyojin
+@persist Ow:entity
+@persist Hooks:table Drawing:table Holos:table
+@persist IsDrawing AngFan Counter BoneAng
+
+if (first()) {
+    runOnTick(1)
+    #include "shingeki_no_kyojin/!shingeki_no_kyojin_holos"
+    entity():propNotSolid(1)
+    
+    #Ow = findPlayerByName("Ghos")
+    Ow = findPlayerByName("Aionics")
+    IsDrawing = 0
+    AngFan = 0
+    Counter = 0
+    BoneAng = 0
+
+    Holos = do_drawHolos(Ow)
+
+    function table hook() {
+        return table(
+            "state" = "inactive",
+            "entity" = noentity(),
+            "length" = 0
+        )
+    }
+
+    Hooks = table(
+        "left" = hook(),
+        "right" = hook()
+    )
+    
+    if (IsDrawing) {
+        local Colors = array()
+        Colors:pushVector(vec(100,100,255))
+        Colors:pushVector(vec(255,100,100))
+        Colors:pushVector(vec(100,255,100))
+        for (I=1, 3) {
+            J = I + 510
+            holoCreate(J)
+            holoScale(J, vec(0.2))
+            holoAlpha(J, 50)
+            local Beam = holoEntity(J):drawBeam("trails/laser",holoEntity(J):pos(),Ow:pos(),Colors[I, vector],255,3,1,1)
+            Beam:setBeamEndEnt(Ow)
+        }
+        Drawing = table(
+            "o_vel" = holoEntity(511),
+            "rope_f" = holoEntity(512),
+            "dir" = holoEntity(513)
+        )
+    }
+    
+    #FUNCTIONS################################
+    
+    function void do_shoot(KeyTag:string) {
+        local Prop = propSpawn("models/hunter/blocks/cube025x025x025.mdl", Ow:shootPos() + Ow:eye() * 50, 0)
+        Prop:setAlpha(0)
+        Prop:setMass(100)
+        Prop:setVel(Ow:eye() * 3000)
+        Prop:noCollideAll(1)
+        #Prop:propNotSolid(1)
+        
+        local HoloIndex = KeyTag == "left" ? 500 : 501
+        holoCreate(HoloIndex)
+        holoModel(HoloIndex, "models/props_combine/combine_mine01.mdl")
+        holoScale(HoloIndex, vec(0.17,0.17,0.6))
+        holoPos(HoloIndex, Prop:pos())
+        holoParent(HoloIndex, Prop)
+        holoPos(HoloIndex, Prop:pos())
+        holoAng(HoloIndex, Ow:eyeAngles() + ang(90,0,0))
+        
+        Holos[KeyTag + "_beam", entity]:soundPlay("sound_" + KeyTag, 10, "TripwireGrenade.ShootRope")
+        soundPitch("sound_" + KeyTag, random(140, 190))
+        local Beam = Prop:drawBeam("cable/cable2",Prop:pos(),Holos[KeyTag + "_beam", entity]:pos(),vec(50),255,2,1,1)
+        Beam:setBeamEndEnt(Holos[KeyTag + "_beam", entity])
+        
+        Hooks[KeyTag, table]["state", string] = "flying"
+        Hooks[KeyTag, table]["entity", entity] = Prop
+        
+        Ow:soundPlay(2,1, "weapons/shotgun/shotgun_fire7.wav")
+        soundVolume(2, 0.5)
+        soundPitch(2, random(170,200))
+        for(I=1, randint(3,6)) {
+            local Rand=toString(randint(10,15))                
+            particle(random(0.05,0.5), random(5,10), random(20,30),"particle/smokesprites_00"+Rand,vec(255,255,255),Holos[KeyTag + "_beam", entity]:pos(),randvec(-10,10)+Ow:eye()*100 + Ow:vel(),random(-40,40), randint(-1,1), 150, 0)                 
+        }
+    }
+    
+    function void do_removeHook(KeyTag:string) {
+        soundStop("sound_" + KeyTag)
+        Hooks[KeyTag, table]["state", string] = "inactive"
+        Hooks[KeyTag, table]["length", number] = 0
+        Hooks[KeyTag, table]["entity", entity]:remove()
+    }
+}
+local LeftKey = Ow:keySprint()
+local RightKey = Ow:keyReload()
+local SpaceKey = Ow:keyJump()
+local IsInNoclip = Ow:inNoclip()
+local KeyAt1 = Ow:keyAttack1()
+local KeyAt2 = Ow:keyAttack2()
+local Weapon = (Ow:weapon():type() == "weapon_frag")
+
+if (!IsInNoclip && Weapon) {
+    if (changed(LeftKey) & LeftKey) {
+        do_shoot("left")
+    }
+    if (changed(RightKey) & RightKey) {
+        do_shoot("right")
+    }
+}
+if (changed(LeftKey) & !LeftKey) {
+    do_removeHook("left")
+}
+if (changed(RightKey) & !RightKey) {
+    do_removeHook("right")
+}
+
+local RopeForces = array()
+foreach (KeyTag, Hook:table=Hooks) {
+    local HookProp = Hook["entity", entity]
+    if (Hook["state", string] == "flying") {
+        rangerFilter(HookProp)
+        rangerFilter(Ow)
+        local Ranger = rangerOffsetHull(50, HookProp:pos(), HookProp:vel():normalized(), vec(5))
+        
+        if (Ranger:hit()) {
+            if (Ranger:entity()) {
+                HookProp:parentTo(Ranger:entity())
+            }
+            HookProp:setPos(Ranger:pos())
+            HookProp:propFreeze(1)
+
+            soundStop("sound_" + KeyTag)
+            Hook["state", string] = "stucked"
+            Hook["length", number] = HookProp:pos():distance(Ow:pos())
+        }
+    }
+    
+    if (Hook["state", string] == "stucked") {
+        local PlayerVel = Ow:vel()
+        local CurrentDistance = Ow:pos():distance(HookProp:pos())
+        
+        local RopeForce = vec(0)
+        if (PlayerVel != vec(0) & CurrentDistance > Hook["length", number] - 20) {
+            local RopeDirection = (HookProp:pos() - Ow:pos()):normalized()
+            local OffsetCoefficient = (CurrentDistance - Hook["length", number]) / 2
+            local CosBetweenRopeDirAndVel = (PlayerVel:x() * RopeDirection:x() + PlayerVel:y() * RopeDirection:y() + PlayerVel:z() * RopeDirection:z()) / 
+                ( (RopeDirection:x() ^ 2 + RopeDirection:y() ^ 2 + RopeDirection:z() ^ 2) ^ 0.5 * (PlayerVel:x() ^ 2 + PlayerVel:y() ^ 2 + PlayerVel:z() ^ 2) ^ 0.5 )
+            RopeForce = RopeDirection * PlayerVel:length() * min(CosBetweenRopeDirAndVel, 0) * -1 + OffsetCoefficient * RopeDirection
+        }        
+        
+        RopeForces:pushVector(RopeForce)
+        if (KeyAt2) {
+            Hook["length", number] = max(Hook["length", number] - 10, 0)
+        }
+        if (IsDrawing & KeyTag == "left") {
+            Drawing["o_vel", entity]:setPos(Ow:pos() + PlayerVel)
+            Drawing["rope_f", entity]:setPos(Ow:pos() + RopeForce)
+            Drawing["dir", entity]:setPos(Ow:pos() + PlayerVel + RopeForce)
+        }
+    }
+}
+
+local ForcesAmount = RopeForces:count()
+if (ForcesAmount) {
+    local SumForce = vec(0)
+    foreach (I, RopeForce:vector=RopeForces) {
+        SumForce+=RopeForce
+    }
+    SumForce/=ForcesAmount
+    if (SpaceKey) {
+        SumForce+=Ow:eye()*10
+    }
+    Ow:setVel(SumForce)
+}
+
+if (Weapon) {
+    if (changed(SpaceKey) & SpaceKey) {
+        Ow:soundPlay(1, 30, "ambient/gas/cannister_loop.wav")
+        soundPitch(1, 200)
+    }
+    if (changed(SpaceKey) & !SpaceKey) {
+        soundStop(1)    
+    }
+    if (changed(KeyAt1) & KeyAt1) {
+        Ow:playerSetBoneAng(8,ang(0,70,90))
+        Ow:playerSetBoneAng(10,ang(0,0,0))
+        Ow:playerSetBoneAng(13,ang(-30,50,190))
+        Ow:playerSetBoneAng(15,ang(0,0,0))
+    }
+    if (changed(KeyAt1) & !KeyAt1) {
+        BoneAng=0
+        Ow:playerSetBoneAng(0,ang(0,0,0))
+        Ow:playerSetBoneAng(8,ang(90,120,90))
+        Ow:playerSetBoneAng(10,ang(0,70,0))
+        Ow:playerSetBoneAng(13,ang(-30,-30,-70))
+        Ow:playerSetBoneAng(15,ang(0,70,0))
+        timer("bones", 200)
+    }
+    if (KeyAt1 & KeyAt2) {
+        BoneAng+=10
+        Ow:playerSetBoneAng(0,ang(0,0,BoneAng))
+        findIncludeClass("player")
+        findIncludeClass("NPC")
+        findIncludeClass("prop_physics")
+        findIncludeClass("vehicle")
+        findExcludeEntity(Ow)
+        findInSphere(Ow:pos() + vec(0,0,30), 70)
+        Arr=findToArray()
+        for(I=1,Arr:count()){
+            #explosion(100,50,Here)
+            Arr[I,entity]:takeDamage(100,"explosion")
+        } 
+        #Ow:playerSetBoneAng(15,ang(0,BoneAng,0))
+    }
+    if (SpaceKey & Counter%3==0) {
+        local Rand=toString(randint(10,15))                
+        particle(random(3,10), random(5,10), random(150,200),"particle/smokesprites_00"+Rand,vec(255,255,255),Ow:pos() + vec(0,0,35) + Ow:eye()*-5,randvec(-10,10)+Ow:eye()*-200 + Ow:vel(),random(-40,40), randint(-1,1), 100, 0)                 
+    }
+}
+
+
+timer("rotate_fan", 100)
+if (clk("rotate_fan")) {
+    local RightFan = Holos["right_fan", entity]
+    RightFan:setAng(RightFan:angles():setRoll(-AngFan))
+    
+    local LeftFan = Holos["left_fan", entity]
+    LeftFan:setAng(LeftFan:angles():setRoll(AngFan))
+    
+    AngFan = AngFan >=360 ? 10 : AngFan + 10 
+    timer("rotate_fan", 100)
+}
+if (clk("bones")) {
+    Ow:playerSetBoneAng(0,ang(0,0,0))
+    Ow:playerSetBoneAng(8,ang(0,0,0))
+    Ow:playerSetBoneAng(10,ang(0,0,0))
+    Ow:playerSetBoneAng(13,ang(0,0,0))
+    Ow:playerSetBoneAng(15,ang(0,0,0))
+    Ow:soundPlay(3, 0.5, "NPC_Vortigaunt.Swing")
+    Ow:soundPlay(4, 1, "Town.d1_town_03_blade_out")
+    findIncludeClass("player")
+    findIncludeClass("NPC")
+    findIncludeClass("prop_physics")
+    findIncludeClass("vehicle")
+    findExcludeEntity(Ow)
+    findInCone(Ow:shootPos(),Ow:eye(),60,130)
+    Arr=findToArray()
+    for(I=1,Arr:count()){
+        #explosion(100,50,Here)
+        Arr[I,entity]:takeDamage(100,"explosion", vec(0,0,100))
+    } 
+    
+    #drawQuad("particle/particle_crescent_additive",Ow:shootPos(),Ow:eyeAngles() + ang(90, 0 ,0),vec(100,255,255),180,30,30):remove(0.5)
+    #particle(0.2, 10, 10,"particle/warp2_warp",vec(255,255,255),Ow:shootPos() + Ow:eye() * 20 + vec(0,0,20),vec(0,0,-50) + Ow:eye() * 20 + Ow:vel(),random(-40,40), randint(-1,1), 100, 0)                 
+}
+Counter = Counter > 1000 ? 0 : Counter + 1
+
+if(changed(Ow:weapon():type()))
+{
+    if (Weapon) {
+        Ow:weapon():setAlpha(0)
+        Ow:weapon():setClip1(0)    
+        Ow:setAmmo(Ow:weapon():primaryAmmoType(),0)
+    }    
+}

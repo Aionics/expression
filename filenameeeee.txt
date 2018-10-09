@@ -1,0 +1,43 @@
+@name 
+@inputs 
+@outputs N V
+@persist O:entity N V
+@trigger 
+
+interval(10)
+
+if (first()) {
+    O = owner()
+}
+
+V = O:keyPressed("V")
+W = O:keyForward()
+
+if (changed(V) & V) {
+    N = N ? 0 : 1
+}
+
+if (N) {
+    if (W) {
+        O:setVel(O:eye()*500)
+    }
+    else {
+        O:setVel(O:vel()*vec(-1))
+    }
+}
+
+# O:owner
+
+#[if (first()) {
+    O=owner()
+}
+
+V = O:keyPressed("E")
+Sp= O:keyJump()
+
+if(V){
+    O:setVel(O:eye()*500)
+}
+if(Sp){
+    O:setVel(O:vel()*vec(-1))
+}]#

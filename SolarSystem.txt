@@ -1,0 +1,82 @@
+@name SolarSystem
+@model models/hunter/blocks/cube05x05x05.mdl
+@inputs 
+@outputs [Arr]:array NewTar:entity
+@persist [E Star NewTar NT]:entity
+@persist [Arr]:array
+@persist [SetMass SetRange LS]:string
+@persist E_mass Range
+@trigger 
+
+if(first()){
+    runOnTick(1)
+    
+    E=entity()
+    Star=holoCreate(1)
+    
+    Range=400
+    E_mass=10000
+    
+    E:setAlpha(0)
+    E:propGravity(0)
+    E:noCollideAll(1)
+#E:propNotSolid(1)
+    E:setMass(E_mass)
+    
+    holoModel(1,"hq_sphere")
+    holoMaterial(1,"models/debug/debugwhite")
+    holoScale(1,vec(4))
+    holoDisableShading(1,1)
+    holoParent(1,E)
+    #Spr=E:drawSprite("effects/tp_eyefx/tp_eyefx",E:pos(),vec(255),255,150,150)
+    
+    
+    
+}
+LS=owner():lastSaid()
+
+if(changed(LS)&LS:find("#setmass")){
+    LS=LS:sub(LS:find(" ")+1,LS:length())
+    E_mass=LS:toNumber()
+    E:setMass(E:mass())
+}
+if(changed(LS)&LS:find("#setrange")){
+    LS=LS:sub(LS:find(" ")+1,LS:length())
+    Range=LS:toNumber()
+}
+if(!NewTar){
+    findIncludeClass("prop")
+    findIncludeClass("expression2")
+    for(I=1,Arr:count()){
+        findExcludeEntity(entity())
+        findExcludeEntity(Arr[I,entity])   
+    }
+       
+    findInSphere(E:pos(),Range)
+    NewTar=find()
+     
+}
+if(changed(NewTar)&NewTar){
+    NewTar:setMass(NewTar:mass()*100)
+    NewTar:setTrails(10,0,15,"trails/laser",randvec(0,255),255)
+    local Dir=E:pos()-NewTar:pos()
+    local R=E:pos():distance(NewTar:pos()) 
+    local Force=E_mass*NewTar:mass()/(R^2)
+  #  NewTar:setPos(NewTar:pos())
+  #  NewTar:applyForce(E:forward()*Force*10)
+    NewTar:propGravity(0)
+    Arr:pushEntity(NewTar)
+ 
+}
+if(NewTar){
+       NewTar=noentity()
+}
+for(I=1,Arr:count()){
+    local Dir=E:pos()-Arr[I,entity]:pos()
+    local R=E:pos():distance(Arr[I,entity]:pos()) 
+    local Force=E_mass*Arr[I,entity]:mass()/(R^2)
+    Arr[I,entity]:applyForce(Dir:normalized()*Force)
+   
+}
+
+

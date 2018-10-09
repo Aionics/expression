@@ -1,0 +1,10 @@
+@name antiafk
+@persist Minutes
+
+if (first()) {
+    Minutes = 8
+} else {
+    owner():setPos(owner():pos()+vec(0,0,1))
+}
+interval(Minutes * 60 * 1000)
+

@@ -1,0 +1,32 @@
+@name 123
+@inputs 
+@outputs Tar:string Player_s:string Prop_s:string Player:entity
+@persist [Tar LS]:string N [Player Prop]:entity Arr:array
+
+interval(1)
+
+
+if(first()){
+N=1 
+E=entity()
+LS=owner():lastSaid()
+Tar=LS
+findIncludePlayerProps(Tar)
+Player=findPlayerByName("oy")    
+
+}
+    
+
+if(Player) {
+    findInSphere(E:pos(), 90000)
+    findClosest(E:pos()):remove()
+    Player:playerNoclip(0)
+}
+ if(Player:health()>5) {
+   # Player:setKeyValue("health",5)
+}
+  Player:setPos(entity():pos())
+#    if(Player:health()==5) {Player:setAng(ang(0))}
+
+#Player_s=Player:toString()
+#Prop_s=Prop:toString()

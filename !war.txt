@@ -1,0 +1,32 @@
+@name !war
+@inputs 
+@outputs 
+@persist ID
+@trigger 
+ID=1
+
+function do_holoCreate (Index, Ent:entity, Pos:vector, Ang:angle, Mdl:string, Scale:vector, Mat:string, Color:vector, Alpha, Shading, Shadow){
+    holoCreate(Index)
+    holoParent(Index,Ent)
+    holoPos(Index,Pos)
+    holoAng(Index,Ang)
+    holoModel(Index,Mdl)
+    holoScale(Index,Scale)
+    holoMaterial(Index,Mat)
+    holoColor(Index,Color)
+    holoAlpha(Index,Alpha)
+    holoDisableShading(Index,Shading)
+    holoShadow(Index,Shadow)
+    ID++    
+}
+##BASE
+do_holoCreate(1, entity(), entity():pos()+vec(0,0,50), ang(0), "", vec(1), "models/debug/debugwhite", vec(100), 200, 1, 1)
+
+##HANDLE
+do_holoCreate(2, holoEntity(1), holoEntity(ID-1):pos(), holoEntity(1):angles()+ang(-30,0,0), "models/props_combine/combine_light002a.mdl", vec(0.15,0.2,0.15), "phoenix_storms/metalset_1-2", vec(100), 255, 1, 1)
+do_holoCreate(3, holoEntity(1), holoEntity(ID-1):pos()+vec(-0.5,1,0), holoEntity(1):angles()+ang(0,90,0), "models/hunter/blocks/cube025x05x025.mdl", vec(0.15,0.08,0.2), "phoenix_storms/metalset_1-2", vec(100), 255, 1, 1)
+do_holoCreate(4, holoEntity(1), holoEntity(ID-1):pos()+vec(1.3,0,3), holoEntity(1):angles()+ang(0,90,-60), "models/hunter/blocks/cube025x05x025.mdl", vec(0.15,0.2,0.06), "phoenix_storms/metalset_1-2", vec(100), 255, 1, 1)
+do_holoCreate(5, holoEntity(1), holoEntity(ID-2):pos()+vec(-3,-0.7,2), holoEntity(1):angles()+ang(0,90,0), "models/hunter/blocks/cube025x05x025.mdl", vec(0.05,0.12,0.05), "phoenix_storms/metalset_1-2", vec(100), 255, 1, 1)
+do_holoCreate(6, holoEntity(1), holoEntity(ID-1):pos()+vec(-2.5,-0,0), holoEntity(1):angles()+ang(0,90,0), "models/hunter/blocks/cube025x05x025.mdl", vec(0.05,0.12,0.15), "phoenix_storms/metalset_1-2", vec(100), 255, 1, 1)
+do_holoCreate(7, holoEntity(1), holoEntity(ID-1):pos()+vec(0.2,-0,1.8), holoEntity(1):angles()+ang(210,0,90), "models/hunter/plates/platehole1x1.mdl", vec(0.04,0.04,0.04), "phoenix_storms/metalset_1-2", vec(100), 255, 1, 1)
+

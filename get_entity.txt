@@ -1,0 +1,31 @@
+@name get_entity
+@inputs 
+@outputs Ent_s:entity Dmg_s:string Ranger_entity:entity
+@persist Active R
+@trigger 
+
+if(first()){
+    runOnTick(1)
+    holoCreate(1)
+    
+}
+rangerHitEntities(1)
+local Ranger = rangerOffsetHull(100,entity():pos()+vec(0,0,5),entity():up(),vec(50))
+holoPos(1, Ranger:pos())
+Ranger_entity = Ranger:entity()
+if (changed(Ranger_entity) & Ranger_entity) {print(Ranger_entity)}
+B = owner():keyPressed("B")
+if(changed(B)& B){
+    
+    #findIncludeModel("models/kobilica/relay.mdl")
+    #findByName("!Blaster")
+    #findExcludeClass("weapon")
+    #findIncludeClass("player")
+    findInSphere(holoEntity(1):pos(), 500)
+    Res = findToArray()
+    
+    for (I=1, Res:count()) {
+        print(Res[I, entity]:model())
+    }
+    
+}

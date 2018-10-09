@@ -1,0 +1,24 @@
+@name 
+@inputs 
+@outputs 
+@persist N
+@trigger 
+
+if(first()){
+    N=0
+    runOnTick(1)
+    function do_holocreate (I){
+        holoCreate(I)
+        holoModel(I, "hq_sphere")
+        holoScale(I,vec(500))
+        holoDisableShading(I,1)
+        holoMaterial(I,"models/debug/debugwhite")
+        #holoMaterial(I,"models/shadertest/shader3")
+        holoAlpha(I,150)
+        holoPos(I,entity():pos()+vec(random(-2000,2000), random(-2000,2000), 0))
+    }    
+}
+N++
+if (N<=2000){
+    do_holocreate(N)
+}

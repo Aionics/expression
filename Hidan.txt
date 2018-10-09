@@ -1,0 +1,191 @@
+@name Hidan
+@persist [E O H Player1 Player God]:entity I360 PlayerD Damage
+@trigger 
+#@model models/effects/teleporttrail.mdl
+runOnTick(1)
+Entity=O
+Weapon=Entity:weapon():type()
+PlayerWeapon = "weapon_stunstick"
+Player = Entity:aimEntity()
+Attack1 = Entity:keyAttack1()
+Attack2 = Entity:keyAttack2()
+AttackT = Entity:keyPressed("T")
+AttackK = Entity:keyPressed("K")
+AttackV = Entity:keyPressed("V")
+Player = Entity:aimEntity()
+PlayerD = Entity:pos():distance(Player:pos())
+Tar = PlayerD&PlayerD<100&Attack1
+
+
+if(first()){
+E = entity()
+O = owner()
+H = holoCreate(1)
+holoAlpha(8,0)
+holoModel(1,"hq_cylinder")
+holoScale(1,vec(0.15,0.15,7))
+holoMaterial(1,"models/XQM/WoodPlankTexture")
+holoColor(1,vec(100,100,100))
+holoPos(1,E:toWorld(vec(0,0,15)))
+holoAng(1,E:toWorld(ang(90,0,0)))
+holoParent(1,E)
+
+holoCreate(2)
+holoModel(2,"models/hunter/tubes/circle2x2d.mdl")
+holoScale(2,vec(0.8,0.15,0.01))
+holoMaterial(2,"phoenix_storms/gear")
+holoColor(2,vec(255,0,0))
+holoPos(2,H:toWorld(vec(-4,0,33)))
+holoAng(2,H:toWorld(ang(180,0,90)))
+holoParent(2,H)
+
+holoCreate(3)
+holoModel(3,"models/hunter/tubes/circle2x2d.mdl")
+holoScale(3,vec(0.6,0.10,0.01))
+holoMaterial(3,"phoenix_storms/gear")
+holoColor(3,vec(255,0,0))
+holoPos(3,H:toWorld(vec(-4,0,25)))
+holoAng(3,H:toWorld(ang(180,0,90)))
+holoParent(3,H)
+
+holoCreate(4)
+holoModel(4,"models/hunter/tubes/circle2x2d.mdl")
+holoScale(4,vec(0.4,0.10,0.01))
+holoMaterial(4,"phoenix_storms/gear")
+holoColor(4,vec(255,0,0))
+holoPos(4,H:toWorld(vec(-4,0,17)))
+holoAng(4,H:toWorld(ang(180,0,90)))
+holoParent(4,H)
+
+holoCreate(5)
+holoModel(5,"hq_tube_thick")
+holoScale(5,vec(0.16,0.16,0.5))
+holoMaterial(5,"phoenix_storms/Fender_white")
+holoColor(5,vec(100,100,100))
+holoPos(5,H:toWorld(vec(0,0,19.4)))
+holoAng(5,H:toWorld(ang(0,0,0)))
+holoParent(5,H)
+
+holoCreate(6)
+holoModel(6,"hq_tube_thick")
+holoScale(6,vec(0.16,0.16,0.5))
+holoMaterial(6,"phoenix_storms/Fender_white")
+holoColor(6,vec(100,100,100))
+holoPos(6,H:toWorld(vec(0,0,27.4)))
+holoAng(6,H:toWorld(ang(0,0,0)))
+holoParent(6,H)
+
+holoCreate(7)
+holoModel(7,"hq_tube_thick")
+holoScale(7,vec(0.16,0.16,0.7))
+holoMaterial(7,"phoenix_storms/Fender_white")
+holoColor(7,vec(100,100,100))
+holoPos(7,H:toWorld(vec(0,0,36.4)))
+holoAng(7,H:toWorld(ang(0,0,0)))
+holoParent(7,H)
+
+holoCreate(8)
+holoModel(8,"models/hunter/tubes/tube2x2x025.mdl")
+holoScale(8,vec(1.4,1.4,0.1))
+holoMaterial(8,"phoenix_storms/Fender_white")
+holoColor(8,vec(255,0,0))
+holoPos(8,E:toWorld(vec(0,0,0)))
+holoAng(8,E:toWorld(ang(0,0,0)))
+holoParent(8,E)
+
+holoCreate(9)
+holoModel(9,"cube")
+holoScale(9,vec(11.0,0.3,0.1))
+holoMaterial(9,"phoenix_storms/Fender_white")
+holoColor(9,vec(255,0,0))
+holoPos(9,holoEntity(8):toWorld(vec(0,-8,0)))
+holoAng(9,holoEntity(8):toWorld(ang(0,0,0)))
+holoParent(9,holoEntity(8))
+
+holoCreate(10)
+holoModel(10,"cube")
+holoScale(10,vec(8.0,0.3,0.1))
+holoMaterial(10,"phoenix_storms/Fender_white")
+holoColor(10,vec(255,0,0))
+holoPos(10,holoEntity(8):toWorld(vec(-30,30,0)))
+holoAng(10,holoEntity(8):toWorld(ang(0,45,0)))
+holoParent(10,holoEntity(8))
+
+holoCreate(11)
+holoModel(11,"cube")
+holoScale(11,vec(8.0,0.3,0.1))
+holoMaterial(11,"phoenix_storms/Fender_white")
+holoColor(11,vec(255,0,0))
+holoPos(11,holoEntity(8):toWorld(vec(30,30,0)))
+holoAng(11,holoEntity(8):toWorld(ang(0,-45,0)))
+holoParent(11,holoEntity(8))
+
+}
+I360 = (I360 + 0.5)%360
+
+timer("Particle",100)
+if(clk("Particle")){   
+#particle(2,random(0.1,1),0,"particle/particle_glow_02",randvec(0,255),holoEntity(2):toWorld(vec(0,0,0)),randvec(-1,1)*10)
+particleGravity(vec(0,0,0))
+}
+if(changed(Weapon)){
+   if(Weapon==PlayerWeapon){
+   
+    soundURLload("1","https://clck.ru/9SDdg",100,0,E)
+    #holoEntity(1):elasticTo(O,vec(0,0,0),vec(0,0,30),25000,3,2,"models/Rope",2,1)  
+    #soundPlay(4,0,"vo/npc/vortigaunt/calm.wav")
+    soundPitch(4,63)
+    hint("MOST Cursed Sword",1)
+    Entity:weapon():setAlpha(0)
+    holoAng(1,Entity:attachmentAng("anim_attachment_RH"))
+    holoPos(1,Entity:attachmentPos("anim_attachment_RH")+vec(-0.0,0,0))
+    holoParentAttachment(1,Entity,"anim_attachment_RH")
+    
+    holoAng(1,holoEntity(1):toWorld(ang(0,0,0)))
+   
+    }else{
+    soundPitch(4,0)
+    
+    holoUnparent(1)
+    Entity:weapon():setAlpha(255)
+    holoAng(1,Entity:attachmentAng("chest"))
+    holoPos(1,Entity:attachmentPos("chest"))
+    holoParentAttachment(1,Entity,"chest")
+    holoPos(1,holoEntity(1):toWorld(vec(1,-7,-10)))
+    holoAng(1,holoEntity(1):toWorld(ang(0,90,90)))
+    holoAlpha(8,255)
+    }
+}
+if(Weapon==PlayerWeapon){
+if(changed(Tar)*Tar){
+    
+    holoPos(8,Entity:pos())
+    holoAlpha(8,255)
+    holoAlpha(9,255)
+    holoAlpha(10,255)
+    holoAlpha(11,255)
+    soundURLload("1","https://clck.ru/9SDeu",100,0,E)
+}
+}else{
+
+holoAlpha(8,0)
+holoAlpha(9,0)
+holoAlpha(10,0)
+holoAlpha(11,0)
+
+}
+findInSphere(holoEntity(8):toWorld(vec(0,0,0)),100)
+findSortByDistance(holoEntity(8):toWorld(vec(0,0,0)))
+findIncludeEntity(Entity)
+God = find()
+
+if(find()){
+if(Entity:getDamage()){Player:setHealth(Player:health()-Damage)}
+
+
+}
+
+if(owner():getDamage()){
+print(owner():getDamage())
+}
+

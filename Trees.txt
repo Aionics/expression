@@ -1,0 +1,40 @@
+@name Trees
+@inputs 
+@outputs N Tick
+@persist 
+@trigger 
+
+runOnTick(1)
+if(first()){
+    entity():propNotSolid(1)
+    Pos=vec(-0,0,5000)
+    #holoCreate(0)
+    holoModel(0,"hq_sphere")
+    holoScale(0,vec(700,700,100)*-1)
+    holoMaterial(0,"models/props_lab/cornerunit_cloud")
+    holoColor(0,vec(150,0,0))
+    holoAlpha(0,255)
+    holoDisableShading(0,1)
+    holoPos(0,Pos)
+    N=1
+    
+    #particleGravity(vec(0,0,-50))
+}
+if(N<=200){
+    N++
+    R=random(1,7)
+    Size=3000
+    PosX=random(-3000,3000)
+    PosY=random(-3000,3000)
+    Ranger = rangerOffset(2000,entity():pos()+vec(PosX,PosY,500),vec(0,0,-1))
+    holoCreate(N,Ranger:pos(),vec(R,R,random(1,5)),ang(),vec(100,100,100),"models/props_foliage/tree_poplar_01.mdl")
+}
+Tick++
+if(Tick%2==0){
+    Rand=toString(randint(10,15))
+    #particle(number Duration,number StartSize,number EndSize,string Mat,vector RGB,vector Position,vector Velocity,number Pitch,number RollDelta,number StartAlpha,number EndAlpha)
+    particle(random(80,120), random(100,200), random(400,1000),"particle/smokesprites_00"+Rand,vec(10,30,10),entity():pos()+vec(random(-3000,3000),random(-3000,3000),random(0,40)),vec(random(-300,300),random(-300,300),0),random(-40,40), randint(-1,1), 180, 0)                 
+}
+if(Tick%2==0){
+    #particle(random(5,10), random(5,25), random(5,10),"sprites/light_ignorez",vec(150,255,255),entity():pos()+vec(random(-1500,1500),random(-1500,1500),random(600,400)),vec(random(-0,0),random(-0,0),0),random(-40,40), randint(-1,1), 150, 0)    
+}

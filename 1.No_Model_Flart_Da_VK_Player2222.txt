@@ -1,0 +1,178 @@
+@name 1.No Model Flart Da VK Player
+@persist [Music Search Data MData FS FE LK]:string FSF FEF
+@persist [NS NE NAME AS1 AS2 AES ARTIST]:string NSF NEF AE ASF AEF
+@persist A EE:entity
+@persist [TIS1 TIS2 TIE TIME MINS SECS SMTH]:string TSF TEF SEC MIN TI
+@persist [COL1 COL2 COL3] NUM
+# Model part
+interval(50)
+if(first()|duped()){
+    EE=entity()
+    SEC=-1
+    MIN=0
+    
+    EE:setAlpha(255)
+}
+
+#Command part
+runOnChat(1)
+if (first()){
+    #EE:propNotSolid(0)
+    #EE:noCollideAll(1)
+FS=toChar(34)+"url"+toChar(34)+":"+toChar(34)
+FE=toChar(34)+","+toChar(34)
+NS=toChar(34)+"title"+toChar(34)+":"+toChar(34)
+NE=toChar(34)+","+toChar(34)
+AS1=toChar(34)+"artist"+toChar(34)+":"+toChar(34)
+AS2=toChar(34)+"artist"+toChar(34)+":"+toChar(34)
+AES=toChar(34)+","+toChar(34)
+TIS1=toChar(34)+"duration"+toChar(34)+":"
+TIE=","+toChar(34)
+}
+if (chatClk(owner())) {switch(lastSaid()) {
+    case "fdpplay "+lastSaid():explode("fdpplay "):string(2),
+    hideChat(1)
+    Music=lastSaid():explode("fdpplay "):string(2):replace(" ","+"):replace("'","%27")
+    printColor(vec(COL1,COL2,COL3),"[FDP]",vec(255)," Searching "+lastSaid():explode("fdpplay "):string(2)+"...")
+    break
+
+    case "fdpreturn",
+    hideChat(1)
+    entity():setPos(owner():pos()+vec(0,0,100))
+    break
+    
+    case "fdppause",
+    for(I=1,4) {soundURLpause(I:toString())}
+    hideChat(1)
+    setName("Flart Da Player \n >Paused<")
+    BEATS=0
+    stoptimer("Sec")
+    break
+    
+    case "fdpresume",
+    for(I=1,4) {soundURLplay(I:toString())}
+    hideChat(1)
+    timer("Sec",1000)
+    BEATS=1
+    break
+    
+    case "fdpnext",
+    for (I=1,4) {soundURLdelete(I:toString())}
+    stoptimer("Sec")
+    stoptimer("Music")
+    hideChat(1)
+    FSF=MData:find(FS,TEF)
+    FEF=MData:find(FE,FSF)
+    ASF=MData:find(AS1,TEF)
+    #ASF=MData:find(AS2,ASF)
+    ASE=MData:find(AES,ASF)
+    NSF=MData:find(NS,ASF)
+    NEF=MData:find(NE,NSF)
+    TSF=MData:find(TIS1,NSF)
+    #TSF=MData:find(TIS1,TSF)
+    TEF=MData:find(TIE,TSF)
+    TIME=MData:sub(TSF,TEF):replace(toChar(34),""):replace(",",""):replace("duration:","")
+    SEC=TIME:toNumber()%60
+    MIN=floor(TIME:toNumber()/60,0.1)
+    ARTIST=MData:sub(ASF,ASE):replace(toChar(34)+"artist"+toChar(34)+":",""):upper()
+    Name=MData:sub(NSF,NEF):replace(toChar(34)+"title"+toChar(34)+":",""):upper()
+    Search=MData:sub(FSF,FEF):replace(toChar(34)+"url"+toChar(34)+":"+toChar(34),""):replace(toChar(34),""):replace(toChar(92),""):replace(".vk-cdn.net",".vk.me")
+    #print(Search)
+    if (ASF==0) {ARTIST="ERR"}
+    if (NSF==0) {Name="ERR"}
+    if (ASF!=0&NSF!=0&FSF!=0) {
+        printColor(vec(COL1,COL2,COL3),"[FDP]",vec(255)," Found!")
+    }
+    else {
+    printColor(vec(COL1,COL2,COL3),"[FDP]",vec(255,0,0)," Error!")
+    SEC=-1
+    MIN=0
+    exit()
+}
+    #hudDrawText(1,"Flart Da Player \n"+"Song: "+Name+"\n"+"Artist: "+ARTIST+"\n"+"Time: "+">"+toString(MIN)+":"+toString(SEC)+"<",50,10,vec(255),255,1,1)
+    SMTH=Name
+    timer("Sound",3000)
+    break
+}
+}
+if (changed(Music)&Music!="") {
+    for(I=1,4) {soundURLdelete(I:toString())}
+    NUM=0
+    BEATS=0
+    stopAllTimers()
+    httpRequest("https://api.vk.com/method/audio.search?q="+Music+"&access_token=dfe8bf7bd3e86ab3d9d114bbd88f6adbad61e69adf27c47a5783045b2332403bbc0261e6776808b2f623e")
+    #print("https://api.vk.com/method/audio.search?q="+Music+"&access_token=dfe8bf7bd3e86ab3d9d114bbd88f6adbad61e69adf27c47a5783045b2332403bbc0261e6776808b2f623e")
+}
+runOnHTTP(1)
+if (httpClk()&NUM==0) {
+    MData=httpData()
+    FSF=MData:find(FS)
+    FEF=MData:find(FE,FSF)
+    ASF=MData:find(AS1)
+    #ASF=MData:find(AS2,ASF)
+    ASE=MData:find(AES,ASF)
+    NSF=MData:find(NS,ASF)
+    NEF=MData:find(NE,NSF)
+    TSF=MData:find(TIS1)
+    #TSF=MData:find(TIS1,TSF)
+    TEF=MData:find(TIE,TSF)
+    TIME=MData:sub(TSF,TEF):replace(toChar(34),""):replace(",",""):replace("duration:","")
+    SEC=TIME:toNumber()%60
+    MIN=floor(TIME:toNumber()/60,0.1)
+    ARTIST=MData:sub(ASF,ASE):replace(toChar(34)+"artist"+toChar(34)+":",""):upper()
+    Name=MData:sub(NSF,NEF):replace(toChar(34)+"title"+toChar(34)+":",""):upper()
+    Search=MData:sub(FSF,FEF):replace(toChar(34)+"url"+toChar(34)+":"+toChar(34),""):replace(toChar(34),""):replace(toChar(92),""):replace(".vk-cdn.net",".vk.me")
+    #print(Search)
+    if (ASF==0) {ARTIST="ERR"}
+    if (NSF==0) {Name="ERR"}
+    if (ASF!=0&NSF!=0&FSF!=0) {
+        printColor(vec(COL1,COL2,COL3),"[FDP]",vec(255)," Found!")
+    }
+    else {
+    printColor(vec(COL1,COL2,COL3),"[FDP]",vec(255,0,0)," Error!")
+    SEC=-1
+    MIN=0
+    exit()
+}
+    #hudDrawText(1,"Flart Da Player \n"+"Song: "+Name+"\n"+"Artist: "+ARTIST+"\n"+"Time: "+">"+toString(MIN)+":"+toString(SEC)+"<",50,10,vec(255),255,1,1)
+    SMTH=Name
+    timer("Sound",3000)
+}
+elseif (httpClk()&NUM==1) {
+    Data=httpData()
+    print(Data)
+    for(I=1,4) {soundURLload(I:toString(),Data,1,1,owner())}
+    printColor(vec(COL1,COL2,COL3),"[FDP]",vec(255)," Shorted! Loading...")
+    timer("Music",10000)
+}
+interval(100)
+if (clk("Music")) {
+    for(I=1,4) {soundURLplay(I:toString())}
+    printColor(vec(COL1,COL2,COL3),"[FDP]",vec(255)," Playing now!")
+    BEATS=1
+    timer("Sec",1000)
+}
+if (clk("Sound")) {
+    NUM=1
+    httpRequest("http://rlu.ru/index.sema?a=api&del=1&link="+Search) 
+    #print("http://rlu.ru/index.sema?a=api&del=1&link="+Search)
+    printColor(vec(COL1,COL2,COL3),"[FDP]",vec(255)," Shortening...")
+}
+if (clk("Sec")) {
+    SEC=SEC-1
+    if (SEC<10) {
+    #hudDrawText(1,"Flart Da Player \n"+"Song: "+SMTH+"\n"+"Artist: "+ARTIST+"\n"+"Time: "+">"+toString(MIN)+":"+"0"+toString(SEC)+"<",50,10,vec(255),255,1,1)
+} else {
+    #hudDrawText(1,"Flart Da Player \n"+"Song: "+SMTH+"\n"+"Artist: "+ARTIST+"\n"+"Time: "+">"+toString(MIN)+":"+toString(SEC)+"<",50,10,vec(255),255,1,1)
+}
+    timer("Sec",1000)
+}
+    if (SEC==-1&MIN!=0) {
+        MIN=MIN-1
+        SEC=59
+        #hudDrawText(1,"Flart Da Player \n"+"Song: "+SMTH+"\n"+"Artist: "+ARTIST+"\n"+"Time: "+">"+toString(MIN)+":"+toString(SEC)+"<",50,10,vec(255),255,1,1)
+    }
+    if (SEC==-1&MIN==0) {
+        #hudDrawText(1,"Flart Da Player \n >Sleeping now<",50,10,vec(255),255,1,1)
+        stopAllTimers()
+    }

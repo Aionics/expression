@@ -1,0 +1,7 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+owner():playerModel("models/Humans/Group03m/male_09.mdl")

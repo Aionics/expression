@@ -1,0 +1,10 @@
+@name ListOfDangerEntity
+@persist ListOfDangerEntity:array
+
+ListOfDangerEntity:pushString("NPC")
+ListOfDangerEntity:pushString("wire")
+ListOfDangerEntity:pushString("prop_physics")
+ListOfDangerEntity:pushString("rpg")
+ListOfDangerEntity:pushString("prop_combine_ball")
+ListOfDangerEntity:pushString("grenade_ar2")
+

@@ -1,0 +1,46 @@
+@name hologram vito
+@inputs 
+@outputs Tar:entity
+@persist Tar:entity EE:entity
+
+interval(10)
+if(first()){
+EE=entity()
+
+holoCreate(6996)
+
+holoPos(6996,EE:pos())
+holoAng(6996,EE:angles())
+
+
+holoAlpha(6996,255)
+holoMaterial(6996,"hunter/myplastic")
+holoModel(6996,"hq_icosphere")
+holoScale(6996,vec(10000))
+
+holoParent(6996,EE)
+
+holoCreate(6999)
+
+holoPos(6999,EE:pos())
+holoAng(6999,EE:angles())
+
+
+holoAlpha(6999,150)
+holoMaterial(6999,"hunter/myplastic")
+holoModel(6999,"hq_icosphere")
+holoScale(6999,vec(-1000000))
+
+holoParent(6999,EE) 
+
+}
+findInSphere(EE:toWorld(vec(0,0,0)),200)
+findSortByDistance(EE:toWorld(vec(0,0,0)))
+findIncludeClass("player")
+
+Tar = find()
+    
+        if(Tar:health()<100&Tar:health()>0) {
+#    Tar:setKeyValue("health",220)}
+O=entitySpawn("item_healthvial",Tar:pos(),1)}
+

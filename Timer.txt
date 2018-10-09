@@ -1,0 +1,20 @@
+@name Timer
+@inputs Butt Res
+@outputs Scr Out
+@persist A
+
+interval(1000)
+
+if (Butt==1){Scr-=1
+    Out=1}
+
+if (Res==1) {Scr=5}
+
+if(Butt==1&Scr==0){
+Out=0
+}
+
+
+
+
+

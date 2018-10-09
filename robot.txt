@@ -1,0 +1,56 @@
+@name asdasdqq
+@inputs 
+@outputs 
+@persist [P1 P2 O]:entity R N R2
+@trigger 
+
+interval(10)
+E=entity()
+if(first()){
+P1=propSpawn("models/hunter/blocks/cube025x025x025.mdl",E:pos()+vec(20,0,20),1)
+P2=propSpawn("models/hunter/blocks/cube025x025x025.mdl",E:pos()+vec(-20,0,20),1)
+P3=propSpawn("models/hunter/blocks/cube025x025x025.mdl",E:pos()+vec(0,0,40),1)
+
+O=owner()
+
+}
+
+L=O:keyPressed("L")
+if(changed(L)&L){
+    if(N==0){N=1}else{N=0}
+}
+if(N){
+W=O:keyPressed("W")
+    if(W){
+    R=(R+1)%360
+    P1:setAng(ang(R,0,0))
+    P2:setAng(ang(R,0,0))
+    }
+S=O:keyPressed("S")
+
+    if(S){
+    R=(R-1)%360
+    P1:setAng(ang(R,0,0))
+    P2:setAng(ang(R,0,0))
+    }
+    
+D=O:keyPressed("D")
+A=O:keyPressed("A")
+    if(D){
+        R2=(R2+1)%360
+        P3:setAng(ang(0,R2,0))
+    }elseif(A){
+        R2=(R2-1)%360
+        P3:setAng(ang(0,R2,0))
+    }
+
+
+
+
+
+
+
+
+}
+
+

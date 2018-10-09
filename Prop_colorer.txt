@@ -1,0 +1,26 @@
+@name Prop_remover
+@inputs 
+@outputs 
+@persist String:string
+@trigger 
+
+interval(10)
+
+P=owner():aimEntity()
+
+T=owner():keyPressed("T")
+
+
+#if(T){P:propDelete()}
+
+if(T){P:setMaterial("models/debug/debugwhite")}
+#if(R){String=P:getMaterial()}
+#if(L){P:setMaterial(String)}
+#[
+    A new preprocessor command, @autoupdate has been added.
+    See the wiki for more info.
+
+    Documentation and examples are available at:
+    http://wiki.wiremod.com/wiki/Expression_2
+    The community is available at http://www.wiremod.com
+]#

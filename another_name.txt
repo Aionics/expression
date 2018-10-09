@@ -1,0 +1,15 @@
+@name another name
+@inputs BigReady Fire
+@outputs SmallFire
+@persist 
+
+if(first()){
+    runOnTick(1)
+}
+
+if (Fire && BigReady) {
+    LocalFire = 1
+}else{
+
+}
+SmallFire = LocalFire

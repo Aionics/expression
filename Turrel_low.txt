@@ -1,0 +1,63 @@
+@name Turrel
+@inputs 
+@outputs 
+@persist [E Tar O Holo]:entity A
+@trigger 
+
+interval(10)
+if(first()){
+
+E=entity()
+O=owner()
+
+    holoCreate(1)
+    holoPos(1,E:pos()+vec(0,0,100))
+    holoModel(1,"models/Gibs/helicopter_brokenpiece_06_body.mdl")
+   # holoMaterial(1,"phoenix_storms/officewindow_1-1")
+    holoScale(1,vec(0.2))
+    Holo=holoEntity(1)
+
+}
+
+findInSphere(E:toWorld(vec(0,0,0)),300)
+findSortByDistance(E:toWorld(vec(0,0,0)))
+findIncludeClass("player")
+findIncludeClass("NPC")
+findExcludePlayer("aionics")
+findExcludePlayer("Most")
+findExcludePlayer("Den246")
+findExcludePlayer("Alex67")
+findExcludePlayer("banan")
+findExcludePlayer("cocobo")
+findExcludePlayer("double")
+findExcludePlayer("balala")
+findExcludePlayer("flart")
+findExcludePlayer("forest")
+findExcludePlayer("freekill")
+findExcludePlayer("immortal")
+findExcludePlayer("Mr.Phoenix")
+findExcludePlayer("botosh")
+findExcludePlayer("Bangal")
+findExcludePlayer("Batman")
+findExcludePlayer("myc9")
+findExcludePlayer("borov")
+findExcludePlayer("nia")
+findExcludePlayer("halo")
+findExcludePlayer("realne")
+
+#findClipFromSphere(E:toWorld(vec(0,0,0)),150)
+#findExcludePlayer("Kolzqz")
+Tar = find()
+A=(A+1)%360
+holoPos(1,E:pos()+vec(sin(A)*150,cos(A)*150,100))
+if(Tar&Tar:health()>0){
+Ang=(Holo:pos()-Tar:pos()):toAngle()
+holoAng(1,Ang)
+
+
+#Holo:shootTo(Holo:pos()+vec(0,0,10),(Tar:pos()-Holo:pos()+vec(0,0,20)),0,20,10,"HelicopterTracer")
+#Holo:shootTo(Holo:pos()+vec(0,0,10),(Tar:pos()-Holo:pos()+vec(0,0,20)),10,20,10,"AirboatGunTracer")
+
+}
+
+

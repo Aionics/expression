@@ -1,0 +1,75 @@
+@name 00000000Parcer02
+@inputs 
+@outputs 
+@persist Code:string Path:array UrlInd Delay Pl:entity
+@trigger 
+
+if(first()){
+holoCreate(1)
+holoCreate(2)
+holoCreate(3)
+holoCreate(4)
+holoCreate(5)
+holoPos(2,entity():pos()+vec(100,100,0))
+holoPos(3,entity():pos()+vec(-100,-100,0))
+holoPos(4,entity():pos()+vec(-100,100,0))
+holoPos(5,entity():pos()+vec(100,-100,0))
+holoParent(2,holoEntity(1))
+holoParent(3,holoEntity(1))
+holoParent(4,holoEntity(1))
+holoParent(5,holoEntity(1))
+for(I=1,5){
+    holoAlpha(I,0)
+}
+runOnChat(1)
+runOnHTTP(1)
+runOnTick(1)
+}
+
+if(chatClk(owner())){
+    S=owner():lastSaid()
+   
+    if(S:find("Q")){
+        hideChat(1)
+        if(S:find("play")){
+    if(S:find("index")){
+    UrlInd=S:sub(S:find("index")+5,S:find("index")+6):toNumber()
+    S=S:sub(1,S:find("index"))
+    }else{UrlInd=1}
+    Audio="http://www.audiopoisk.com/?q="
+    Req=S:explode("play")[2,string]
+    Req=Req:sub(2)
+    Req=Req:replace(" ","%20")
+    httpRequest(Audio+Req)
+}}}
+
+if(httpClk()){
+Path:clear()
+Code=httpData()
+while(Code:find("/file")&Code:find(".mp3")){
+CodeX=Code:sub(Code:find("/file"),Code:find(".mp3")+3)
+Code=Code:replace(CodeX,"")
+CodeX="http://www.audiopoisk.com"+CodeX
+Path:pushString(CodeX)
+#print(_HUD_PRINTCONSOLE,Path:count(),CodeX)
+}
+Pl=findPlayerByName("real")
+if(UrlInd<1){UrlInd=1}
+for(I=1,5){soundURLdelete(I:toString())}
+soundURLload("1",Path[UrlInd,string],1,1,Pl)
+soundURLload("2",Path[UrlInd,string],1,1,Pl)
+soundURLload("3",Path[UrlInd,string],1,1,Pl)
+soundURLload("4",Path[UrlInd,string],1,1,Pl)
+soundURLload("5",Path[UrlInd,string],1,1,Pl)
+timer("play",1500)
+Delay=1
+}
+if(clk("play")&Delay){
+Delay=0
+for(I=1,5){soundURLplay(I:toString())}
+}
+
+#entity():setPos(Pl:pos()+vec(0,0,100))
+#holoParentAttachment(1,Pl,"chest")
+
+

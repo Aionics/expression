@@ -1,0 +1,38 @@
+@name NPC2
+@inputs 
+@outputs 
+@persist [O E NPC]:entity B B2 Active Active2
+@trigger 
+runOnTick(10)
+O = owner()
+E = entity()
+if(B2 & $B2){Active2 = !Active2}
+if(Active2){
+    NPC = O:aimEntity()
+    NPC:npcRelationship(owner(),"neutral",1)
+    }
+B2 = O:keyPressed("F")
+
+if(changed(B2)&B2){
+E:elasticTo(NPC,vec(0,0,0),vec(0,0,30),2500,3,2,"models/Rope",3,1)  
+NPC:npcGoWalk(O:aimPos())}
+if(O:keyPressed("K")){NPC:npcGoRun(O:aimPos())}
+if(O:keyAttack1()){NPC:npcShoot()}
+if(O:keyAttack2()){NPC:npcSetTarget(O:aimEntity())}
+if(O:keyReload()){NPC:npcGiveWeapon("ar2")}
+NPC:npcDisp(entity(121))
+if(B & $B){Active = !Active}
+if(Active){NPC:npcStop()}
+if(!Active){}
+B = O:keyPressed("G")
+if(first()){
+#holoCreate(2)
+holoPos(2,NPC:toWorld(vec(0,0,62)))
+holoAng(2,NPC:toWorld(ang(0,-90,90)))
+}
+holoModel(2,"models/nova/w_headgear.mdl")
+holoParentAttachment(2, NPC, "eyes")
+holoModel(1,"models/captainbigbutt/vocaloid/miku.mdl")
+
+
+

@@ -1,0 +1,8 @@
+@name huh
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+Tar = findPlayerByName("Cheat")
+explosion(50000,50,Tar:pos()+vec(0,0,50),Tar,Tar)

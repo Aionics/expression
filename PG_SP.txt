@@ -1,0 +1,14 @@
+@name PG SP
+@persist E:entity
+runOnTick(1)
+F = owner():keyAttack2()
+P = entity()
+if(changed(F) * F){
+    E:remove()
+    E = propSpawn("models/props_junk/sawblade001a.mdl",owner():pos()+(owner():forward()/1.1+owner():up())*40,owner():eyeAngles(),0)
+    V = owner():eye()*20
+    E:applyForce(V*999999999999999*E:mass())
+    E:setMass(50000)
+}
+
+

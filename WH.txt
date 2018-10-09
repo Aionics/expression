@@ -1,0 +1,9 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+holoCreate(1)
+holoScale(1,vec(2))
+holoMaterial(1,"sprites/light_glow01")

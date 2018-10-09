@@ -1,0 +1,15 @@
+@name headcraber
+@inputs 
+@outputs 
+@persist 
+@trigger 
+interval(10)
+
+E=entity()
+O=owner()
+if(first()){
+P=propSpawn("models/props_c17/oildrum001.mdl",E:pos()+vec(0,0,40),0)
+A=findPlayerByName("Aionics")
+P:elasticTo(O,vec(0,0,30),vec(0,0,30),2500,3,2,"models/Rope",2,1)  
+}
+

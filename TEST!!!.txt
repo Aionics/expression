@@ -1,0 +1,29 @@
+@name TEST!!!
+@inputs 
+@outputs 
+@persist I EGP:entity
+@trigger 
+
+if(first()){
+    runOnTick(1)
+    holoCreate(1)
+    holoScale(1,vec(0.5)) 
+    holoPos(1,entity():pos()+vec(0,0,50))
+    holoParent(1,entity())   
+}
+I++
+holoAng(1,ang(0,0,I))
+L=owner():keyPressed("L")
+if(changed(L)&L){
+    findIncludeClass("gmod_wire_egp")
+    findInSphere(entity():pos(),500)
+    EGP=find()
+    EGP:propGravity(0)
+    EGP:setPos(holoEntity(1):pos())
+    EGP:setAng(holoEntity(1):angles())
+    timer("timer",10)
+    
+}
+if(clk("timer")){
+    EGP:parentTo(holoEntity(1))
+}

@@ -1,0 +1,8 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+interval(50)
+effectSpawn("VortDispel",entity():pos(),1)

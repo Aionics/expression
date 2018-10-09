@@ -1,0 +1,66 @@
+@name GAme
+@inputs 
+@outputs 
+@persist E:entity MaxAmount Amount Arr:array Radius Height Players:table
+@trigger 
+interval(50)
+if(first()){
+    E=entity()
+    Radius = 200
+    Height = 30
+    MaxAmount = 200
+    Amount = 0
+    findByClass("player")
+    findInSphere(E:pos(), 5000)
+    local Player = findToArray()
+    Players = table()
+    
+    for (I=1, Player:count()) {
+        local Pl = table(
+            "player" = Player[I, entity],
+            "pos" = vec(0)
+        )
+        Players:pushTable(Pl)
+    }
+}
+
+if(Amount<=MaxAmount){
+Amount++
+if(Amount==1){
+    P=propSpawn("models/props_phx/construct/metal_plate1.mdl",vec(E:pos():x()+random(-Radius,Radius), E:pos():y()+random(-Radius,Radius), E:pos():z() + Height),1)
+}else{
+    P=propSpawn("models/props_phx/construct/metal_plate1.mdl",vec(E:pos():x()+random(-Radius,Radius), E:pos():y()+random(-Radius,Radius), Arr[Amount-1,entity]:pos():z() + (randint(1,2) == 1 ? Height : 0)),1)
+}
+if(Amount==MaxAmount){
+
+    P=propSpawn("models/props_phx/construct/plastic/plastic_angle_360.mdl",vec(E:pos():x(), E:pos():y(), Arr[Amount-1,entity]:pos():z() + Height),1)    
+}
+Arr:pushEntity(P)
+
+}
+
+
+K=owner():keyPressed("B")
+if(changed(K)&K){
+    for(I=0,Arr:count()){
+        Arr[I,entity]:remove(0) 
+    }   
+}
+
+for (I=1, Players:count()) {
+    local Player = Players[I, table]
+    local Save = Player["player", entity]:keyPressed("E")
+    local Load = Player["player", entity]:keyPressed("R")
+    if (changed(Save) & Save) {
+        Player["pos", vector] = Player["player", entity]:pos()
+        holoCreate(I)
+        holoModel(I, Player["player", entity]:model())
+        holoPos(I, Player["pos", vector])
+        holoAlpha(I, 100)
+        Player["player", entity]:soundPlay(1, 1, "elevator/effects/slap_hit03.wav")
+    }
+    if (changed(Load) & Load) {
+        Player["player", entity]:setPos(Player["pos", vector])
+        Player["player", entity]:soundPlay(1, 1, "elevator/effects/slap_hit01.wav")
+    }
+}

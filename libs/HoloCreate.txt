@@ -1,0 +1,54 @@
+@name holo_create_function
+
+function entity do_holocreate (HoloIndex, ParentTo:entity, Model:string, Pos:vector, Ang:angle, Scale:vector, Color:vector, Alpha:number) {
+    holoCreate(HoloIndex)
+    holoModel(HoloIndex, Model)
+    holoPos(HoloIndex, ParentTo:toWorld(Pos))
+    holoAng(HoloIndex, ParentTo:toWorld(Ang))
+    holoScale(HoloIndex, Scale)
+    holoParent(HoloIndex, ParentTo)
+    
+    holoColor(HoloIndex, Color)
+    holoAlpha(HoloIndex, Alpha)
+    
+    return holoEntity(HoloIndex)
+}
+
+function entity do_holocreate_player (HoloIndex, ParentTo:entity, Attachment:string, Model:string, Pos:vector, Ang:angle, Scale:vector, Color:vector, Alpha:number) {
+    holoCreate(HoloIndex+680, ParentTo:attachmentPos(Attachment))
+    holoAlpha(HoloIndex+680, 0)
+    holoAng(HoloIndex+680, ParentTo:attachmentAng(Attachment))
+    holoParentAttachment(HoloIndex+680, ParentTo, Attachment)
+    
+    local PartentToE = holoEntity(HoloIndex+680)
+
+    holoCreate(HoloIndex)
+    holoModel(HoloIndex, Model)
+    holoPos(HoloIndex, PartentToE:toWorld(Pos))
+    holoAng(HoloIndex, PartentToE:toWorld(Ang))
+    holoScale(HoloIndex, Scale)
+    holoParent(HoloIndex, PartentToE)
+    
+    holoColor(HoloIndex, Color)
+    holoAlpha(HoloIndex, Alpha)
+    
+    return holoEntity(HoloIndex)
+}    
+
+function entity do_holocreate_key (HoloIndex, ParentTo:entity, Pos:vector, Ang:angle, Alpha:number) {
+    holoCreate(HoloIndex)
+    holoModel(HoloIndex, "models/props_lab/huladoll.mdl")
+    holoPos(HoloIndex, ParentTo:toWorld(Pos))
+    holoAng(HoloIndex, ParentTo:toWorld(Ang))
+    holoScale(HoloIndex, vec(1.5))
+    holoAlpha(HoloIndex, Alpha)
+    holoParent(HoloIndex, ParentTo)
+    
+    return holoEntity(HoloIndex)
+}
+
+function do_holoclip (HoloIndex:number, ClipId:number, Offset:vector, Direction:vector) {
+    holoClip(HoloIndex, ClipId, Offset, Direction, 0)
+    holoClipEnabled(HoloIndex, ClipId, 1)
+}
+

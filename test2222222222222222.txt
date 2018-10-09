@@ -1,0 +1,15 @@
+@name test
+@inputs 
+@outputs 
+@persist 
+@trigger 
+holoCreate(1000)
+holoColor(1000,vec(255,0,0))
+holoPos(1000,entity():pos())
+
+for(I=1,181)
+{
+    holoCreate(I)
+    holoScale(I,vec(0.5))
+    holoPos(I,entity():pos()+vec((I-1)*10,0,50))
+}

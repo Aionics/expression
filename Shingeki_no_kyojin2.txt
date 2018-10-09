@@ -1,0 +1,195 @@
+@name Shingeki no kyojin
+@inputs 
+@outputs Ang:angle Ang_s:string N:vector Rope:vector Vel:vector Aim_ent_vel:vector Proec C GO P:entity Max Delta Dis YAW E:entity Go:entity Aim_ent:entity
+@persist O:entity Ra:ranger N_h 
+@trigger 
+runOnTick(1)
+if(first()){
+    holoCreate(1)
+   # O=findPlayerByName(owner():lastSaid())
+    O=owner()
+    E=entity()
+    holoScale(1,vec(0.25))
+    holoParent(1,entity())
+    rangerFilter(O)
+  ### 
+    holoCreate(2)
+    holoPos(2,E:pos()+vec(0,0,35))
+    holoAng(2,O:angles())
+    holoParentAttachment(2,O,"chest")
+    holoAlpha(2,50)
+    holoParent(2,O)
+  
+    holoCreate(3)
+    holoModel(3,"models/props_c17/FurnitureDrawer003a.mdl")
+    holoPos(3,holoEntity(2):toWorld(vec(-5,-15,-5)))
+    holoScale(3,vec(0.6,0.4,0.8))
+    holoAng(3,holoEntity(2):angles()+ang(70,30,0))
+    holoParent(3,2)
+    
+    holoCreate(4)
+    holoModel(4,"models/props_c17/FurnitureDrawer003a.mdl")
+    holoPos(4,holoEntity(2):toWorld(vec(-15,10,-10)))
+    holoScale(4,vec(0.6,0.4,0.8))
+    holoAng(4,holoEntity(2):angles()+ang(50,-5,0))
+    holoParent(4,2)
+    
+    holoCreate(5)
+    holoModel(5,"models/props_junk/propane_tank001a.mdl")
+    holoPos(5,holoEntity(3):toWorld(vec(-5.45,0,3)))
+    holoScale(5,vec(0.5,0.5,1))
+    holoAng(5,holoEntity(3):toWorld(ang(0,90,0)))
+    holoParent(5,2)
+    
+    holoCreate(6)
+    holoModel(6,"models/props_junk/propane_tank001a.mdl")
+    holoPos(6,holoEntity(4):toWorld(vec(-5.45,0,3)))
+    holoScale(6,vec(0.5,0.5,1))
+    holoAng(6,holoEntity(4):toWorld(ang(0,90,0)))
+    holoParent(6,2)
+    
+    holoCreate(7)
+    holoModel(7,"models/hunter/blocks/cube05x1x025.mdl")
+    holoMaterial(7,"models/props_pipes/pipeset_metal02")
+    holoPos(7,holoEntity(4):toWorld(vec(-2,0,-10)))
+    holoScale(7,vec(0.25,0.24,0.1))
+    holoAng(7,holoEntity(4):toWorld(ang(0,90,0)))
+    holoParent(7,4)
+    
+    holoCreate(8)
+    holoModel(8,"models/hunter/blocks/cube05x1x025.mdl")
+    holoMaterial(8,"models/props_pipes/pipeset_metal02")
+    holoPos(8,holoEntity(4):toWorld(vec(-2,0,6)))
+    holoScale(8,vec(0.25,0.24,0.1))
+    holoAng(8,holoEntity(4):toWorld(ang(0,90,0)))
+    holoParent(8,4)
+
+    holoCreate(9)
+    holoModel(9,"models/hunter/blocks/cube05x1x025.mdl")
+    holoMaterial(9,"models/props_pipes/pipeset_metal02")
+    holoPos(9,holoEntity(3):toWorld(vec(-2,0,-10)))
+    holoScale(9,vec(0.25,0.24,0.1))
+    holoAng(9,holoEntity(3):toWorld(ang(0,90,0)))
+    holoParent(9,3)
+    
+    holoCreate(10)
+    holoModel(10,"models/hunter/blocks/cube05x1x025.mdl")
+    holoMaterial(10,"models/props_pipes/pipeset_metal02")
+    holoPos(10,holoEntity(3):toWorld(vec(-2,0,6)))
+    holoScale(10,vec(0.25,0.24,0.1))
+    holoAng(10,holoEntity(3):toWorld(ang(0,90,0)))
+    holoParent(10,3)
+   
+ 
+    holoCreate(11)
+    holoModel(11,"models/hunter/misc/shell2x2x45.mdl")
+    holoMaterial(11,"models/props_pipes/pipeset_metal02")
+    holoPos(11,holoEntity(2):toWorld(vec(-2,0,2)))
+    holoScale(11,vec(0.2,0.2,0.15))
+    holoAng(11,holoEntity(2):toWorld(ang(90,-90,0)))
+    holoParent(11,3)
+    
+    holoCreate(12)
+    holoModel(12,"models/props_c17/pulleywheels_large01.mdl")
+    holoMaterial(12,"models/props_pipes/pipeset_metal02")
+    holoPos(12,holoEntity(2):toWorld(vec(-10,2.5,4)))
+    holoScale(12,vec(0.2,0.125,0.125))
+    holoAng(12,holoEntity(2):toWorld(ang(20,-30,0)))
+    holoParent(12,11)
+    
+    holoCreate(13)
+    holoModel(13,"models/props_c17/pulleywheels_large01.mdl")
+    holoMaterial(13,"models/props_pipes/pipeset_metal02")
+    holoPos(13,holoEntity(2):toWorld(vec(-10,-2.5,4)))
+    holoScale(13,vec(0.2,0.125,0.125))
+    holoAng(13,holoEntity(2):toWorld(ang(15,30,0)))
+    holoParent(13,11)
+    
+    holoCreate(14)
+    holoModel(14,"models/XQM/panel360.mdl")
+   # holoMaterial(13,"models/props_pipes/pipeset_metal02")
+    holoPos(14,holoEntity(13):toWorld(vec(-0.45,0,0)))
+    holoScale(14,vec(0.2,0.09,0.09))
+    holoAng(14,holoEntity(13):toWorld(ang(0,0,0)))
+    holoParent(14,11)
+    
+    holoCreate(15)
+    holoModel(15,"models/XQM/panel360.mdl")
+   # holoMaterial(13,"models/props_pipes/pipeset_metal02")
+    holoPos(15,holoEntity(12):toWorld(vec(-0.49,0,0)))
+    holoScale(15,vec(0.2,0.09,0.09))
+    holoAng(15,holoEntity(12):toWorld(ang(0,0,0)))
+    holoParent(15,11)
+
+    function do_shoot (){
+    
+    Ra=rangerOffsetHull(O:pos()+vec(0,0,100),holoEntity(1):pos(),vec(-1,-1,0),vec(1,1,0))
+    holoPos(1,Ra:position())
+    Max=Ra:distance()
+    P=propSpawn("models/props_junk/PopCan01a.mdl",O:aimPos(),1)
+   # O:rope(P,vec(0,0,50),vec(0,0,0),2500,3,2,"cable/cable2",3,1)
+    rope(1,O,vec(0,0,50),P,vec(0,0,0))    
+    rope(1,O,vec(0,0,50),P,vec(0,0,0),0,3,"cable/cable_icon")
+    }
+
+}
+N_h=(N_h+1)%360
+
+
+holoAng(12,ang(holoEntity(12):angles():pitch(),holoEntity(12):angles():yaw(),N_h-180))
+holoAng(13,ang(holoEntity(13):angles():pitch(),holoEntity(13):angles():yaw(),180-N_h))
+if(changed(O:weapon())){holoPos(2,O:pos()+vec(0,0,35)) holoAng(2,O:angles())}
+Ra=rangerOffsetHull(O:pos()+vec(0,0,100),holoEntity(1):pos(),vec(-1,-1,0),vec(1,1,0))
+Go=Ra:entity()
+
+Ang= ((Ra:position()-O:pos())-O:vel()):toAngle()
+ANGEPTA="["+round(Ang:pitch(),2)+","+round(Ang:yaw(),2)+","+round(Ang:roll(),2)+"]"
+Ang_s="Angle between vector OwnerToChip and Owner's vel\n"+ANGEPTA
+T=O:keyAttack2()
+
+Shift=O:keySprint()
+if(changed(Shift)&Shift){O:soundPlay("1",30,"ambient/gas/cannister_loop.wav")}
+if(changed(Shift)&!Shift){soundStop("1")}
+if(changed(T)&T){
+
+  do_shoot()
+  holoPos(1,O:aimPos())
+}
+if(changed(T)&!T){P:remove()}
+
+Dis=Ra:distance()
+Delta=Max-Ra:distance()
+A=O:keyPressed("A")
+D=O:keyPressed("D")
+Space=O:keyJump()
+if(Space){Max=Max-5} 
+if(T & Delta<=-5){
+     
+    Rope=(Ra:position()-O:pos()):normalized()
+    Vel=O:vel()
+    Proec=(Vel:x()*Rope:x()+Vel:y()*Rope:y()+Vel:z()*Rope:z())/(Rope:x()^2+Rope:y()^2+Rope:z()^2)^0.5
+    Rope=(Rope*Proec)*(-1.5)
+    Aim_ent_vel=Aim_ent:vel()/5
+    N=vec(Rope:x()+Vel:x() , Rope:y()+Vel:y() , Rope:z()+Vel:z()) 
+    
+
+    if(!Shift){  
+       O:setVel(O:vel()*(-1)+N)
+    }elseif(Shift&A&!D){
+       O:setVel(O:vel()*(-1)+N+O:eye():normalized()*10+O:eye():normalized():rotate(ang(0,90,0))*10)
+    }elseif(Shift&!A&D){
+       O:setVel(O:vel()*(-1)+N+O:eye():normalized()*10+O:eye():normalized():rotate(ang(0,-90,0))*10)
+    }elseif(Shift){
+    O:setVel(O:vel()*(-1)+N+O:eye():normalized()*10+vec(0,0,10))
+    }
+}
+if(changed(T)&!T){P:remove() Aim_ent=noentity()}
+
+
+if(Shift){    
+    C=(C+1)%2
+    if(C==1){
+      particle(4,5,random(40,80),"particle/smokestack",vec(255),O:pos()+vec(random(-10,10),random(-10,10),40),O:eye():normalized()*(-50)+vec(random(-30,30)),1,1,255,0)
+    }
+}
+if(Shift&!T){O:setVel(O:eye():normalized()*10)}

@@ -1,0 +1,90 @@
+@name mainstrait_template
+@persist MS:table C CC E:entity Clk SMul
+
+# created and modified by artem32. [CLOSED A32M TEAM S9 SW]
+# all rights reserved. To get more information about this method connect with me. ( STEAM_0:1:58710089 )
+
+if (first()){ 
+    
+    E = entity()
+    
+    Clk = 50 # ms 
+    SMul = 1
+    
+    if ( holoModelAny() >= 1 ) {
+        
+        print( "Holo Model Any: Successfull ("+holoModelAny()+")" )
+        
+    } else {
+        
+        print( "Warning! Failure to set model of holograms. (Holo Model Any equals 0)." )
+        
+    }
+    
+    C++ MS[C, table] = table( vec(0,0,0)*SMul, vec(1)*SMul, ang(180,0,0), "", "models/holograms/hq_sphere.mdl", vec(255), 255, table( table( vec(), vec(0,0,1) ) ) )
+    C++ MS[C, table] = table( vec(0,0,1)*SMul, vec(1)*SMul, ang(180,0,0), "", "models/holograms/hq_sphere.mdl", vec(255), 255, table( table( vec(), vec(0,0,1) ) ) )
+    C++ MS[C, table] = table( vec(0,0,2)*SMul, vec(1)*SMul, ang(180,0,0), "", "models/holograms/hq_sphere.mdl", vec(255), 255, table( table( vec(), vec(0,0,1) ) ) )
+    C++ MS[C, table] = table( vec(0,0,3)*SMul, vec(1)*SMul, ang(180,0,0), "", "models/holograms/hq_sphere.mdl", vec(255), 255, table( table( vec(), vec(0,0,1) ) ) )
+    C++ MS[C, table] = table( vec(0,0,4)*SMul, vec(1)*SMul, ang(180,0,0), "", "models/holograms/hq_sphere.mdl", vec(255), 255, table( table( vec(), vec(0,0,1) ) ) )
+    C++ MS[C, table] = table( vec(0,0,5)*SMul, vec(1)*SMul, ang(180,0,0), "", "models/holograms/hq_sphere.mdl", vec(255), 255, table( table( vec(), vec(0,0,1) ) ) )
+    C++ MS[C, table] = table( vec(0,0,6)*SMul, vec(1)*SMul, ang(180,0,0), "", "models/holograms/hq_sphere.mdl", vec(255), 255, table( table( vec(), vec(0,0,1) ) ) )
+    C++ MS[C, table] = table( vec(0,0,7)*SMul, vec(1)*SMul, ang(180,0,0), "", "models/holograms/hq_sphere.mdl", vec(255), 255, table( table( vec(), vec(0,0,1) ) ) )
+    C++ MS[C, table] = table( vec(0,0,8)*SMul, vec(1)*SMul, ang(180,0,0), "", "models/holograms/hq_sphere.mdl", vec(255), 255, table( table( vec(), vec(0,0,1) ) ) )
+    C++ MS[C, table] = table( vec(0,0,9)*SMul, vec(1)*SMul, ang(180,0,0), "", "models/holograms/hq_sphere.mdl", vec(255), 255, table( table( vec(), vec(0,0,1) ) ) )
+    C++ MS[C, table] = table( vec(0,0,10)*SMul, vec(1)*SMul, ang(180,0,0), "", "models/holograms/hq_sphere.mdl", vec(255), 255, table( table( vec(), vec(0,0,1) ) ) )
+  
+    timer("Init", Clk)
+       
+}
+
+if (clk("Init")) {
+    
+    if (holoCanCreate()) {
+        
+        if (CC != C) {
+            
+            CC++
+            
+            local POS = MS[CC,table][1,vector] ?: vec()
+            local SCL = MS[CC,table][2,vector] ?: vec()
+            local ANG = MS[CC,table][3,angle ] ?: ang()
+            local MAT = MS[CC,table][4,string] ?: "default"
+            local MDL = MS[CC,table][5,string] ?: "models/holograms/cube.mdl"
+            local CLR = MS[CC,table][6,vector] ?: vec()
+            local ALP = MS[CC,table][7,number] ?: 0
+            local CLP = MS[CC,table][8, table] ?: table()
+            
+            holoCreate(CC, E:toWorld(POS), SCL, E:toWorld(ANG)), holoParent(CC, E), holoMaterial(CC, MAT), holoModel(CC, MDL), holoColor(CC, CLR), holoAlpha(CC, ALP)
+            
+            if ( CLP:count() >= 1 ) {
+                
+                for ( ID = 1, CLP:count() ) {
+                 
+                    local Offset = CLP[ID, table][1, vector]
+                    local Origin = CLP[ID, table][2, vector]
+                    
+                    if ( Origin != vec() ) {
+                        
+                        holoClip( CC, ID, Offset, Origin, 0 ), holoClipEnabled( CC, ID, 1 )
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            timer("Init", Clk)
+            
+        } else {
+            
+            print("Done. \n" + CC + " Holograms deployed.")
+            
+        }
+        
+    } else {
+    
+        timer("Init", Clk * 2)
+    
+    }
+    
+}

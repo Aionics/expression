@@ -1,0 +1,10 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+holoCreate(1)
+holoParentAttachment(1,owner(),"eyes")
+holoPos(1,owner():toWorld(vec(-30,0,60)))
+holoParent(1,owner())
+entity(147):parentTo(holoEntity(1))

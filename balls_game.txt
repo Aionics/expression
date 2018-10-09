@@ -1,0 +1,43 @@
+@name balls_game
+@inputs 
+@outputs 
+@persist O:entity E:entity N Ball:entity
+@trigger 
+
+if(first()){
+    runOnTick(1)
+    O=owner()
+    findIncludeClass("prop_combine_ball")
+    entity():setMaterial("lemongate/skin3")
+    
+    E=entitySpawn("point_combine_ball_launcher",entity():pos()+vec(0,0,40),1)
+    E:setKeyValue("maxballbounces","20")
+    E:setKeyValue("ballcount","99999")
+    E:setKeyValue("ballradius","1000")
+    E:setKeyValue("launchconenoise","0")
+    E:setKeyValue("balltype","2")
+    E:setKeyValue( "minspeed", "200" )
+    E:setKeyValue( "maxspeed", "200" )
+    E:setKeyValue("rendercolor","255 0 0")
+    
+    function do_spawn() {
+        E:setAng(ang(random(0,360)))
+        E:setFire("launchball","0",0)
+        E:setFire("kill","3",0)
+        #findInSphere(E:pos(),200)
+        #Ball=find()
+        #Ball:propFreeze(1)
+        #Ball:setPos(entity():pos())
+        #timer("sas", 200)
+    }
+    do_spawn()    
+}
+
+if(clk("sas"))
+{
+    #Ball:propFreeze(0)
+}
+
+if(changed(Ball)&!Ball) {
+        do_spawn()
+}

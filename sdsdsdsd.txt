@@ -1,0 +1,18 @@
+z@name sdsdsdsd
+@inputs 
+@outputs 
+@persist P:entity Angle:angle
+@trigger 
+interval(10)
+if(first()){
+P = entity():isWeldedTo()
+}
+E=owner():keyPressed("R")
+if(changed(E)&E){
+    P:setVel(owner():eye()*500)
+}
+Angle=P:angles()
+Angle:setPitch(0)
+Angle:setYaw(0)
+P:setAng(Angle) 
+

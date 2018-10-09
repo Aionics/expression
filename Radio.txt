@@ -1,0 +1,97 @@
+@name Radio
+@model models/bull/various/subwoofer.mdl
+@persist T
+
+#By Cocobo 
+
+interval(50)
+if(duped()){reset()}
+
+O=owner()
+E=entity()
+
+if(first()){
+    
+    runOnChat(1)
+    
+    holoCreate(1)
+    holoPos(1,E:toWorld(vec(15,0,15)))
+    holoModel(1,"hq_torus_thin")
+    holoParent(1,E)
+    holoScale(1,vec(2.3,2.3,2.3))
+    holoAng(1,E:toWorld(ang(90,0,0)))
+    
+    lightCreate(1,E:pos(),vec(255),10000,15)
+    lightParent(1,E)
+   
+    
+    soundPurge()
+    for(I=1,4){soundStop(I)}
+    hint("Music [Remade by TheDen246]",5)
+    
+    entity():setSkin(1)
+    
+}
+
+T++
+if(T>700){T=0}
+Color=hsv2rgb(T,1,1)
+holoColor(1,Color)
+lightColor(1,Color)
+
+if(chatClk(O)){
+    
+    Say=O:lastSaid()
+    Arg=Say:explode(" ")
+    Cmd=Arg:string(1)
+    
+    if(Cmd=="!elec")
+    {
+        URL="http://radio-electron.ru:8000/128.m3u"
+        
+    }elseif(Cmd=="!rec")
+    {
+        URL="http://online.radiorecord.ru:8102/club_128"
+        
+    }elseif(Cmd=="!rec2")
+    {
+        URL="http://nbn.101.ru:4000/re_63_03"
+        
+    }elseif(Cmd=="!Gorilaz")
+    {
+        URL="http://cs1-39v4.vk-cdn.net/p3/84ec1dc35875cd.mp3?extra=Z-Utr7l4umUEbjkc9Z7wzsEhjb3PjmwxvNhQHRt9kWc1LJzGoVLPwx72xe3utROL2GWQ_Y3776FJkLagYOyTqXoN9qtaRks&/Gorilaz%20-%20Dirty%20Harry.mp3"
+        
+     }elseif(Cmd=="!Gorilaz2")
+    {
+        URL="http://cs1-31v4.vk-cdn.net/p8/25bc5c5e55d163.mp3?extra=iB4uZO5ddzd8z3pvJe3l9MjRYKubPqG8ucnsrtcZ-QlwahLdLgwQJRdvaH6VaGOAlF9C8ihd7BA-NrR_z3ukzjwqy_ZT2w&/Gorilaz%20-%20Feel%20Good%20Inc.mp3"   
+    
+    }elseif(Cmd=="!Gorilaz3")
+    {
+        URL="http://cs1-37v4.vk-cdn.net/p9/a190d6b3cdb961.mp3?extra=R_IUruTeAGJrMVqmIy5RubfVfdcrfiqBtTcTriRgXkJ9Cyfngx6EFvyA-IljGDPKAaVKM7ddydIz_RRNA_L_7CWE4-ZGmPI&/Gorilaz%20-%20Kids%20with%20Guns.mp3"
+
+    }
+    
+    if(URL){
+        
+        for(I=1,4){
+            
+            soundURLload(I:toString(),URL,1,1,entity())
+            soundURLpos(I:toString(),entity():toWorld(randvec(-5,5)))
+            
+        }
+        
+        hideChat(1)
+        printColor(Color,"[R]",vec(255)," Please, wait 2 seconds.")
+        timer("play",2000)
+        
+    }
+    
+}
+
+if(clk("play")){
+    
+    for(I=1,4){soundURLplay(I:toString())}
+    
+}
+
+#http://file.xmusic.me/mp3/273854651/155207461/1438694653/3ddc601212/Adele_-_Skyfall_-_Skyfall_(xMusic.me).mp3

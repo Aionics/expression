@@ -1,0 +1,218 @@
+function table classProjectile(Owner:table, Skill:table, Anchor:entity, Sprite:entity) {
+    return table(
+        "owner" = Owner,
+        "anchor" = Anchor,
+        "sprite" = Sprite,
+        "skill" = Skill
+    )
+}
+
+function table classEffect(Owner:table, Target:table, Skill:table, Params:table) {
+    return table(
+        "owner" = Owner,
+        "target" = Target,
+        "skill" = Skill,
+        "params" = Params
+    )
+}
+
+function array findTargets(Class:string, Position:vector, Radius:number) {
+    print(Radius)
+    findClearBlackList()
+    findClearWhiteEntityList()
+    findIncludeClass(Class)
+    findInSphere(Position, Radius)
+    return findToArray()
+}
+
+function void do_playSound(Target:entity, Path:string, Pitch:number) {
+    local Index = randint(1,100)
+    Target:soundPlay(Index, 2, Path)
+    soundPitch(Index, Pitch)
+}
+
+function void do_emiteParticle(Emitter:table) {
+    #particle(number Duration,number StartSize,number EndSize,string Mat,vector RGB,vector Position,vector Velocity,number Pitch,number RollDelta,number StartAlpha,number EndAlpha)
+    local AnchorPos = Emitter["anchor", entity]:pos() + Emitter["offset", vector]
+    local AnchorPos2 = Emitter["anchor2", entity]:pos() + Emitter["offset2", vector]
+    local StartPos = AnchorPos + randvec(-Emitter["spos_r", number], Emitter["spos_r", number])
+    local Velocity = AnchorPos2 + randvec(-Emitter["epos_r", number], Emitter["epos_r", number]) - StartPos + Emitter["velocity", vector]
+    particle(
+        Emitter["livetime", number] + random(-Emitter["livetime_r", number], Emitter["livetime_r", number]),
+        Emitter["startsize", number] + random(-Emitter["startsize_r", number], Emitter["startsize_r", number]),
+        Emitter["endsize", number] + random(-Emitter["endsize_r", number], Emitter["endsize_r", number]),
+        Emitter["path", string],
+        Emitter["color", vector],
+        StartPos,
+        Velocity,
+        random(-1,1),
+        randint(-Emitter["spin", number],Emitter["spin", number]),
+        Emitter["startalpha", number],
+        Emitter["endalpha", number]
+    ) 
+}
+
+function void do_fireballCast(Player:table, Skill:table, GlobalCounters:table) {
+    local PlayerE = Player["entity", entity]
+    local AnchorHolo = holoCreate(GlobalCounters["holoindex", number])
+    local Direction = (PlayerE:aimPos() - PlayerE:shootPos()):normalized()
+    local Sprite = AnchorHolo:drawSprite("effects/muzzleflash3_noz",AnchorHolo:pos(),vec(255),255,80,80)
+    holoAlpha(GlobalCounters["holoindex", number], 0)
+    holoPos(GlobalCounters["holoindex", number],PlayerE:shootPos() + PlayerE:eye() * 50)
+    GlobalCounters["holoindex", number] = GlobalCounters["holoindex", number] + 1        
+    local NewFireball = classProjectile(Player, Skill, AnchorHolo, Sprite)
+    NewFireball["type", string] = "direct"
+    NewFireball["sprite", entity] = Sprite
+    NewFireball["direction", vector] = Direction
+    NewFireball["particles", table] = table(
+        "path" = "particles/fire1",
+        "livetime" = 2.5,
+        "livetime_r" = 0.5,
+        "startsize" = 20,
+        "startsize_r" = 10,
+        "endsize" = 100,
+        "endsize_r" = 20,
+        "anchor" = AnchorHolo,
+        "anchor2" = AnchorHolo,
+        "offset" = vec(0),
+        "offset2" = vec(0,0,0),
+        "spos_r" = 30,
+        "epos_r" = 70,
+        "velocity" = vec(0,0,300),
+        "color" = vec(255),
+        "spin" = 1,
+        "startalpha" = 130,
+        "endalpha" = 0
+    )
+    do_playSound(AnchorHolo, "elevator/effects/slap_hit02.wav", 60)
+    Player["projectiles", table]:pushTable(NewFireball)
+}
+function void do_fireballExplode(Projectile:table, Ranger:ranger) {
+    local Skill = Projectile["skill", table]
+    local Targets = findTargets("Player", Ranger:pos(), Skill["aoe", number])
+    for (I=1, Targets:count()) {
+        local Attacker = Projectile["owner",table]["entity", entity]
+        local KnockBack = (Targets[I, entity]:pos() + vec(0,0,20)  - Ranger:pos()):normalized() * Skill["knockback", number] * Skill["level", number] * 0.5
+        local Damage = Skill["damage", number] * Skill["level", number] * 0.5
+        Targets[I, entity]:setPos(Targets[I, entity]:pos() + vec(0,0,10))
+        Targets[I, entity]:setVel(KnockBack)
+        Targets[I, entity]:takeDamage(Damage, Attacker, Targets[I, entity])
+    }
+    local RandPath = "weapons/explode" + randint(3,5) +".wav"
+    do_playSound(Projectile["anchor", entity], RandPath, randint(40,70))
+    do_emiteParticle(table(
+        "path" = "effects/muzzleflash3_noz", "livetime" = 0.4, "livetime_r" = 0, "startsize" = 10, "startsize_r" = 0, "endsize" = 300, "endsize_r" = 0, "anchor" = Projectile["anchor", entity], "anchor2" = Projectile["anchor", entity], "spos_r" = 0,
+        "offset" = vec(0,0,0), "offset2" = vec(0,0,0), "epos_r" = 0, "velocity" = vec(0,0,0), "color" = vec(255), "spin" = 0, "startalpha" = 255, "endalpha" = 0
+    ))
+    do_emiteParticle(table(
+        "path" = "particle/fire", "livetime" = 0.2, "livetime_r" = 0, "startsize" = 300, "startsize_r" = 0, "endsize" = 1, "endsize_r" = 0, "anchor" = Projectile["anchor", entity], "anchor2" = Projectile["anchor", entity], "spos_r" = 0,
+        "offset" = vec(0,0,0), "offset2" = vec(0,0,0), "epos_r" = 0, "velocity" = vec(0,0,0), "color" = vec(255,230,200), "spin" = 0, "startalpha" = 255, "endalpha" = 0
+    ))
+    Projectile["sprite", entity]:remove()
+    Projectile["anchor", entity]:remove(2)
+}
+
+function void do_lifestealCast(Player:table, Skill:table, GlobalCounters:table) {
+    local PlayerE = Player["entity", entity]
+    local Index = GlobalCounters["holoindex", number]
+    local AnchorHolo = holoCreate(Index)
+    local Direction = (PlayerE:aimPos() - PlayerE:shootPos()):normalized()    
+    holoAlpha(Index, 0)
+    holoPos(Index, PlayerE:shootPos() + PlayerE:eye() * 50)
+    
+    GlobalCounters["holoindex", number] = Index + 1
+    Index = GlobalCounters["holoindex", number]
+    holoCreate(Index)
+    holoModel(Index, "models/Gibs/HGIBS.mdl")
+    holoScale(Index, vec(3))
+    holoMaterial(Index, "models/effects/splode_sheet")
+    holoColor(Index, vec(30,255,30))
+    holoAlpha(Index, 190)
+    holoPos(Index, holoEntity(Index-1):pos())
+    holoAng(Index, PlayerE:eyeAngles())
+    holoParent(Index, Index-1)
+    holoEntity(Index-1):setTrails(50,0,1,"trails/plasma",vec(50,255,50),255)
+    GlobalCounters["holoindex", number] = Index + 1        
+    local NewLifesteal = classProjectile(Player, Skill, AnchorHolo, holoEntity(Index))
+    NewLifesteal["type", string] = "direct"
+    NewLifesteal["direction", vector] = Direction
+    do_playSound(AnchorHolo, "npc/advisor/advisor_blast6.wav", 150)
+    Player["projectiles", table]:pushTable(NewLifesteal)
+}
+
+function void do_lifestealExplode(Projectile:table, Ranger:ranger) {
+    local Skill = Projectile["skill", table]
+    local Targets = findTargets("Player", Ranger:pos(), Skill["aoe", number])
+    for (I=1, Targets:count()) {
+        local Damage = Skill["damage", number] * Skill["level", number] * 0.5 
+        local Attacker = Projectile["owner",table]["entity", entity]
+        Targets[I, entity]:takeDamage(Damage, Attacker, Targets[I, entity])
+        
+        local Index = randint(500,100)
+        local AnchorHolo = holoCreate(Index)
+        holoAlpha(Index, 0)
+        holoPos(Index, Targets[I, entity]:pos() + vec(0,0,50))
+        local Sprite = holoEntity(Index):drawSprite("effects/yellowflare",holoEntity(Index):pos(),vec(220,255,150),255,80,80)
+        holoEntity(Index):setTrails(60,0,0.5,"trails/plasma",vec(255,255,200),255)
+        local NewSkill = Skill:clone()
+        NewSkill["name", string] = "lifesteal2"
+        NewSkill["speed", number] = 8
+        local NewLifesteal = classProjectile(Projectile["owner",table], NewSkill, AnchorHolo, holoEntity(Index))
+        NewLifesteal["type", string] = "target"
+        NewLifesteal["ignore", entity] = Targets[I, entity]
+        NewLifesteal["target_e", entity] = Attacker
+        Projectile["owner", table]["projectiles", table]:pushTable(NewLifesteal)
+    }
+    do_emiteParticle(table(
+        "path" = "particle/fire", "livetime" = 0.3, "livetime_r" = 0, "startsize" = 200, "startsize_r" = 0, "endsize" = 1, "endsize_r" = 0, "anchor" = Projectile["anchor", entity], "anchor2" = Projectile["anchor", entity], "spos_r" = 0,
+        "offset" = vec(0,0,0), "offset2" = vec(0,0,0), "epos_r" = 0, "velocity" = vec(0,0,0), "color" = vec(200,255,200), "spin" = 0, "startalpha" = 255, "endalpha" = 0
+    ))
+    
+    do_playSound(Projectile["anchor", entity], "npc/antlion/antlion_shoot2.wav", 125)
+
+    Projectile["sprite", entity]:remove()
+    Projectile["anchor", entity]:remove(2)
+}
+
+function void do_lifesteal2Explode(Projectile:table, Ranger:ranger) {
+    local Skill = Projectile["skill", table]
+    local TargetE = Ranger:entity()
+    
+    TargetE:setHealth(TargetE:health() + Skill["damage", number])
+    do_playSound(TargetE, "weapons/physcannon/physcannon_pickup.wav", 185)
+
+    Projectile["sprite", entity]:remove()
+    Projectile["anchor", entity]:remove(2)
+}
+
+function void do_teleportCast(Player:table, Skill:table, GlobalCounters:table) {
+    local PlayerE = Player["entity", entity]
+    local Range = min(Skill["range", number] +  Skill["level", number] * 150, PlayerE:pos():distance(PlayerE:aimPos()))
+    local EndPos = PlayerE:pos() + (PlayerE:aimPos() - PlayerE:pos()):normalized() * Range
+    do_emiteParticle(table(
+        "path" = "particle/fire", "livetime" = 0.3, "livetime_r" = 0, "startsize" = 400, "startsize_r" = 0, "endsize" = 1, "endsize_r" = 0, "anchor" = PlayerE, "anchor2" = PlayerE, "spos_r" = 0,
+        "offset" = vec(0,0,40), "offset2" = vec(0,0,40), "epos_r" = 0, "velocity" = vec(0,0,0), "color" = vec(200,200,255), "spin" = 0, "startalpha" = 255, "endalpha" = 0
+    ))
+    
+    local Holo = holoCreate(GlobalCounters["holoindex", number])
+    Holo:remove(2)
+    holoAlpha(GlobalCounters["holoindex", number], 0)
+    holoPos(GlobalCounters["holoindex", number], PlayerE:pos() + vec(0,0,50))
+    GlobalCounters["holoindex", number] = GlobalCounters["holoindex", number] + 1
+    do_playSound(Holo, "weapons/physcannon/energy_bounce2.wav", 50)
+    PlayerE:setPos(EndPos + vec(0,0,10))
+    do_playSound(PlayerE, "weapons/physcannon/energy_bounce2.wav", 50)
+    
+    do_emiteParticle(table(
+        "path" = "particle/fire", "livetime" = 0.3, "livetime_r" = 0, "startsize" = 400, "startsize_r" = 0, "endsize" = 1, "endsize_r" = 0, "anchor" = PlayerE, "anchor2" = PlayerE, "spos_r" = 0,
+        "offset" = vec(0,0,40), "offset2" = vec(0,0,40), "epos_r" = 0, "velocity" = vec(0,0,0), "color" = vec(200,200,255), "spin" = 0, "startalpha" = 255, "endalpha" = 0
+    ))
+}
+
+function void do_rushCast(Player:table, Skill:table, GlobalCounters:table) {
+    local PlayerE = Player["entity", entity]
+    local Range = min(Skill["range", number] +  Skill["level", number] * 200, PlayerE:pos():distance(PlayerE:aimPos()))
+    local NewEffect = classEffect(Player, table(), Skill, table("duration" = Range / 1000))
+    Player["effects", table]:pushTable(NewEffect)
+    
+}

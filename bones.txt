@@ -1,0 +1,19 @@
+@name bones
+@inputs 
+@outputs 
+@persist N
+@trigger 
+
+runOnTick(1)
+O=findPlayerByName("aion")
+    N=(N+6)%360#    O:playerSetBoneAng(5,ang(0,0,0))
+#    owner():playerSetBoneAng(13,ang(70,0,-80))
+  O:playerSetBoneAng(2,ang(0,-180,0))
+  O:playerSetBoneAng(4,ang(0,-180,0))
+ # O:playerSetBoneAng(0,ang(N,0,0))  
+# owner():playerSetBoneAng(5,ang(-N,180,90))
+
+E=owner():keyPressed("E") if(E){for(I=0,20){O:playerSetBoneAng(I,ang(0,0,0))
+    O:setColor(vec(255))
+    }}
+

@@ -1,0 +1,41 @@
+@name 
+@inputs 
+@outputs 
+@persist [OW]:entity I
+ 
+
+if (first()) {
+    runOnTick(1)    
+    OW = owner()
+    I = 0
+    
+    function void do_fire() {
+        rangerFilter(OW)
+        local Ranger=rangerOffsetHull(10000,OW:shootPos(), OW:eye(),vec(10))
+        local TargetEntity = Ranger:entity()
+        if (TargetEntity) {
+            print(TargetEntity)
+        }
+        local Smooth = OW:shootPos():distance(Ranger:pos())/50
+        AimPos=Ranger:pos() + randvec(-Smooth,Smooth)
+        
+        #Beam=drawBeam("sprites/laser", OW:shootPos(),AimPos,vec(100,100,255),255,15,1,1)
+        #Beam:remove(1)
+        local Coeff = randint(0,5) * 25 + 100
+        for (I=1, Ranger:distance() / Coeff) {
+            particle(randint(1,5),50,1,"sprites/light_ignorez",vec(100,100,255), OW:shootPos() + (AimPos - OW:shootPos()):normalized() * I * Coeff,vec(0,0,-30),1,0,255,0)
+        }
+    }
+}
+
+At2 = OW:keyAttack2()
+
+if (changed(At2)&&!At2) {
+    I = 0
+}
+if (At2) {
+    I++
+    if (I%10==0) {
+        do_fire()
+    }    
+}

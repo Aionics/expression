@@ -1,0 +1,208 @@
+@name !teleport
+@inputs 
+@outputs
+@persist Tick IsTeleportationActive Height Angl Height2
+@persist [TargetPos Offset]:vector
+@persist [OW]:entity 
+@trigger 
+
+if (first()) {
+    
+    #[IDs:
+    1 - first clone
+    2-3 - first balls
+    3 - second clone
+    4-5 second balls
+    ]#
+    runOnTick(1)
+    
+    #include "libs/HoloCreate"
+    
+    OW = owner()
+    #OW = findPlayerByName("Hero")
+    print(OW)
+    Height=100
+    Height2 = 80
+    IsTeleportationActive = 0
+    Angl = 0
+    
+    holoCreate(1)
+    holoModel(1, OW:model())
+    holoAlpha(1, 0)
+    holoShadow(1,0)
+    
+    holoCreate(4)
+    holoModel(4, OW:model())
+    holoAlpha(4, 0)
+    holoShadow(4, 0)
+    
+    Alpha = 255    
+
+}
+
+R=OW:keyPressed("R")
+T=OW:keyPressed("T")
+
+if (changed(R) && R) {
+    TargetPos = OW:aimPos()
+    
+}
+
+if (changed(T) && T && !IsTeleportationActive) {
+    OW:setMaterial("Models/effects/vol_light001")
+    OW:drawShadow(0)
+    OW:weapon():setAlpha(0)
+    OW:setColor(vec(10))
+    
+    Offset = TargetPos - OW:pos()
+    IsTeleportationActive = 1
+    
+    holoAlpha(1, 255)
+    holoAng(1, OW:angles())
+    holoPos(1, TargetPos)
+    
+    holoAlpha(4, 255)
+    holoAng(4, OW:angles())
+    holoPos(4, OW:pos())
+    
+    
+    Height = 100
+    do_holoclip(1, 1, vec(0,0,Height), vec(0,0,-1))
+    holoEntity(1):soundPlay("init", 1, "buttons/button19.wav")
+    soundPitch("init", 60)
+    holoEntity(1):soundPlay("charge", 3, "ambient/Phone/HomePhone-01.wav")
+    soundPitch("charge", 0)
+    
+    do_holoclip(4, 1, vec(0,0,Height2), vec(0,0,-1))
+    OW:soundPlay("init2", 1, "buttons/button19.wav")
+    soundPitch("init2", 60)
+    OW:soundPlay("charge2", 3, "ambient/Phone/HomePhone-01.wav")
+    #soundPitch("charge2", 0)
+    
+    for (I = 2, 3) {
+        holoCreate(I)
+        holoPos(I, TargetPos)
+        holoDisableShading(I, 1)
+        holoModel(I, "models/Combine_Helicopter/helicopter_bomb01.mdl")
+        holoScale(I, vec(0.3))
+        holoColor(I, vec(220,220,255))
+        holoEntity(I):setTrails(30,0,0.5,"trails/laser",vec(150,180,255),255)
+        effectSpawn("StunstickImpact",holoEntity(I):pos(),2)
+        #holo
+    }
+    for (I = 5, 6) {
+        holoCreate(I)
+        holoPos(I, TargetPos)
+        holoDisableShading(I, 1)
+        holoModel(I, "models/Combine_Helicopter/helicopter_bomb01.mdl")
+        holoScale(I, vec(0.3))
+        holoColor(I, vec(220,220,255))
+        holoEntity(I):setTrails(30,0,0.5,"trails/laser",vec(150,180,255),255)
+        effectSpawn("StunstickImpact",holoEntity(I):pos(),2)
+        #holo
+    }
+    
+    particle(1, 0, 120,"particle/warp3_warp_noz",vec(255),TargetPos,vec(0,0,0),random(-40,40), randint(-1,1), 200, 0)
+    particle(1, 0, 120,"particle/warp3_warp_noz",vec(255),OW:pos()+ vec(0,0,80),vec(0,0,0),random(-40,40), randint(-1,1), 200, 0)
+}
+
+if (IsTeleportationActive) {    
+    #local Anim = OW:getAnimID()
+
+    #[if (changed(Anim)) {
+        holoAnim(1, Anim, 1, 1)
+        holoAnim(4, Anim, 1, 1)
+        holoSetPose(1, "move_x", 1)
+        holoSetPose(4, "move_x", 1)  
+    }]#
+    holoPos(1, OW:pos() + Offset)      
+    holoAng(1, OW:angles())
+    
+    holoPos(4, OW:pos())
+    holoAng(4, OW:angles())
+    
+    local Ang = (OW:aimPos() - OW:shootPos()):normalized():toAngle()
+    #holoSetPose(1, "aim_pitch", Ang:pitch())
+    #holoSetPose(1, "aim_yaw", Ang:yaw())
+    #holoSetPose(4, "aim_pitch", Ang:pitch())
+    #holoSetPose(4, "aim_yaw", Ang:yaw())
+    
+    Tick++
+    
+    local Radius = Height > 35 ? 70 - Height : Height
+    Radius = max(10, Radius)
+    if (Tick%3==0) {
+        Height--
+    }
+    if (Tick%2==0) {
+        local StartEntity = randint(2) == 2 ? holoEntity(2) : holoEntity(3)
+        local StartPos = StartEntity:pos()
+        local EndPos = holoEntity(1):pos()+vec(0,0,Height)
+        particle(0.5, random(5,5), random(30,50),"particle/particle_glow_05_addnofog",vec(255,255,255),StartPos,(EndPos-StartPos)*1.3,random(-40,40), randint(-1,1), 255, 60)
+        
+        local StartEntity = randint(2) == 2 ? holoEntity(5) : holoEntity(6)
+        local StartPos = StartEntity:pos()
+        local EndPos = holoEntity(4):pos()+vec(0,0,Height2)
+        particle(0.5, random(5,5), random(30,50),"particle/particle_glow_05_addnofog",vec(255,255,255),EndPos,(StartPos-EndPos)*1.3,random(-40,40), randint(-1,1), 255, 60)
+    }
+    if (Tick%5==0) {
+        local StartPos = holoEntity(1):pos()+vec(0,0,Height)+vec(random(-20,20),random(-20,20),random(-0,0))
+        particle(1.5, random(10,30), random(0,0),"particle/particle_glow_05_addnofog",vec(150,180,255),StartPos,vec(0,0,-50),random(-40,40), randint(-1,1), 100, 0)            
+        
+        local StartPos = holoEntity(4):pos()+vec(0,0,Height2)+vec(random(-20,20),random(-20,20),random(-0,0))
+        particle(1.5, random(10,30), random(0,0),"particle/particle_glow_05_addnofog",vec(150,180,255),StartPos,vec(0,0,-50),random(-40,40), randint(-1,1), 100, 0)              
+        #particle(number Duration,number StartSize,number EndSize,string Mat,vector RGB,vector Position,vector Velocity,number Pitch,number RollDelta,number StartAlpha,number EndAlpha)
+    }
+    
+    
+    Angl+=12  
+    for (I = 2, 3) {
+        local LocalAng = Angl + (I-2)*180
+        holoPos(I, holoEntity(1):pos() + vec(sin(LocalAng)*Radius, cos(LocalAng)*Radius, Height))
+    }
+    
+    for (I = 5, 6) {
+        local LocalAng = Angl + (I-5)*180
+        holoPos(I, holoEntity(4):pos() + vec(sin(LocalAng)*Radius, cos(LocalAng)*Radius, Height2))
+    }
+    
+    soundPitch("charge", Tick)
+    soundPitch("charge2", 255 - Tick)     
+}
+
+if (changed(Height)) {
+    Height2 = Height
+    do_holoclip(1, 1, vec(0,0,Height), vec(0,0,1))
+    do_holoclip(4, 1, vec(0,0,Height2), vec(0,0,-1))
+    if (Height == 10) {
+        particle(0.8, 0, 80,"particle/warp3_warp_noz",vec(255), holoEntity(1):pos() + vec(0,0,80),vec(0,0,0),random(-40,40), randint(-1,1), 200, 0)
+        particle(0.8, 0, 80,"particle/warp3_warp_noz",vec(255), holoEntity(4):pos() + vec(0,0,0),vec(0,0,0),random(-40,40), randint(-1,1), 200, 0)
+    }
+    if (Height == 0) {
+        IsTeleportationActive = 0
+        Height = 0
+        Tick = 0
+        Angl = 0
+        holoAlpha(1, 0)
+        holoAlpha(4, 0)
+        holoEntity(1):soundPlay("done", 1, "garrysmod/balloon_pop_cute.wav")
+        holoEntity(4):soundPlay("done", 1, "garrysmod/balloon_pop_cute.wav")
+        for (I = 2, 3) {
+            effectSpawn("StunstickImpact",holoEntity(I):pos(),2)
+            holoEntity(I):remove()
+        }
+        for (I = 5, 6) {
+            effectSpawn("StunstickImpact",holoEntity(I):pos(),2)
+            holoEntity(I):remove()
+        }
+        OW:setPos(OW:pos() + Offset)
+        OW:setMaterial("")
+        OW:drawShadow(1)
+        OW:setColor(vec(255))
+        OW:weapon():setAlpha(255)
+        
+        TargetPos = holoEntity(4):pos()    
+        
+    }
+}
+

@@ -1,0 +1,308 @@
+@name zzzSkeletonMech
+@inputs Seat:entity Angle:angle
+@outputs 
+@persist [L1 L2 L3 Total]
+@persist [E Right Left]:entity
+@persist [HipR KneeR AnkleR FootR]
+@persist [HipL KneeL AnkleL FootL]
+@persist [Rpos Lpos]:vector
+
+@persist [R L]:ranger DistR DistL [AddVecR AddVecL]:vector
+@persist [RTemp LTemp]:vector [Ratio T Leg]:number Yaw Speed [SOUND_STEP SOUND_PASS SOUND_MCHN]:string
+@model models/maxofs2d/cube_tool.mdl
+
+if(first())
+{
+    function number holoCreate_EX(Index:number, Parent:number, Param:number, Pos:vector, Ang:angle, Scale:vector, Color:vector, [Material Model]:string)
+    {
+        if(Parent) { holoCreate(Index, holoEntity(Parent):toWorld(Pos), Scale, holoEntity(Parent):toWorld(Ang), Color) holoParent(Index, Parent) }
+              else { holoCreate(Index, E:toWorld(Pos), Scale, E:toWorld(Ang), Color) holoParent(Index, E) }
+        
+        #ifdef entity:setModel(string)
+            if(Model:length()>20) { holoEntity(Index):setModel(Model) } else { holoModel(Index, Model) }
+        #else
+            holoModel(Index, Model)
+        #endif
+        
+        if(Param) { holoScaleUnits(Index, Scale) }
+        holoMaterial(Index, Material)
+        return Index
+    }
+    
+    function number cosine( [One Two Three]:number ) {
+        return acos( (Three^2 + Two^2 - One^2) / (2*Two*Three) )
+    }
+    
+    function void vector:kinemize( [Hip Knee Ankle Foot]:number) #This = FootPos
+    {
+        #-Hip
+            local HipEnt = holoEntity(Hip)
+            local HipPos = HipEnt:pos()
+            
+            Bearing = -bearing(HipPos, E:angles(), This)
+            Angle = E:toLocalAxis(This - HipPos):toAngle():setRoll(Bearing)
+            Offset = Total - abs(min(HipPos:distance(This), Total))
+            Quat = quat(Angle) * qRotation(vec(0, -Offset + 55, 0)) # + 65-15
+            holoAng(Hip, E:toWorld(slerp(quat(HipEnt), Quat, 1):toAngle()))
+            
+        #-Knee
+            local KneeEnt = holoEntity(Knee)
+            local KneePos = KneeEnt:pos()
+            
+            Distance = min(KneePos:distance(This), L2+L3)
+            Axis = HipEnt:toLocalAxis(KneePos - This)
+            Atan = atan(-Axis:z(), Axis:x()) + cosine(L3, L2, Distance) + 90
+            holoAng(Knee, HipEnt:toWorld(ang(Atan, 0, 0)))
+        
+        #-Ankle
+            holoAng(Ankle, KneeEnt:toWorld(ang(cosine(Distance, L2, L3), 0, 0)))
+            
+        #-Foot
+            holoAng(Foot, E:toWorld(ang(-90, 0, 0)))
+    }
+    
+    Metal_M1 = "models/props_canal/metalwall005b"
+    
+    function number createLeg([Id Hip Knee Ankle Foot]:number, Dir:string)
+    {
+        local Index = Id
+        Index++ holoCreate_EX(Index, Hip, 0, vec(30,0,14),   ang(90,0,0),       vec(1), vec(100), Metal_M1, "models/props_c17/furniturefridge001a.mdl") holoDisableShading(Index, 1)
+        Index++ holoCreate_EX(Index, Hip, 0, vec(50,-1,11),  ang(0,90,90),  vec(3,1,2),  vec(80), Metal_M1, "models/props_junk/metalgascan.mdl")        holoDisableShading(Index, 1)
+        Index++ holoCreate_EX(Index, Hip, 0, vec(30,-1,-3),   ang(0,0,180), vec(7,1,2),  vec(60), Metal_M1, "models/items/car_battery01.mdl")           holoDisableShading(Index, 1)
+        Index++ holoCreate_EX(Index, Hip, 0, vec(25,-1,21),   ang(0,180, 0), vec(0.8,0.4, 0.5), vec(0,255,0), "debug/debugdrawflat", "models/mechanics/robotics/claw_guide.mdl") holoDisableShading(Index, 1)
+        local Ang = Dir == "L" ? ang(0,90,-90) : Dir == "R" ? ang(0,-90,90) : ang()
+        local Pos = Dir == "L" ? vec(60, 8, 5) : Dir == "R" ? vec(60,-8, 5) : vec()
+        #Index++ holoCreate_EX(Index, Hip, 0, Pos,   Ang, vec(5,4.1, 7), vec(255), "", "models/Items/battery.mdl") #holoDisableShading(Index, 1)
+        
+        Index++ holoCreate_EX(Index, Knee, 0, vec(0,6,0),   ang(0,0,90), vec(1), vec(255), "", "models/Mechanics/gears/gear16x24_small.mdl") #holoDisableShading(Index, 1)
+        Index++ holoCreate_EX(Index, Knee, 0, vec(0, 0,-20), ang(), vec(1,1,4), vec(80), Metal_M1, "hexagon") holoDisableShading(Index, 1)
+        
+        Index++ holoCreate_EX(Index, Ankle, 0, vec(0,6,0),  ang(0,0,90),  vec(1), vec(255), "", "models/Mechanics/gears/gear16x24_small.mdl") #holoDisableShading(Index, 1)
+
+        Index++ holoCreate_EX(Index, Ankle, 0, vec(0,8,80), ang(0,90,0),  vec(0.5, 0.4, 0.3), vec(100), Metal_M1, "models/mechanics/articulating/arm_base_b.mdl") holoDisableShading(Index, 1)
+        Index++ holoCreate_EX(Index, Ankle, 0, vec(5,0,15), ang(0,0,180), vec(0.5,1,1.5), vec(100), Metal_M1, "models/props_junk/trashbin01a.mdl") holoDisableShading(Index, 1)
+        Index++ holoCreate_EX(Index, Ankle, 0, vec(0,0,47), ang(-90,0,0), vec(0.33,  0.2, 0.3), vec(60), Metal_M1, "models/props_phx/trains/double_wheels_base.mdl") holoDisableShading(Index, 1)
+        Index++ holoCreate_EX(Index, Ankle, 0, vec(0,0,50), ang(90,0,0),  vec(5,1.8,1), vec(60), Metal_M1, "hq_stube")
+        
+        Index++ holoCreate_EX(Index, Ankle, 0, vec(0,0,87), ang(),  vec(1), vec(255), Metal_M1, "hq_sphere")
+        
+        #Index++ holoCreate_EX(Index, Foot, 0, vec(2,0,0),   ang(0,0,0), vec(0.7,  0.7, 0.9), vec(100), Metal_M1, "models/props_c17/FurnitureWashingmachine001a.mdl") holoDisableShading(Index, 1)
+        
+        Index++ holoCreate_EX(Index, Foot, 0, vec(5, 0, -2), ang(0,0,90), vec(0.3,1,3), vec(60), Metal_M1, "models/mechanics/robotics/claw.mdl") holoDisableShading(Index, 1)
+        
+        #Index++ holoCreate_EX(Index, Foot, 0, vec(-2, 4,  3), ang(90,40,0), vec(1), vec(0,255,0), "debug/debugdrawflat", "models/xqm/pistontype1.mdl") holoDisableShading(Index, 1)
+        #Index++ holoCreate_EX(Index, Foot, 0, vec(-2, 4, -8), ang(90,40,0), vec(1), vec(0,255,0), "debug/debugdrawflat", "models/xqm/pistontype1.mdl") holoDisableShading(Index, 1)
+        #Index++ holoCreate_EX(Index, Foot, 0, vec(-2,-4,  3), ang(90,-40,0), vec(1), vec(0,255,0), "debug/debugdrawflat", "models/xqm/pistontype1.mdl") holoDisableShading(Index, 1)
+        #Index++ holoCreate_EX(Index, Foot, 0, vec(-2,-4, -8), ang(90,-40,0), vec(1), vec(0,255,0), "debug/debugdrawflat", "models/xqm/pistontype1.mdl") holoDisableShading(Index, 1)
+        
+        return Index
+    }
+    
+    #Legs Setup
+    L1 = 70 #70 #
+    L2 = 50 #50 #
+    L3 = 90 #90 #
+    Total = L1+L2+L3
+    
+    E = entity()
+    E:setMass(500)
+    #Right = propSpawn("models/hunter/blocks/cube025x025x025.mdl", E:toWorld(vec(25, -60, 0)), 1) Right:setColor(vec(255,0,0)) Right:setAlpha(0)
+    #Left  = propSpawn("models/hunter/blocks/cube025x025x025.mdl", E:toWorld(vec(25,  60, 0)), 1)  Left:setColor(vec(0,0,255))  Left:setAlpha(0)
+    #E:setPos(E:toWorld(vec(0,0,1)))
+    
+    Id = 0
+    
+    Id++ HipR   = holoCreate_EX(Id,    0, 0, vec(  0,-40,-15), ang(), vec(0.5), vec(200), "debug/debugdrawflat", "hq_sphere") holoColor(Id, vec(255,0,0))
+    Id++ KneeR  = holoCreate_EX(Id, Id-1, 0, vec( L1,  0,  0), ang(), vec(0.5), vec(200), "debug/debugdrawflat", "hq_sphere") holoColor(Id, vec(0,255,0))
+    Id++ AnkleR = holoCreate_EX(Id, Id-1, 0, vec(  0,  0,-L2), ang(), vec(0.5), vec(200), "debug/debugdrawflat", "hq_sphere") holoColor(Id, vec(0,0,255))
+    Id++ FootR  = holoCreate_EX(Id, Id-1, 0, vec(  0,  0, L3), ang(), vec(0.5), vec(200), "debug/debugdrawflat", "hq_sphere")
+    
+    Id++ HipL   = holoCreate_EX(Id,    0, 0, vec(  0, 40,-15), ang(), vec(0.5), vec(200), "debug/debugdrawflat", "hq_sphere")
+    Id++ KneeL  = holoCreate_EX(Id, Id-1, 0, vec( L1,  0,  0), ang(), vec(0.5), vec(200), "debug/debugdrawflat", "hq_sphere")
+    Id++ AnkleL = holoCreate_EX(Id, Id-1, 0, vec(  0,  0,-L2), ang(), vec(0.5), vec(200), "debug/debugdrawflat", "hq_sphere")
+    Id++ FootL  = holoCreate_EX(Id, Id-1, 0, vec(  0,  0, L3), ang(), vec(0.5), vec(200), "debug/debugdrawflat", "hq_sphere")
+    
+    Id = createLeg(Id, HipR, KneeR, AnkleR, FootR, "R")
+    Id = createLeg(Id, HipL, KneeL, AnkleL, FootL, "L")
+    
+    print(Id)
+    
+    function void entity:applytorque(Ang:angle)
+    {
+        Ve = This:toLocal(rotationVector(quat(Ang)/quat(This))+This:pos())
+        This:applyTorque((150*Ve - 25*This:angVelVector())*This:inertia())
+    }
+    
+    runOnTick(1)
+    
+    Ratio = 0.035#0.032
+    Speed = 70
+    E:propFreeze(0)
+    
+    RTemp = E:pos()
+    LTemp = RTemp
+    
+    Rpos  = RTemp
+    Lpos  = RTemp
+    #npc/dog/dog_footstep_run1.wav
+    #npc/dog/dog_servo1.wav - 10
+
+    SOUND_STEP = "npc/dog/dog_footstep" #"physics/metal/metal_grate_impact_soft2.wav"#npc/dog/dog_footstep1.wav - npc/dog/dog_footstep4.wav
+
+    SOUND_PASS = "ambient/machines/courtyard_mach_loop.wav"
+    SOUND_MCHN = "ambient/machines/turbine_loop_2.wav"
+}
+
+R = rangerOffset(200, E:toWorld(vec(0, -50 , 0)), vec(0,0,-1))
+L = rangerOffset(200, E:toWorld(vec(0,  50 , 0)), vec(0,0,-1))
+
+if(R:hit()|L:hit()) {
+    E:applyForce( (((L:pos()+R:pos())/2+E:up() * (185-L:pos():distance(R:pos())/4))-E:pos()) * E:mass() -E:vel()*E:mass()/5 )
+}
+
+DistR = Rpos:distance(R:pos())
+DistL = Lpos:distance(L:pos())
+
+AddVecR = AddVecL = vec()
+if(E:vel():length()>20) {
+    AddVecR = (R:pos() - Rpos):normalized():setZ(0) * DistR/3
+    AddVecL = (L:pos() - Lpos):normalized():setZ(0) * DistL/3
+}
+
+if(DistR > 1 | DistL > 1)
+{
+    #if(!T)
+    #{
+    #    Leg = DistR < DistL
+    #}
+    #[
+    if(!T)
+    {
+        T = min(T + Ratio, 1)
+        if(!Leg)
+        {
+            RTemp = bezier(Rpos, Rpos + (R:pos() - Rpos) / 2 + vec(0,0,DistR/3), R:pos() + AddVecR , T)
+        }
+        else
+        {
+            LTemp = bezier(Lpos, L:pos() - (L:pos() - Lpos) / 2 + vec(0,0,DistL/3), L:pos() + AddVecL , T)
+        }
+    }
+    ]#
+    #Ratio = clamp(E:velL():length() / 10000, 0.03, 1)
+    #print(Ratio)
+    
+    #[
+    if(DistR > Total | DistL > Total)
+    {
+        print((DistR / Total) / 10)
+        
+        Ratio = 0.03 + (DistR / Total) / 100
+    }
+    else
+    {
+        Ratio = 0.03
+    }
+    ]#
+    
+    
+    if(!Leg)
+    {
+        if(T < 1)
+        {
+            T = min(T + Ratio, 1)
+            RTemp = bezier(Rpos, (R:pos() + Rpos) / 2 + vec(0,0,DistR/3), R:pos() + AddVecR , T)
+        }
+        else
+        {
+            T = 0
+            Rpos = RTemp
+            Leg = !Leg
+            holoEntity(FootR):soundPlay(1, 0, SOUND_STEP+randint(1,4)+".wav") soundPitch(1, randint(75, 80))
+            soundVolume(1, clamp(DistR / Total, 0.2, 1))
+            #print("R Complete")
+        }
+    }
+    else
+    {
+        if(T < 1)
+        {
+            T = min(T + Ratio, 1)
+            LTemp = bezier(Lpos, (L:pos() + Lpos) / 2 + vec(0,0,DistL/3), L:pos() + AddVecL , T)
+        }
+        else
+        {
+            T = 0
+            Lpos = LTemp
+            Leg = !Leg
+            holoEntity(FootL):soundPlay(1, 0, SOUND_STEP+randint(1,4)+".wav") soundPitch(1, randint(75, 80))
+            soundVolume(1, clamp(DistL / Total, 0.2, 1))
+            #print("L Complete")
+        }
+    }
+}
+
+E:applytorque(ang(0, Yaw, 0))
+RTemp:kinemize(HipR, KneeR, AnkleR, FootR)
+LTemp:kinemize(HipL, KneeL, AnkleL, FootL)
+
+Driver = Seat:driver()
+if(Driver:keyPressed("w"))
+{
+    E:applyForce( E:forward() * Speed * E:mass())
+}
+if(Driver:keyPressed("a"))
+{
+    E:applyForce( -E:right() * 30 * E:mass())
+}
+if(Driver:keyPressed("d"))
+{
+    E:applyForce( E:right() * 30 * E:mass())
+}
+if(Driver:keyPressed("s"))
+{
+    E:applyForce( -E:forward() * 40 * E:mass())
+}
+
+if(Driver:keyPressed("left"))
+{
+    Yaw += 1.2
+}
+elseif(Driver:keyPressed("right"))
+{
+    Yaw -= 1.2
+}
+else
+{
+    Yaw = E:angles():yaw()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,144 @@
+@name SUSANO2
+@inputs 
+@outputs Arr:array
+@persist [E O]:entity [S]:string N 
+@trigger 
+
+runOnTick(1)
+if(first()){
+    E=entity()
+    O=owner()
+    for(J=1,10)
+       {
+        holoCreate(J)
+        holoModel(J,"models/holograms/hq_cylinder.mdl")
+        holoPos(J,E:pos()+vec(0,0,J*11))
+        holoScale(J,vec(0.5,0.5,0.8))        
+    }
+    holoPos(1,E:pos()+vec(0,0,1*11))
+    holoAng(1,ang((1+5)*3,0,0))
+
+    holoPos(2,E:pos()+vec(3,0,2*11))
+    holoAng(2,ang((1+4)*2,0,0))
+
+    holoPos(3,E:pos()+vec(4,0,3*11))
+    holoAng(3,ang((1+2)*2,0,0))
+    
+    holoPos(4,E:pos()+vec(4,0,4*11))
+    holoAng(4,ang((1+2)*0,0,0))
+    
+    holoPos(5,E:pos()+vec(3,0,5*11))
+    holoAng(5,ang((1-5)*2,0,0))
+
+    holoPos(6,E:pos()+vec(1,0,6*11))
+    holoAng(6,ang((1-8)*2,0,0))
+    
+    holoPos(7,E:pos()+vec(-2,0,7*11))
+    holoAng(7,ang((1-6)*2,0,0))
+    
+    holoPos(8,E:pos()+vec(-4,0,8*11))
+    holoAng(8,ang((1-3)*2,0,0))
+    
+    holoPos(9,E:pos()+vec(-3,0,9*11))
+    holoAng(9,ang((1+2)*2,0,0))
+    
+    holoPos(10,E:pos()+vec(-1,0,10*11))
+    holoAng(10,ang((1+5)*2,0,0))
+    
+    holoCreate(11)
+    holoModel(11,"models/Gibs/HGIBS.mdl")
+    holoPos(11,E:pos()+vec(5,0,130))
+#    holoMaterial(11,"models/debug/debugwhite")
+    holoScale(11,vec(3,3,4))  
+    holoAng(11,ang(20,0,0))
+    
+    for(J=12,16)
+       {
+        holoCreate(J)
+        holoModel(J,"models/Gibs/HGIBS_rib.mdl")
+        holoPos(J,E:pos()+vec(5,-15+J*2,(J-12)*8+75))
+        holoScale(J,vec(1.5+((J-11)/5),0.25+((J-11)/2),1+((J-11)/3))) 
+        holoAng(J,holoEntity(J-12):angles()+ang(0,180-(J-12)*5,0))       
+    }
+        for(J=17,21)
+       {
+        holoCreate(J)
+        holoModel(J,"models/Gibs/HGIBS_rib.mdl")
+        holoPos(J,E:pos()+vec(5,30-J*2,(J-17)*8+75))
+        holoScale(J,vec(1.5+((J-16)/5),0.25+((J-16)/2),1+((J-16)/3))) 
+        holoAng(J,holoEntity(J-17):angles()+ang(0,180+(J-17)*5,180))       
+    }
+    
+    holoCreate(22)
+    holoAlpha(22,0)
+    for(J=1,21){
+        holoColor(J,vec(255,0,0))
+        holoAlpha(J,200)
+        holoMaterial(J,"models/props_wasteland/dirtwall001a")
+        holoParent(J,22)
+    }
+    holoMaterial(11,"")
+    lightCreate(1,owner():pos()+vec(0,0,40),vec(255,0,0),6000,8)
+    lightParent(1,owner())
+    
+    O:setEyeAngles(ang(0,0,0))
+    holoCreate(23)
+    holoScale(23,vec(0.2))
+    holoAlpha(23,0)
+    holoAng(23,ang(0,0,0))
+    holoPos(23,O:attachmentPos("eyes"))
+    holoParentAttachment(23,O,"eyes")
+    holoParent(23,O)
+    
+    holoCreate(24)
+    holoScale(24,vec(0.1))
+    holoAlpha(24,0)
+    holoPos(24,holoEntity(23):toWorld(vec(-2.2,1.2,-2.2))) 
+    holoParent(24,23)
+    holoEntity(24):setTrails(5,0,0.6,"trails/laser",vec(255,0,0),255)
+    
+    holoCreate(25)
+    holoScale(25,vec(0.1))
+    holoAlpha(25,0)
+    holoPos(25,holoEntity(23):toWorld(vec(-0.5,-2.3,-2.2))) 
+    holoParent(25,23)
+    holoEntity(25):setTrails(5,0,0.6,"trails/laser",vec(255,0,0),255)
+
+
+}
+L=O:keyPressed("L")
+if(changed(L)&L){
+    holoPos(22,O:toWorld(vec(-20,-10,-40)))
+    holoAng(22,O:angles()+ang(90,20,180))
+    holoParentAttachment(22,O,"chest")
+    holoParent(22,O)}
+
+N=(N+1)%10
+if(N==1){        
+    S="sprites/flamelet"+random(1,5):toString()
+    particle(random(1,3),20,30,S,vec(150,20,20),holoEntity(22):pos()+vec(random(-50,50),random(-50,50),random(0,10)),vec(0,0,50),1,0,100,10)
+    particle(random(1,3),10,20,S,vec(150,20,20),O:pos()+vec(random(-20,20),random(-20,20),random(-10,10)),vec(0,0,50),1,0,100,10)
+}
+T=O:keyPressed("T")
+if(T){
+    if(!Arr:count()){Arr:pushEntity(O:aimEntity()) }else{
+        for(J=1,Arr:count()){
+            if(Arr[J,entity]!=O:aimEntity()){
+                Arr:pushEntity(O:aimEntity()) 
+            }       
+        }
+    }
+}
+if(N==1){
+    for(J=1,Arr:count()){
+        Health=Arr[J,entity]:health()
+        Dmg=Health*0.01+1
+        S="sprites/flamelet"+random(1,5):toString()
+        Arr[J,entity]:takeDamage(Dmg,E,Arr[J,entity])
+        for(K=1,random(2,5)){
+            particle(random(1,3),10,30,S,vec(255,255,255),Arr[J,entity]:pos()+vec(random(-10,10),random(-20,20),random(0,10)),vec(0,0,50),1,0,255,255)
+        }
+    }
+}
+
+

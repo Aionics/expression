@@ -1,0 +1,26 @@
+@name pusher
+@inputs 
+@outputs 
+@persist OW:entity Prop:entity
+@trigger 
+
+if (first()) {
+    runOnTick(1)
+    OW = owner()
+    Prop = noentity()
+    entity():propNotSolid(1)
+}
+
+T = OW:keyPressed("T")
+
+if (changed(T) && T) {
+    
+    Prop:propDelete()
+    Prop = propSpawn("models/hunter/blocks/cube6x6x05.mdl", OW:aimPos() + vec(0,0,130), ang(0), 0)
+    Prop:setMass(20000)
+    
+}
+
+if (T) {
+    #Prop:applyForce(vec(0,0,-1000))       
+}

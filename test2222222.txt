@@ -1,0 +1,10 @@
+@name test
+@inputs 
+@outputs A_s:string
+@persist 
+@trigger 
+
+interval(5)
+
+A = owner():eyeAngles()
+A_s=A:toString()

@@ -1,0 +1,10 @@
+@name drop
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+Tar="danya"
+Player=findPlayerByName(Tar)
+holoCreate(1)
+Player:re

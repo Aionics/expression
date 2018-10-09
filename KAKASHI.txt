@@ -1,0 +1,132 @@
+@name KAKASHI
+@inputs 
+@outputs T_max T_cur N_gou Gou Ar:array Ra
+@persist [Tesla O Tar Tar2]:entity Chi   Eye:vector Aim:vector 
+@trigger 
+
+runOnTick(1)
+if(first()){
+O=owner()
+owner():setKeyValue("targetname","toparent")
+Tesla=entitySpawn("point_tesla",owner():pos()+vec(0,0,50),1)
+Tesla:setKeyValue("beamcount_min",1:toString())
+Tesla:setKeyValue("beamcount_max",1:toString())
+Tesla:setKeyValue("texture","effects/laser1.vmt")
+Tesla:setKeyValue("m_flRadius",10:toString())
+Tesla:setKeyValue("thick_max",20:toString())
+Tesla:setKeyValue("thick_min",1:toString())
+Tesla:setKeyValue("m_Color","180 200 255")
+Tesla:setKeyValue("SetParent","toparent")
+#Tesla:setKeyValue("scale","1 1 20")
+#Tesla:setKeyValue("m_SoundName","ambient/voices/f_scream1.wav")
+#Tesla:setKeyValue("m_SoundName","ambient/alarms/combine_bank_alarm_loop1.wav")
+
+O:playerModel("models/Humans/Group01/male_09.mdl")
+findIncludeClass("player")
+findIncludeClass("prop")
+findIncludeClass("NPC")
+findExcludePlayer("aionics")
+particleGravity(vec(0))
+
+}
+
+if(changed(O:weapon())){
+    if(O:weapon():type()=="weapon_stunstick"){
+        Chi=1
+        O:weapon():setAlpha(0)
+        O:playerSetBoneAng(13,ang(110,0,0))
+        O:playerSetBoneAng(14,ang(0,0,0))
+        O:playerSetBoneAng(15,ang(0,35,0))
+        O:playerSetBoneAng(8,ang(-30,45,0))
+        O:playerSetBoneAng(10,ang(-23,-35,0))
+        soundURLload(1:toString(),"https://clck.ru/9SDeM",255,0,O)
+        O:plyRunSpeed(900)
+        
+        }else{
+        Chi=0
+        O:weapon():setAlpha(255)
+        O:playerSetBoneAng(13,ang(0,0,0))
+        O:playerSetBoneAng(14,ang(0,0,0))
+        O:playerSetBoneAng(15,ang(0,0,0))
+        O:playerSetBoneAng(8,ang(0,0,0))
+        O:playerSetBoneAng(10,ang(0,0,0))
+        Tar=noentity()
+        }
+for(I=1,50){
+holoCreate(I+10)
+holoModel(I+10,O:model())
+holoPos(I+10,entity():pos()+vec(I*15,0,0))
+holoAnim(I+10,I)
+}
+        
+    
+}
+
+if(Chi){
+Pos=owner():attachmentPos("eyes")+O:eye()*25+vec(0,0,-10)
+Tesla:setPos(Pos)
+Tesla:setFire("doSpark","",0)
+findInSphere(Pos+O:eye()*15,50)
+Tar=find()
+}
+if(changed(Tar)&Tar){Tar:takeDamage(100)}
+R=O:keyPressed("R")
+if(changed(R)&R){
+    T_cur=0
+    N_gou=0
+    soundURLload(1:toString(),"https://clck.ru/9SFWD",255,0,O)
+    Gou=1
+}
+if(Gou){
+    N_gou++
+    if(N_gou==150){
+        T_cur=0
+        Ra=rangerOffsetHull(O:toWorld(vec(40,0,60)),O:aimPos(),vec(-5,-5,0),vec(5,5,0)):distance()
+        holoCreate(1)
+        holoPos(1,O:toWorld(vec(20,0,60)))
+        holoAng(1,O:eyeAngles())
+        Eye=O:eye()
+        Aim=O:aimPos()
+     #   T_max=(abs(Aim:x()-holoEntity(1):pos():x())+abs(Aim:y()-holoEntity(1):pos():y())+abs(Aim:z()-holoEntity(1):pos():z()))/13.8
+        
+    }
+    if(N_gou>=150){
+        S="sprites/flamelet"+random(1,5):toString()
+        particle(random(1,1),80,10,S,vec(255,255,255),holoEntity(1):pos()+vec(random(-50,50),random(-50,50),random(-50,50)),vec(0,0,20),0,1,100,10)
+        T_cur=T_cur+30
+        holoPos(1,holoEntity(1):pos()+holoEntity(1):forward()*30)
+        findInSphere(holoEntity(1):pos(),60)
+        Tar2=find()
+        if(changed(Tar2)&Tar2)
+        {
+            Tar2:ignite(10)
+        }
+}
+    if(Ra-T_cur<=30){findInSphere(holoEntity(1):pos(),300)}
+    if(T_cur>Ra){Gou=0 }
+}
+
+if(changed(Gou)&!Gou){
+    for(I=1,30){
+        
+        S="sprites/flamelet"+random(1,5):toString()
+        particle(random(1,3),350,10,S,vec(255,255,255),holoEntity(1):pos()+vec(random(-60,60),random(-60,60),random(-60,60)),vec(random(-500,500),random(-500,500),random(-60,100)),0,1,100,10)
+        effectSpawn("explosion",holoEntity(1):pos(),10)
+    }
+    
+#    Tar2=find()
+ #   Tar2:ignite(10)
+    Ar=findToArray()
+    for(J=1,Ar:count()){
+        Ar[J,entity]:ignite(10)
+        Ar[J,entity]:takeDamage(Ar[J,entity]:health()*0.5)
+    }
+    
+}
+
+
+
+
+
+
+

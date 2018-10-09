@@ -1,0 +1,9 @@
+@name mingo_car
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+interval(100)
+
+particle(15,20,0,"effects/blueflare1",vec(random(0,255),random(0,255),random(0,255)),entity():pos(),vec(random(-70,70),random(-70,70),random(-10,120)),1)

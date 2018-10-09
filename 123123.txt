@@ -1,0 +1,11 @@
+@name 123123
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+if(first()){
+    runOnTick(1)    
+}
+
+owner():setHealth(20)

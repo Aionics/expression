@@ -1,0 +1,117 @@
+@name 
+@inputs 
+@outputs 
+@persist X Y S M:string
+@trigger 
+@model models/holograms/hq_icosphere.mdl
+
+if(first()){
+    entity():noDraw(1)
+    M="hq_icosphere"
+    V=entity():pos()
+    holoCreate(0,V,vec(1),ang(),vec(255,200,0),M)
+    
+    X=0.025
+    Y=0.925
+    S=1.01
+    
+    holoCreate(1000,vec(),vec(S),ang(),vec(),M)
+    X=X*holoScaleUnits(1000):x()/2
+    Y=Y*holoScaleUnits(1000):x()/2
+    holoDelete(1000)
+    holoDisableShading(0,1)
+    for(I=1,4){
+        holoCreate(I,V,vec(S),ang(),vec(50),M)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,vec(0,1,0)*X,vec(0,1,0),0)
+        holoClip(I,4,vec(0,1,0)*Y,-vec(0,1,0),0)
+    }
+    for(I=5,8){
+        holoCreate(I,V,vec(S),ang(),vec(50),M)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,-vec(0,1,0)*X,-vec(0,1,0),0)
+        holoClip(I,4,-vec(0,1,0)*Y,vec(0,1,0),0)
+    }
+    for(I=9,12){
+        holoCreate(I,V,-vec(S),ang(),vec(50),M)
+        holoParent(I,I-8)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,vec(0,1,0)*X,vec(0,1,0),0)
+        holoClip(I,4,vec(0,1,0)*Y,-vec(0,1,0),0)
+    }
+    for(I=13,16){
+        holoCreate(I,V,-vec(S),ang(),vec(50),M)
+        holoParent(I,I-8)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,-vec(0,1,0)*X,-vec(0,1,0),0)
+        holoClip(I,4,-vec(0,1,0)*Y,vec(0,1,0),0)
+    }
+    
+    holoCreate(17,V,vec(S),ang(),vec(50),M)
+    holoClipEnabled(17,1,1)
+    holoClip(17,-vec(0,1,0)*(Y+X),-vec(0,1,0),0)
+    holoCreate(18,V,-vec(S),ang(),vec(50),M)
+    holoClipEnabled(18,1,1)
+    holoClip(18,-vec(0,1,0)*(Y+X),-vec(0,1,0),0)
+    holoParent(18,17)
+    
+    holoCreate(19,V,vec(S),ang(),vec(50),M)
+    holoClipEnabled(19,1,1)
+    holoClip(19,vec(0,1,0)*(Y+X),vec(0,1,0),0)
+    holoCreate(20,V,-vec(S),ang(),vec(50),M)
+    holoClipEnabled(20,1,1)
+    holoClip(20,vec(0,1,0)*(Y+X),vec(0,1,0),0)
+    holoParent(20,19)
+    
+    for(I=1,20){
+        holoParent(I,0)    
+    }
+    holoParent(0,entity())
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

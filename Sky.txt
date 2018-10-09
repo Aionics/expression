@@ -1,0 +1,18 @@
+@name not_enought
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+Pos=vec(-1500,1600,11000)
+holoCreate(1)
+holoModel(1,"hq_sphere")
+holoScale(1,vec(800,800,100)*-1)
+holoMaterial(1,"models/props_lab/cornerunit_cloud")
+
+holoColor(1,vec(100,0,0))
+holoAlpha(1,255)
+holoDisableShading(1,1)
+holoPos(1,Pos)
+#entity():propNotSolid(1)
+

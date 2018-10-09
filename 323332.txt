@@ -1,0 +1,25 @@
+@name 323332
+@inputs 
+@outputs Ch_ang:angle O_ang:angle L
+@persist [O Ch]:entity
+@trigger 
+interval(5)
+if(first()){
+O=findPlayerByName("Aion")
+Ch=entity():isWeldedTo()
+}
+O_ang=O:eyeAngles()
+Ch_ang=Ch:angles()
+N=(O_ang-Ch_ang)
+L=N:yaw()
+
+
+if(L<70){
+    
+    Ch:setAng(Ch:angles()+ang(0,-1,0))
+}
+if(L>110){
+    
+    Ch:setAng(Ch:angles()+ang(0,1,0))
+}
+

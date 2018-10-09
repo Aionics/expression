@@ -1,0 +1,13 @@
+@name 12312333333
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+V=entity():pos()+vec(0,0,50)
+holoCreate(1,V,vec(5))
+holoModel(1, "hqsphere")
+holoClip(1,1,holoEntity(1):toLocal(V+vec(0,5,0)),-ang(90,0,0):up(),0)
+holoClip(1,2,holoEntity(1):toLocal(V-vec(0,-5,0)),ang(90,0,0):up(),0)
+holoClipEnabled(1,1,1)
+holoClipEnabled(1,2,1)

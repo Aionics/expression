@@ -1,0 +1,200 @@
+@name shin_n_k3
+@inputs 
+@outputs FirstRange SecondRange
+@persist FirstRope Searching1 Searching2 FirstDamping SecondDamping FirstRange SecondRope SecondRange Set1 Set2
+@persist [O E FirstHook SecondHook Beam]:entity
+@persist [FirstVel SecondVel Elast1 Elast2]:vector
+@trigger 
+
+if (first()) {
+    runOnTick(1)
+    O=owner()
+    #O=findPlayerByName("Mr.p")
+    E=entity() 
+       
+    FirstRope=1
+    SecondRope=1
+    FirstDamping=0
+    SecondDamping=0
+    FirstRange=0
+    SecondRange=0
+    
+    Searching1=0
+    Searching2=0
+    
+    rangerFilter(O)
+    
+    function do_shoot (Pos, Projectile:entity){
+        Projectile:propNotSolid(1)
+        Projectile:setMass(10)
+        Projectile:setColor(vec(0))
+        Projectile:setAlpha(0)
+        
+        holoCreate(1,Projectile:pos())
+        holoParent(1,Projectile)
+        holoModel(1,"models/items/combine_rifle_ammo01.mdl")
+        holoScale(1,vec(0.5))
+        holoColor(1,vec(0))
+        holoAng(1, O:eyeAngles()+ ang(90,0,0))
+        local Dir = (O:aimPos() - Projectile:pos()):normalized()
+        Projectile:setVel(Dir*5000)
+        local Distance = O:aimPos():distance(Projectile:pos())
+        Projectile:elasticTo(O,vec(0),vec(0,0,50),0,3,0.1,"cable/cable2",3,1)
+        switch (Pos){
+            case 1, Searching1=1 break
+            case 2, Searching2=1 break
+        }
+        
+    }
+    #[holoCreate(66)
+    holoScale(66,vec(0.3))
+    holoParent(66,O)
+    holoPos(66,O:pos())
+    
+    holoCreate(65)
+    holoScale(65,vec(0.3))
+    
+    holoCreate(67)
+    holoScale(67,vec(0.3))
+    holoParent(67,O)
+    holoPos(67,O:pos())
+    
+    holoCreate(68)
+    holoScale(68,vec(0.3))
+    
+    holoCreate(69)
+    holoScale(69,vec(0.3))
+    holoParent(69,O)
+    holoPos(69,O:pos())
+    
+    holoCreate(70)
+    holoScale(70,vec(0.3))
+    
+    Beam1=holoEntity(66):drawBeam("sprites/lgtning",holoEntity(66):pos(),holoEntity(65),vec(180,100,255),255,5,2,1)
+    Beam1=holoEntity(67):drawBeam("sprites/lgtning",holoEntity(67):pos(),holoEntity(68),vec(180,255,180),255,5,2,1)
+Beam1=holoEntity(69):drawBeam("sprites/lgtning",holoEntity(69):pos(),holoEntity(70),vec(255,100,100),255,5,2,1) }]#
+    
+}
+if (O:weapon():type()=="weapon_crowbar") {
+    At1=O:keyAttack1()
+    At2=O:keyAttack2()
+        
+    if(changed(At1)&At1){     
+        FirstHook=propSpawn("models/items/combine_rifle_ammo01.mdl",O:pos() + vec(0,0,50), 0)
+        do_shoot(1, FirstHook)            
+    }
+    if(changed(At1)&!At1){
+        if(FirstHook){
+            FirstDamping=0
+            Set1=0
+            FirstHook:remove()
+        }
+    } 
+    
+    
+    if(changed(At2)&At2){       
+        SecondHook=propSpawn("models/items/combine_rifle_ammo01.mdl",O:pos() + vec(0,0,50), 0)
+        do_shoot(2, SecondHook)              
+    }
+    if(changed(At2)&!At2){
+        if(SecondHook){
+            SecondDamping=0
+            Set2=0
+            SecondHook:remove()
+        }    
+    }     
+}
+
+####Searching####
+if(Searching1){
+    rangerFilter(O)
+    local Ranger = rangerOffsetHull(50,FirstHook:pos(),FirstHook:vel():normalized(),vec(5))
+    
+    if(Ranger:hit()){
+        Searching1=0
+        FirstDamping=1
+        FirstRange=FirstHook:pos():distance(O:pos())  
+        if(Ranger:entity()){
+            FirstHook:parentTo(Ranger:entity())
+            FirstHook:setPos(Ranger:pos())
+        }else{
+            FirstHook:propFreeze(1)
+            FirstHook:setPos(Ranger:pos())
+        }
+    }
+}
+
+if(Searching2){
+    rangerFilter(O)
+    local Ranger = rangerOffsetHull(50,SecondHook:pos(),SecondHook:vel():normalized(),vec(5))
+    if(Ranger:hit()){
+        #Searching2=0
+        SecondDamping=1
+        SecondRange=SecondHook:pos():distance(O:pos())  
+        if(Ranger:entity()){
+            SecondHook:parentTo(Ranger:entity())
+            SecondHook:setPos(Ranger:pos())
+        }else{
+            SecondHook:propFreeze(1)
+            SecondHook:setPos(Ranger:pos())
+        }
+    }
+}
+####Damping####
+
+if(FirstDamping){
+
+    local CurrentRange = FirstHook:pos():distance(O:pos())    
+    if (CurrentRange >= FirstRange) {
+        Set1=1
+        
+        local Vel = O:vel()
+        local RopeDir = (FirstHook:pos() - O:pos()):normalized()
+        local Proec=(Vel:x()*RopeDir:x()+Vel:y()*RopeDir:y()+Vel:z()*RopeDir:z())/(RopeDir:x()^2+RopeDir:y()^2+RopeDir:z()^2)^0.5        
+        local RopeVel = RopeDir*Proec        
+        local Coeff = (CurrentRange-FirstRange)
+        RopeVel = RopeVel*(-1.8)
+        FirstVel = vec( Vel:x()+RopeVel:x(), Vel:y()+RopeVel:y(), Vel:z()+RopeVel:z() )
+        Elast1 = RopeDir*Coeff                      
+    }else{Set1=0}
+}
+if(SecondDamping){
+
+    local CurrentRange = SecondHook:pos():distance(O:pos())    
+    if (CurrentRange >= SecondRange) {
+        Set2=1
+        
+        local Vel = O:vel()
+        local RopeDir = (SecondHook:pos() - O:pos()):normalized()
+        local Proec=(Vel:x()*RopeDir:x()+Vel:y()*RopeDir:y()+Vel:z()*RopeDir:z())/(RopeDir:x()^2+RopeDir:y()^2+RopeDir:z()^2)^0.5        
+        local RopeVel = RopeDir*Proec        
+        local Coeff = (CurrentRange-SecondRange)
+        RopeVel = RopeVel*(-1.8)
+        SecondVel = vec( Vel:x()+RopeVel:x(), Vel:y()+RopeVel:y(), Vel:z()+RopeVel:z() )
+        Elast2 = RopeDir*Coeff
+        
+        holoPos(65,O:pos()+Vel)              
+        holoPos(68,O:pos()+RopeDir*-80)              
+        holoPos(70,O:pos()+RopeVel)              
+    }else{Set2=0}
+}
+#print(Set1,Set2)
+#
+if(Set1 & !(FirstDamping&SecondDamping)){
+    #print(1)
+    O:setVel(O:vel()*(-1)+FirstVel +Elast1)
+}elseif(Set2 & !(FirstDamping&SecondDamping)){
+    O:setVel(O:vel()*(-1)+SecondVel +Elast2)
+}elseif( Set1 & Set2){
+    local SumVel = (FirstVel + SecondVel)/2
+    local SumElast =  (Elast2 + Elast1)/2
+    O:setVel(O:vel()*(-1)+SumVel + SumElast)
+}
+####manevring####
+Jump=O:keyJump()
+if(Jump){
+    if(FirstDamping)  {FirstRange=FirstRange-30}  
+    if(SecondDamping)  {SecondRange=SecondRange-30}  
+}
+
+

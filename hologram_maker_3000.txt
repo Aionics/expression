@@ -1,0 +1,17 @@
+@name 0000000hologram_maker_3000
+@inputs 
+@outputs 
+@persist [E]:entity
+@trigger 
+
+interval(10)
+if(first()){
+    E=entity()
+    O=owner()
+    findInBox(E:pos()+vec(-150,-150,0),E:pos()+vec(150,150,200))
+    holoCreate(1,E:pos()+vec(-150,-150,0))
+    holoCreate(2,E:pos()+vec(150,150,200))
+    P=propSpawn("models/hunter/plates/plate1x2.mdl",O:pos()+vec(-100,0,50),ang(0),1)
+    P:setAng(((O:pos()-P:pos()):toAngle())+ang(40,0,0))
+    
+}

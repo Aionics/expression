@@ -1,0 +1,17 @@
+@name 
+@inputs 
+@outputs 
+@persist Tick
+@trigger 
+
+if (first()) {
+    runOnTick(1)
+    Tick = 0
+    particleBounce(0)
+}
+Tick = Tick > 1000 ? 0 : Tick + 1
+
+if(Tick%1==0){
+    local Scale = random(5,15)
+    particle(random(30,60), Scale, Scale,"sprites/light_ignorez",vec(255,255,255),entity():pos()+vec(random(-1500,1500),random(-1500,1500),random(2000,3000)),vec(random(-0,0),random(-0,0),0),random(-40,40), randint(-1,1), 150, 0)    
+}

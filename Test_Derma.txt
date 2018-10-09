@@ -1,0 +1,56 @@
+@name Test_Derma
+@persist Hide Mouse O:entity
+
+interval( 20 )
+
+if( first() )
+{
+    O = owner()
+
+    dPanel( "Panel", vec2( 50 ), vec2( 280, 130 ) )
+    dColor( "Panel", 50, 50, 50, 255 )
+    
+    dButton( "Skills switcher", "Panel", vec2( ), vec2( 300, 22 ) )
+    dColor( "Skills switcher", 0, 255, 190, 255 )
+    
+    dButton( "Icicles", "Panel", vec2( 10, 30 ), vec2( 80, 40 ) )
+    dColor( "Icicles", 0, 255, 190, 255 )
+    
+    dButton( "Magic", "Panel", vec2( 100, 30 ), vec2( 80, 40 ) )
+    dColor( "Magic", 0, 255, 190, 255 )
+    
+    dButton( "KnockDown", "Panel", vec2( 190, 30 ), vec2( 80, 40 ) )
+    dColor( "KnockDown", 0, 255, 190, 255 )
+    
+    dButton( "1", "Panel", vec2( 10, 80 ), vec2( 80, 40 ) )
+    dColor( "1", 0, 255, 190, 255 )
+    
+    dButton( "2", "Panel", vec2( 100, 80 ), vec2( 80, 40 ) )
+    dColor( "2", 0, 255, 190, 255 )
+    
+    dButton( "3", "Panel", vec2( 190, 80 ), vec2( 80, 40 ) )    
+    dColor( "3", 0, 255, 190, 255 )
+}
+
+R = O:keyReload()
+if( changed( R ) & R )
+{
+    Mouse = !Mouse
+    enableMouse( Mouse )
+}
+
+Clk = dClk()
+if( Clk )
+{
+    switch( Clk )
+    {
+        case "Skills switcher",
+            Hide = !Hide
+            dSize( "Panel", Hide ? vec2( 280, 20 ) : vec2( 280, 130 ) )
+        break
+        case "Icicles",
+            hint( "Now its a Icicles!", 6 )
+        break
+    }
+    hint( Clk, 5 )
+}

@@ -1,0 +1,18 @@
+@name clip
+@inputs 
+@outputs 
+@persist 
+@trigger 
+if(first())
+{
+    holoCreate(1,entity():toWorld(vec(0,0,0)),vec(3),entity():toWorld(ang(0,0,0)),vec(255),"models/breen.mdl")
+    holoClipEnabled(1,         1,          1)
+                    #holoIndex #ClipNumber #ClipOn/Off
+    holoClip(1,         1,          vec(0,0,62),           vec(0,0,1),     0)                            #Vector2 vec(0, 1 = Y/50% ,0)
+             #holoIndex #ClipNumber#CorectionSideVector1,#ClipSideVector2,#GlobalOn/Off
+    
+    #holoClipEnabled(1,2,1)
+    #holoClip(1,2,vec(0,0,0),vec(1,0,0),0)
+}
+runOnTick(1)
+entity():setAng(entity():toWorld(ang(0,0.2,0)))

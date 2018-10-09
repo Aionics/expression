@@ -1,0 +1,37 @@
+@name 
+@inputs 
+@outputs C P1_s:string [P1 P2]:entity  Ar:array 
+@persist [P1 P2]:entity 
+@trigger 
+
+ 
+if(first()){
+    runOnTick(1)
+#Ls=owner():lastSaid()
+Ls="Fanat"
+E=entity()
+P1=findPlayerByName("Aion")
+#P2=findPlayerByName("Dan")
+findIncludeClass("player")
+findInSphere(E:pos(),99000)
+
+}
+P1_s=P1:toString()
+L=owner():keyPressed("L")
+if(changed(L)&L){
+
+
+
+
+
+explosion(20000,50,P1:pos())
+
+}
+O=owner():keyPressed("o")
+if(changed(O)&O){
+    Pr=propSpawn("models/props_c17/oildrum001_explosive.mdl",P1:pos(),1)
+    Pr:propBreak()
+    
+}
+
+C=Ar:count()

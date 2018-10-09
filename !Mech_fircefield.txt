@@ -1,0 +1,161 @@
+@name !Mech_fircefield
+@persist Toggle TurningOnCounter Ready MaxSize WhileCounter ShieldSize
+@persist Quads:table QuadTargets:array
+@persist [Ent Seat HoloSphere]:entity
+
+
+if (first()) {
+    #include "libs/HoloCreate"
+    #include "libs/ListOfDangerEntity"
+    runOnTick(1)
+    
+    Ent = entity()
+    Seat = entity():isWeldedTo()
+    Toggle = 0
+    Ready = 0
+    ShieldSize = 200
+    MaxSize = 200
+    
+    Quads = table()
+    QuadTargets = array()
+    
+    Ent:removeAllConstraints()
+    Ent:propNotSolid(1)
+    Ent:setAlpha(0)
+    Ent:propFreeze(1)
+    Ent:setPos(Ent:pos()-vec(0,0,300))
+    
+    HoloSphere1 = do_holocreate(1, Seat, "hq_sphere", vec(0), ang(0), vec(ShieldSize/5.65), vec(200,200,255), 0)
+    HoloSphere1 = do_holocreate(2, Seat, "hq_sphere", vec(0), ang(0), vec(ShieldSize/5.65), vec(200,200,255), 0)
+    HoloSphere2 = do_holocreate(3, Seat, "hq_sphere", vec(0), ang(0,180,0), -vec(ShieldSize/5.65), vec(200,200,255), 0)
+    HoloSphere2 = do_holocreate(4, Seat, "hq_sphere", vec(0), ang(0,180,0), -vec(ShieldSize/5.65), vec(200,200,255), 0)
+    holoMaterial(1, "models/alyx/emptool_glow")
+    holoMaterial(2, "models/alyx/emptool_glow")
+    holoMaterial(3, "models/alyx/emptool_glow")
+    holoMaterial(4, "models/alyx/emptool_glow")
+    
+    for (I=1, ListOfDangerEntity:count()) {
+        findIncludeClass(ListOfDangerEntity[I, string])
+    }
+    findExcludeEntity(Seat)
+    findExcludeEntity(HoloSphere1)
+    findExcludeEntity(HoloSphere2)
+    findExcludeClass("weapon")
+    findExcludePlayerProps(owner())
+}
+
+local Driver = Seat:driver()
+local KeyToggle = Driver:keyPressed("T")
+
+if (changed(KeyToggle) & KeyToggle) {
+    Toggle = !Toggle
+}
+
+if (changed(Toggle) & Toggle) {
+    Seat:soundPlay("on", 0, "hl1/ambience/particle_suck2.wav")
+    soundPitch("on", 200)
+    TurningOnCounter = 0
+}
+
+if (changed(Toggle) & !Toggle) {
+    Ready = 0
+}
+
+
+if (Toggle) {
+    if (!Ready) {
+        TurningOnCounter=TurningOnCounter+2
+        if (TurningOnCounter >= 250) {Ready = 1}
+        
+        do_holoclip(1, 1, vec(0,0,TurningOnCounter-100), vec(0,0,-1))
+        do_holoclip(2, 1, vec(0,0,TurningOnCounter-100), vec(0,0,-1))
+        do_holoclip(3, 1, vec(0,0,TurningOnCounter-100), vec(0,0,-1))
+        do_holoclip(4, 1, vec(0,0,TurningOnCounter-100), vec(0,0,-1))
+        holoAlpha(1, (250 - TurningOnCounter) / 1.5)
+        holoAlpha(2, (250 - TurningOnCounter) / 1.5)
+        holoAlpha(3, (250 - TurningOnCounter) / 1.5)
+        holoAlpha(4, (250 - TurningOnCounter) / 1.5)
+    } else {
+        findInSphere(Seat:pos(), ShieldSize)
+        local Targets = findToArray()
+        
+        if (Targets:count() > 0) {
+            for (I=1, Targets:count()) {
+                local Tar = Targets[I,entity]
+                if (Tar:isWeapon()) {Tar:remove() Targets:remove(I)}
+            }
+                
+            for (I=1, Targets:count()) {
+                    print(Targets)
+                    local Tar = Targets[I,entity]
+                    
+                    local NewVel = (Tar:pos() + vec(0,0,30) - Seat:pos()):normalized() * Tar:vel():length()
+                    local Direction = (Tar:isNPC() || Tar:type() == "player" ? Tar:pos()+vec(0,0,45) : Tar:pos() - Seat:pos()):normalized()
+                    
+                    local NewPos = Direction * ShieldSize*1.3 + Seat:pos()
+                    Tar:setPos(NewPos:setZ(max(Tar:pos():z(), NewPos:z())))
+                    Tar:propFreeze(0)
+                    
+                    
+                    Tar:setVel(NewVel)
+                    
+                    if (Quads:count() > 0) {
+                        local IsItHasQuad = 0
+                        
+                        for (J=1, QuadTargets:count()) {
+                            if (QuadTargets[J, entity] == Tar) {
+                                IsItHasQuad = 1
+                                break
+                            }
+                        }
+                        if (!IsItHasQuad) {
+                            local Size = 20
+                                local Sprite = Seat:drawQuad("sprites/magic", Seat:pos() + Direction * ShieldSize * 1.2, Direction:toAngle()+ ang(90,0,0), vec(50,200,255), 255, Size, Size)
+                                local Quad = table(
+                                    "sprite" = Sprite,
+                                    "size" = Size,
+                                    "assignedto" = Tar
+                                )
+                                QuadTargets:pushEntity(Tar)
+                                Quads:pushTable(Quad)
+                        }
+                        
+                    } else {
+                        local Size = 20
+                        local Sprite = Seat:drawQuad("sprites/magic", Seat:pos() + Direction * ShieldSize * 1.2, Direction:toAngle()+ ang(90,0,0), vec(50,200,255), 255, Size, Size)
+                        local Quad = table(
+                            "sprite" = Sprite,
+                            "size" = Size,
+                            "assignedto" = Tar
+                        )
+                        QuadTargets:pushEntity(Tar)
+                        Quads:pushTable(Quad)
+                    }
+
+                    
+
+           }
+        }
+        #printTable(Quads)
+        if (Quads:count() > 0) {
+            for(I=1, Quads:count()) {
+                local Quad = Quads[I, table]
+                local Sprite = Quad["sprite", entity]
+                if (Quad["size", number] < MaxSize) {
+                    Quad["size", number] = Quad["size", number] + 5
+                    Sprite:setAlpha(255 - Quad["size", number] * 255 / MaxSize)               
+                    Sprite:quadSize(Quad["size", number],Quad["size", number])
+                } else {
+                    for (J=1, QuadTargets:count()) {
+                        if (Quad["assignedto", entity] == QuadTargets[J, entity]) {
+                            QuadTargets:remove(J)
+                            break
+                        }
+                    }
+                    Sprite:remove()
+                    Quads:removeTable(I)
+                }
+            }
+        }        
+    }
+}

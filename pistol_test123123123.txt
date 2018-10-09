@@ -1,0 +1,185 @@
+@name pistol_test123123123
+#
+@inputs 
+#
+@outputs 
+#
+@persist [E O]:entity
+@persist 
+@persist 
+@persist 
+@persist 
+@persist 
+#
+@model
+#
+
+interval(1)
+
+if(first())
+{
+    E = entity()
+    
+    O = owner()
+
+    ########### PRI SPAVNE E2 NE SHEVELITSA, A TO HOLKI KRIVO PRIPARENTATSA K RUKE I K SPINE
+    
+    function holoOnHand(Index:number,Num:number)
+    {
+        if(Num)
+        {
+            holoUnparent(Index) 
+            holoPos(Index,holoEntity(0):pos())
+            holoAng(Index,holoEntity(0):toWorld(ang(10,180,0)))
+            holoParent(Index,holoEntity(0))
+        } 
+        else
+        {
+            holoUnparent(Index) 
+            holoPos(Index,holoEntity(13):toWorld(vec(-8,0.5,0)))
+            holoAng(Index,holoEntity(13):toWorld(ang(-90,-90,180)))
+            holoParent(Index,holoEntity(13))
+        }
+    }
+   
+    function weaponMat(Number:number)
+    {
+        if(Number)
+        {
+            O:weapon():setAlpha(0)
+            holoEntity(1):soundPlay(64,1.5,"npc/roller/blade_out.wav") soundPitch(64,randint(85,105)) soundVolume(64,0.5) 
+        }
+        else
+        {
+            O:weapon():setAlpha(255)
+        }
+    }
+
+    local Color1 = vec(255,255,255)  # Metal
+    local Color2 = vec()  # Accessory
+    local Color3 = vec()  # Other
+
+    local Mat1 = "debug/env_cubemap_model"  # Metal 
+    local Mat2 = ""  # Accessory 
+    local Mat3 = ""  # Other 
+
+    ##### NE TROGAT ETO :D
+    holoCreate(0,O:attachmentPos("anim_attachment_RH"))
+    holoAng(0,O:attachmentAng("anim_attachment_RH"))
+    holoParentAttachment(0,O,"anim_attachment_RH")
+    holoAlpha(0,0)
+    holoCreate(13,(owner():attachmentPos("chest")))
+    holoAng(13,(O:attachmentAng("chest") ))
+    holoParentAttachment(13,O,"chest")
+    holoAlpha(13,0)
+    ##### NE TROGAT ETO :D
+
+
+    holoCreate(1,E:toWorld(vec(0,0,30)),vec(0,0,0),E:toWorld(ang(0,0,0)),Color3,"octagon")
+    holoParent(1,E) holoMaterial(1,Mat2) holoDisableShading(1,1)
+    
+    holoCreate(2,holoEntity(1):toWorld(vec(-7,0,7.5)),vec(0.25,0.3,1),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/holograms/hq_rcube.mdl")
+    holoParent(2,holoEntity(1)) holoMaterial(2,Mat1) holoDisableShading(1,1)
+    
+    holoCreate(3,holoEntity(1):toWorld(vec(-13,0,7)),vec(0.35,0.35,0.35),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/holograms/hq_rcube.mdl")
+    holoParent(3,holoEntity(1)) holoMaterial(3,Mat1) holoDisableShading(3,1)
+    
+    holoCreate(4,holoEntity(1):toWorld(vec(-2,0,7)),vec(0.35,0.35,0.35),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/holograms/hq_rcube.mdl")
+    holoParent(4,holoEntity(1)) holoMaterial(4,Mat1) holoDisableShading(4,1)
+    
+    holoCreate(5,holoEntity(1):toWorld(vec(-2,0,1.5)),vec(1,1,0.6),holoEntity(1):toWorld(ang(0,-90,0)),Color1,"models/Gibs/HGIBS_spine.mdl")
+    holoParent(5,holoEntity(1)) holoMaterial(5,Mat1) holoDisableShading(5,1)
+    
+    holoCreate(6,holoEntity(1):toWorld(vec(-2,0,-1.7)),vec(0.1,0.2,0.3),holoEntity(1):toWorld(ang(90,180,0)),Color1,"models/holograms/hq_cubinder.mdl")
+    holoParent(6,holoEntity(1)) holoMaterial(6,Mat1) holoDisableShading(6,1)
+    
+    holoCreate(7,holoEntity(1):toWorld(vec(-8.5,0,-1.7)),vec(0.1,0.1,0.9),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/holograms/hq_cylinder.mdl")
+    holoParent(7,holoEntity(1)) holoMaterial(7,Mat1) holoDisableShading(7,1)
+    
+    holoCreate(8,holoEntity(1):toWorld(vec(-14,0,2.5)),vec(0.7,0.2,0.25),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/holograms/torus2.mdl")
+    holoParent(8,holoEntity(1)) holoMaterial(8,Mat1) holoDisableShading(8,1)
+    
+    holoCreate(9,holoEntity(1):toWorld(vec(1.5,0,7)),vec(0.05,0.1,0.1),holoEntity(1):toWorld(ang(0,0,0)),Color1,"models/props_trainstation/mount_connection001a.mdl")
+    holoParent(9,holoEntity(1)) holoMaterial(9,Mat1) holoDisableShading(9,1)
+    
+    holoCreate(10,holoEntity(1):toWorld(vec(-13,0,7)),vec(0.38,0.38,0.05),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/holograms/hq_rcube.mdl")
+    holoParent(10,holoEntity(1)) holoMaterial(10,Mat1) holoDisableShading(10,1)
+    
+    holoCreate(11,holoEntity(1):toWorld(vec(-14.5,0,7)),vec(0.33,0.33,0.25),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/holograms/hq_stube_thin.mdl")
+    holoParent(11,holoEntity(1)) holoMaterial(11,Mat1) holoDisableShading(11,1)
+    
+    holoCreate(12,holoEntity(1):toWorld(vec(-13,1,9.12)),vec(0.04,0.28,0.03),holoEntity(1):toWorld(ang(0,90,0)),Color1,"models/holograms/pyramid.mdl")
+    holoParent(12,holoEntity(1)) holoMaterial(12,Mat1) holoDisableShading(12,1)
+    
+    holoCreate(14,holoEntity(1):toWorld(vec(-13,-1,9.12)),vec(0.04,0.28,0.03),holoEntity(1):toWorld(ang(0,90,0)),Color1,"models/holograms/pyramid.mdl")
+    holoParent(14,holoEntity(1)) holoMaterial(14,Mat1) holoDisableShading(14,1)
+    
+    holoCreate(15,holoEntity(1):toWorld(vec(-13,-2.10,8)),vec(0.04,0.28,0.03),holoEntity(1):toWorld(ang(-90,90,0)),Color1,"models/holograms/pyramid.mdl")
+    holoParent(15,holoEntity(1)) holoMaterial(15,Mat1) holoDisableShading(15,1)
+    
+    holoCreate(16,holoEntity(1):toWorld(vec(-13,-2.10,6)),vec(0.04,0.28,0.03),holoEntity(1):toWorld(ang(-90,90,0)),Color1,"models/holograms/pyramid.mdl")
+    holoParent(16,holoEntity(1)) holoMaterial(16,Mat1) holoDisableShading(16,1)
+    
+    holoCreate(17,holoEntity(1):toWorld(vec(-13,2.10,6)),vec(0.04,0.28,0.03),holoEntity(1):toWorld(ang(90,90,0)),Color1,"models/holograms/pyramid.mdl")
+    holoParent(17,holoEntity(1)) holoMaterial(17,Mat1) holoDisableShading(17,1)
+    
+    holoCreate(18,holoEntity(1):toWorld(vec(-13,2.10,8)),vec(0.04,0.28,0.03),holoEntity(1):toWorld(ang(90,90,0)),Color1,"models/holograms/pyramid.mdl")
+    holoParent(18,holoEntity(1)) holoMaterial(18,Mat1) holoDisableShading(18,1)
+    
+    holoCreate(19,holoEntity(1):toWorld(vec(-13,2.4,9.2)),vec(0.1,0.1,0.2),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/holograms/hq_cylinder.mdl")
+    holoParent(19,holoEntity(1)) holoMaterial(19,Mat1) holoDisableShading(19,1)
+    
+    holoCreate(20,holoEntity(1):toWorld(vec(-13,2.4,9.2)),vec(0.05,0.05,0.22),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/holograms/hq_cylinder.mdl")
+    holoParent(20,holoEntity(1)) holoMaterial(20,Mat1) holoDisableShading(20,1)
+    
+    holoCreate(21,holoEntity(1):toWorld(vec(-10,2.3,8.6)),vec(0.1,0.1,0.1),holoEntity(1):toWorld(ang(0,180,-90)),Color1,"models/props_vehicles/carparts_muffler01a.mdl")
+    holoParent(21,holoEntity(1)) holoMaterial(21,Mat1) holoDisableShading(21,1)
+    
+    holoCreate(22,holoEntity(1):toWorld(vec(-6.5,2,7.7)),vec(0.1,0.1,0.1),holoEntity(1):toWorld(ang(-90,0,0)),Color1,"models/props_junk/PropaneCanister001a.mdl")
+    holoParent(22,holoEntity(1)) holoMaterial(22,Mat1) holoDisableShading(22,1)
+    
+    holoCreate(23,holoEntity(1):toWorld(vec(-5.5,0,4.5)),vec(0.03,0.03,0.03),holoEntity(1):toWorld(ang(25,0,90)),Color1,"models/mechanics/roboticslarge/clawl.mdl")
+    holoParent(23,holoEntity(1)) holoMaterial(23,Mat1) holoDisableShading(23,1)
+    
+    holoParent(25,holoEntity(1)) holoMaterial(25,Mat1) holoDisableShading(25,1)
+    
+    holoCreate(26,holoEntity(1):toWorld(vec(-15.4,0,7)),vec(0.32,0.05,0.05),holoEntity(1):toWorld(ang(0,-90,90)),Color1,"models/holograms/pyramid.mdl")
+    holoParent(26,holoEntity(1)) holoMaterial(26,Mat1) holoDisableShading(26,1)
+    
+    holoCreate(27,holoEntity(1):toWorld(vec(-15.4,0,7)),vec(0.32,0.05,0.05),holoEntity(1):toWorld(ang(90,-90,90)),Color1,"models/holograms/pyramid.mdl")
+    holoParent(27,holoEntity(1)) holoMaterial(27,Mat1) holoDisableShading(27,1)
+    
+    holoCreate(28,holoEntity(1):toWorld(vec(-15.4,0,7)),vec(0.1,0.1,0.1),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/holograms/hq_tube.mdl")
+    holoParent(28,holoEntity(1)) holoMaterial(28,Mat1) holoDisableShading(28,1)
+    holoEntity(1):shootTo(holoEntity(8):pos(),owner():eye()+randvec(-0.05,0.05),0,500,70,"Tracer")
+    
+    holoCreate(29,holoEntity(1):toWorld(vec(-15.15,0,7)),vec(0.1,0.1,0.1),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/holograms/hq_cylinder.mdl")
+    holoParent(29,holoEntity(1)) holoMaterial(29,Mat1) holoDisableShading(29,1)
+    
+    holoCreate(30,holoEntity(1):toWorld(vec(-14,0,2)),vec(0.13,0.17,0.2),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/holograms/torus.mdl")
+    holoParent(30,holoEntity(1)) holoMaterial(30,Mat1) holoDisableShading(30,1)
+    
+    holoCreate(31,holoEntity(1):toWorld(vec(-14.5,0,8)),vec(0.13,0.17,0.2),holoEntity(1):toWorld(ang(0,180,0)),Color1,"models/props_wasteland/panel_leverHandle001a.mdl")
+    holoParent(31,holoEntity(1)) holoMaterial(31,Mat1) holoDisableShading(31,1)
+
+
+
+}
+
+if(changed(O:weapon():type()))
+{
+    local Num = (O:weapon():type() == "laserpointer")
+    weaponMat(Num) holoOnHand(1,Num)
+}
+
+At=O:keyAttack2()
+if(changed(At)&At){
+    if(O:weapon():type() == "laserpointer"){
+    O:shootTo(holoEntity(28):pos(),owner():aimPos()-holoEntity(28):pos(),0,1000,200,"ToolTracer")
+    owner():playerSetBoneAng(8,ang(30,30,60))
+    
+
+}
+}  
+owner():playerSetBoneAng(11,O:eyeAngles()*ang(-1))
+

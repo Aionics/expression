@@ -1,0 +1,122 @@
+@name Super killer
+@persist Vec:vector Ang:angle On Off Sphere Force
+@model models/props_junk/sawblade001a.mdl
+runOnTick(1)
+runOnChat(1)
+
+entity():setMass(50000)
+
+if(first())
+{
+    print("Modes: \"/auto\" automatic goes to target, \"/aim\" goes to your aim position, while pressing \"USE\"")
+    hint("Made by KS",10)
+}
+
+if(owner():lastSaid()=="/auto")
+{
+    findExcludePlayer(owner())
+    if(!isSinglePlayer())
+    {
+        Mode="Multiplayer, target - players"
+        findByClass("player")
+    }
+    else
+    {
+        Mode="Singleplayer, target - NPCs"
+        findByClass("npc_*")
+    }
+    findSortByDistance(entity():pos())
+
+    if(chatClk(owner()))
+    {
+        hideChat(1)
+        printColor(vec(255,0,0),Mode)
+    }
+
+    if(find())
+    {
+        timer("FL",2500)
+        if(clk("FL"))
+        {
+            UpForce=1
+            stoptimer("FL")
+            Sphere=5000
+        }
+        On=1
+        entity():applyTorque(vec(Sphere,Sphere,5000)*entity():mass()*Force)
+
+        Vec=find():pos() + find():boxCenter() - entity():pos()
+        applyForce((Vec + $Vec*5)*entity():mass()*10)
+    }
+    else
+    {
+        UpForce=0
+        stoptimer("FL")
+        Sphere=0
+        On=0
+    }
+    
+    if(UpForce)
+    {
+        Force+=10000
+    }
+    else
+    {
+        Force=1
+    }
+}
+if(owner():lastSaid()=="/aim")
+{
+    if(chatClk(owner()))
+    {
+        hideChat(1)
+        printColor(vec(0,255,0),"Aim mode. Press \"USE\" to make target position")
+    }
+    if(owner():keyUse())
+    {
+        timer("FL",2500)
+        if(clk("FL"))
+        {
+            stoptimer("FL")
+            Sphere=5000
+        }
+        On=1
+        entity():applyTorque(vec(Sphere,Sphere,5000)*entity():mass())
+
+        Vec=owner():aimPos() - entity():pos()
+        applyForce((Vec + $Vec*5)*entity():mass()*10*(owner():aimEntity()!=entity() & owner():aimEntity()!=owner()))
+    }
+    else
+    {
+        stoptimer("FL")
+        Sphere=0
+        On=0
+        applyForce(entity():vel()*-entity():mass())
+    }
+}
+Ang=-ang(entity():angles():pitch(),0,entity():angles():roll())
+applyAngForce((Ang + $Ang*5)*entity():mass()*15)
+
+Off=!On
+
+if(On & $On)
+{
+    entity():setTrails(100,0,0.25,"trails/electric",vec(255,255,255),255)
+    soundPlay(0,0,"npc/manhack/mh_engine_loop1.wav")
+    soundPitch(0,500)
+}
+if(Off & $Off)
+{
+    entity():removeTrails()
+    soundPlay(0,0,"npc/manhack/bat_away.wav")
+    soundPitch(0,100)
+}
+
+if(duped())
+{
+    selfDestructAll()
+}
+
+if(On){
+    explosion(10,50,entity():pos())
+}

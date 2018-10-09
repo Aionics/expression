@@ -1,0 +1,25 @@
+@persist Plrs:array
+if(first()){
+    runOnTick(1)
+    
+    findIncludeClass("player")
+findInSphere(entity():pos(),10000)
+Plrs = findToArray()
+#for(I=0,Plrs:count()-1){
+    #print(Plrs[I,entity])
+    #soundURLload(1:toString(),"https://clck.ru/9utWj",255,0,Plrs[I,entity])
+    owner():soundURLload(1:toString(),"https://clck.ru/9utXn",255,1)
+    owner():soundURLload(2:toString(),"https://clck.ru/9utXn",255,1)
+    owner():soundURLload(3:toString(),"https://clck.ru/9utXn",255,1)
+    owner():soundURLload(4:toString(),"https://clck.ru/9utXn",255,1)
+#}
+timer("123",2000)
+}
+
+
+if(clk("123")){
+    soundURLplay(1:toString())
+    soundURLplay(2:toString())
+    soundURLplay(3:toString())
+    soundURLplay(4:toString())
+}

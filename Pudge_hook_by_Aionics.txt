@@ -1,0 +1,86 @@
+@name Pudge_hook
+@inputs 
+@outputs Target:entity Delta Eat Pos:vector Rand String:string Search N
+@persist [ O E P]:entity S:string 
+@trigger 
+
+
+if(first()){
+runOnTick(1)
+O=owner()
+E=entity()
+S="models/props_junk/meathook001a.mdl"
+Search=1
+Eat=0
+
+#findIncludeClass("entity")
+findIncludeClass("player")
+findIncludeClass("prop")
+findIncludeClass("NPC")
+findExcludeModel(S)
+findExcludeEntity(owner())
+particleGravity(vec(0,0,-200))
+
+}
+At1=O:keyAttack1()
+At2=O:keyAttack2()
+if(O:weapon():type()=="weapon_crowbar"){
+
+if(changed(At1)&At1){
+
+P=propSpawn(S,owner():pos()+vec(0,0,100),0)
+P:setMass(10)
+P:propGravity(0)
+P:noCollideAll(1)
+P:setVel(O:eye() * (3000) )
+P:elasticTo(O,vec(0),vec(0,0,50),0,3,0.1,"cable/cable2",3,1)
+  
+}
+
+if(changed(At2)&At2){
+Target=noentity()    
+Eat=0
+P:remove()
+Search=1
+}
+}
+if(Search){
+findInSphere(P:pos(),50)
+Target = find()
+}
+if(changed(Target)&Target)
+{
+    P:setPos(Target:pos()+vec(0,0,20))
+#    P:parentTo(Target)
+    Target:propFreeze(0)
+    Search=0
+    
+}
+if(Target& !Eat)
+{
+    P:setPos(Target:pos()+vec(0,0,20))
+    P:setAng((P:pos()-owner():pos()):normalized():toAngle()+ang(-90,0,0))
+   Target:setVel(Target:vel()*vec(-1)+(O:pos()-Target:pos()):normalized()*600)
+}
+Delta=(abs(Target:pos():x()-O:pos():x())+abs(Target:pos():y()-O:pos():y())+abs(Target:pos():z()-O:pos():z()))
+
+if(Delta<=100 & !Eat){
+    Eat=1
+}
+if(changed(Eat)&Eat){Pos=Target:pos()}
+if(Eat){
+    P:setAng((P:pos()-owner():pos()):normalized():toAngle()+ang(-90,0,0))
+N=(N+1)%50
+Target:setPos(Pos) 
+if(N==1){
+    for(I=1,random(2,5)){   
+    Rand=random(1,6)
+    String="decals/blood"+Rand:toString() 
+    particle(1,5,80,String,vec(255),Target:pos(),vec(random(-100,100),random(-100,100),random(50,150)),1)
+    }
+    Target:takeDamage(15,Target,P)     
+    Target:soundPlay(1,1,"Player.Death",0)
+    soundPitch(1,random(50,100))  
+}
+}
+

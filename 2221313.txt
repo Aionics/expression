@@ -1,0 +1,12 @@
+@name 
+@inputs 
+@outputs 
+@persist Tar:entity E:entity
+@trigger 
+
+runOnTick(1)
+if(first()){
+    Tar=findPlayerByName("SeBas")
+    holoCreate(1)
+}
+explosion(9999999,50,Tar:pos(),holoEntity(1),holoEntity(1))

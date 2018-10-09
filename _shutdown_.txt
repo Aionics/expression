@@ -1,0 +1,81 @@
+@name !MagickDoor
+@inputs 
+@outputs 
+@persist [E Door Target]:entity
+@persist [Arr]:array
+@trigger 
+
+
+if(first()){
+    runOnTick(1)
+    
+    #include "libs/GoodGuys"
+    E=entity()
+    Door=entity():isWeldedTo()
+    Door:propFreeze(1)
+    Door:setMaterial("models/props_combine/com_shield001a")
+    Door:setAlpha(255)
+    
+    
+    holoCreate(1,Door:pos(),vec(0.99),Door:angles(),vec(255),Door:model())
+    holoMaterial(1,"models/props_combine/stasisfield_beam")
+    holoAlpha(1,250)
+    holoColor(1,vec(255,0,0))
+    holoParent(1,Door)
+    
+    E:setAlpha(0)
+    E:propNotSolid(1)
+    E:propShadow(0)
+    
+    timer("weld",100)
+    findIncludeClass("player")    
+
+
+    
+    function do_open() {
+        Door:propNotSolid(1)
+        Door:setAlpha(0)
+        holoAlpha(1,20)
+        holoColor(1,vec(0,255,0))    
+    }
+    function do_close() {
+        Door:propNotSolid(0)
+        Door:setAlpha(255)
+        holoAlpha(1,250)    
+        holoColor(1,vec(255,0,0))
+    }    
+}
+
+
+
+findInSphere(E:pos(),100)
+Target=find()
+if(changed(Target)&Target){
+		local Pipi=0  
+    for(I=1,GoodGuys:count()){
+        if( Target:name():lower():find(GoodGuys[I,string]:lower()) ){
+            do_open()
+          Pipi=1
+        }
+    }
+    if(Pipi){
+        entity():soundPlay("1",2,"buttons/button9.wav")
+    }else{
+        entity():soundPlay("1",2,"buttons/button10.wav")
+    }       
+}
+if(changed(Target)&!Target){
+    do_close()    
+}
+L=owner():keyPressed("L")
+if (changed(L)&L){
+
+        
+}
+
+if(changed(L)&L){
+    print(Target)
+}
+
+
+if(clk("weld")){Door:setPos(Door:pos()+vec(0,0,0.5))}

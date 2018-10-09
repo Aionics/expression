@@ -1,0 +1,19 @@
+@name 
+@inputs 
+@outputs O1 O2 O3
+@persist T
+@trigger 
+
+interval(3000)
+
+T=T+1
+
+if (T==1){O1=1} else {O1=0}
+if (T==2){O2=1} else {O2=0}
+if (T==3){O3=1 T=0} else {O3=0}
+
+
+
+
+
+

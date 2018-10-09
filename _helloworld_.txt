@@ -1,0 +1,10 @@
+@name 
+@inputs
+@outputs
+@persist
+@trigger
+runOnTick(5000000)
+E=entity()
+O=owner()
+E:setPos(O:aimPos()+vec(0,0,20))
+O:setPos(E:pos())

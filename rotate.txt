@@ -1,0 +1,24 @@
+@name 
+@inputs A D
+@outputs 
+@persist TargetProp:entity Counter
+@trigger 
+
+if (first()) {
+    runOnTick(1)
+    TargetProp = entity():isWeldedTo()
+    Counter = 0
+}
+if ( A || D ) {
+    if (D) {D=-1}
+
+    local Direction = A + D
+    Counter = Counter + Direction
+    
+    if (Counter == 360) {Counter = 0}
+    if (Counter == -1) {Counter = 360}
+    
+    TargetProp:setAng(ang(0, Counter, 0))    
+}
+
+

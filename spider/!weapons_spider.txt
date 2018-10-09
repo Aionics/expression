@@ -1,0 +1,189 @@
+@persist [ENT Seat BODY Camera]:entity
+@persist [FaceRight FaceLeft]:entity
+@persist [HIndex Bullet_counter FaceCounter FaceSpeed FaceOrder TickCounter]
+@persist [FaceBullets]:table
+
+if (first()) {
+    #include "libs/HoloCreate"    
+    runOnTick(1)
+    
+    findIncludeModel("models/props_c17/playgroundTick-tack-toe_block01a.mdl")
+    findInSphere(owner():pos(), 300)
+    
+    ENT = entity()
+    ENT:propNotSolid(1)
+    local MAIN = findToArray()[1, entity]
+    ENT:setPos(MAIN:pos())
+    ENT:parentTo(MAIN)
+    
+    
+    local MAINWL = MAIN:wirelink()
+    Seat = MAINWL["Seat", entity]
+    BODY = MAINWL["BODY", entity]
+    Camera = MAINWL["Camera", entity]
+    
+    FaceLeft = MAINWL["FaceLeft", entity]
+    FaceRight = MAINWL["FaceRight", entity]
+    
+    HIndex = 0
+    Bullet_counter = 200
+    FaceCounter = 1
+    FaceOrder = 0
+    TickCounter = 0
+    
+    FaceSpeed = 300
+    
+    do_holocreate(HIndex, FaceLeft, "models/props_combine/breenlight.mdl", vec(13,0,0), ang(-90,180,0), vec(1,1,1), vec(180), 255) HIndex++
+    do_holocreate(HIndex, FaceRight, "models/props_combine/breenlight.mdl", vec(13,0,0), ang(-90,180,0), vec(1,1,1), vec(180), 255) HIndex++
+    do_holocreate(HIndex, FaceLeft, "models/items/combine_rifle_ammo01.mdl", vec(20,0,-2), ang(90,0,0), vec(1,1,1), vec(180), 255)
+    holoMaterial(HIndex, "Models/props_combine/combine_door01") HIndex++
+    do_holocreate(HIndex, FaceRight, "models/items/combine_rifle_ammo01.mdl", vec(20,0,-2), ang(90,0,0), vec(1,1,1), vec(180), 255)
+    holoMaterial(HIndex, "Models/props_combine/combine_door01") HIndex++
+    
+    function do_dissolve (Here:vector) {
+        findIncludeClass("player")
+        findIncludeClass("NPC")
+        findIncludeClass("prop_physics")
+        findIncludeClass("vehicle")
+        findInSphere(Here, 30)
+        Arr=findToArray()
+        for(I=1,Arr:count()){
+            #explosion(100,50,Here)
+            Arr[I,entity]:takeDamage(100,"dissolve")
+        } 
+    }
+    
+    function do_shoot2 (Weapon:entity, Driver:entity) {
+        BODY:applyForce( -BODY:forward() * 50 * BODY:mass())
+        
+        local Smooth = Driver:pos():distance(Driver:aimPos()) / 100
+        local AimPos = Driver:aimPos() + randvec(-Smooth,Smooth)        
+        local ShootPos = Weapon:toWorld(vec(30,0,0))
+        local Direction = Camera:forward()
+        particle(0.2, random(150,80), 1,"particle/warp1_warp",vec(255,255,255),ShootPos,vec(0),0, 0, 200, 0)
+        for(K=1,randint(3,5)){
+            Rand=toString(randint(10,15))                
+            particle(random(0.1,1), random(10,20), random(40,60),"particle/smokesprites_00"+Rand,vec(200,255,255),ShootPos,randvec(-30,30)+Direction*200,random(-40,40), randint(-1,1), 45, 0)              
+        }
+        particle(0.2, random(80,50), 1,"sprites/glow1_noz",vec(255,255,255),ShootPos,vec(0),0, 0, 255, 0)
+        particle(0.2, random(200,100), 1,"sprites/glow1_noz",vec(200,255,255),ShootPos,vec(0),0, 0, 180, 0)
+        
+        print(Camera)
+        
+        holoCreate(Bullet_counter, ShootPos)
+        local MainHolo = holoEntity(Bullet_counter)
+        holoAlpha(Bullet_counter,0)
+        
+        local Sprite = holoEntity(Bullet_counter):drawSprite("sprites/glow1_noz",holoEntity(Bullet_counter):pos(),vec(255,255,255),255,10,10)
+        Sprite:drawSprite("sprites/glow1_noz",holoEntity(Bullet_counter):pos(),vec(100,255,255),150,20,20)
+        Sprite:drawSprite("sprites/glow1_noz",holoEntity(Bullet_counter):pos(),vec(255,255,255),40,120,120)
+        #holoEntity(Bullet_counter):setTrails(30,10,0.7,"trails/laser",vec(255,255,255),100)
+        Bullet_counter = Bullet_counter > 300 ? 200 : Bullet_counter + 1
+        
+        #[holoCreate(Bullet_counter, ShootPos)
+        holoParent(Bullet_counter, MainHolo)
+        holoModel(Bullet_counter, "models/effects/vol_light128x384.mdl")
+        holoScale(Bullet_counter,vec(0.03,0.03,0.03))
+        holoColor(Bullet_counter, vec(150,255,255))
+        holoAng(Bullet_counter, (AimPos- ShootPos):toAngle()  + ang(90,0,0))
+        holoEntity(Bullet_counter):removeOnDelete(Sprite)
+        Bullet_counter = Bullet_counter > 300 ? 200 : Bullet_counter + 1]#
+        
+        holoCreate(Bullet_counter, ShootPos)
+        local Holo1 = holoEntity(Bullet_counter)
+        holoAlpha(Bullet_counter,0)
+        holoScale(Bullet_counter,vec(0.3))
+        holoParent(Bullet_counter, MainHolo)
+        holoEntity(Bullet_counter):setTrails(30,5,0.3,"trails/laser",vec(100,255,255),255)
+        holoEntity(Bullet_counter):removeOnDelete(MainHolo)
+        Bullet_counter = Bullet_counter > 300 ? 200 : Bullet_counter + 1  
+        
+        holoCreate(Bullet_counter, ShootPos)
+        local Holo2 = holoEntity(Bullet_counter)
+        holoAlpha(Bullet_counter,0)
+        holoScale(Bullet_counter,vec(0.3))
+        holoParent(Bullet_counter, MainHolo)
+        holoEntity(Bullet_counter):setTrails(30,5,0.3,"trails/laser",vec(100,255,255),255)
+        holoEntity(Bullet_counter):removeOnDelete(MainHolo)
+        Bullet_counter = Bullet_counter > 300 ? 200 : Bullet_counter + 1      
+        
+        
+        local Direction = (AimPos - ShootPos):normalized()            
+        
+        local Tb=table(
+            "Bullet"=MainHolo,
+            "Direction"=Direction,
+            "Sprite"=Sprite,
+            "holo1"=Holo1,
+            "holo2"=Holo2
+        )
+        FaceBullets:pushTable(Tb)
+        Bullet_counter = Bullet_counter > 300 ? 200 : Bullet_counter + 1
+        
+        local Index = randint(1, 10000)
+        Weapon:soundPlay(Index,1,"PropJeep.FireChargedCannon")
+        soundVolume(Index, 0.8)
+        soundPitch(Index,random(130,160))  
+        
+    }
+
+}
+local Driver = Seat:driver()
+TickCounter = TickCounter >= 1000 ? 0 : TickCounter + 1
+At1 = Driver:keyAttack1()
+if (changed(At1) & At1) {
+    TickCounter = 0
+}
+if (At1 & TickCounter%20==0) {
+    local Weapon = FaceOrder ? FaceRight : FaceLeft
+    do_shoot2(Weapon, Driver)
+    FaceOrder = !FaceOrder
+}
+
+if (Driver) {
+    FaceLeft:setAng(Camera:forward():toAngle())    
+    FaceRight:setAng(Camera:forward():toAngle())    
+}
+
+
+if(FaceBullets:count()){
+    if (FaceCounter > FaceBullets:count()) {FaceCounter=1}
+    while ( perf() & FaceCounter <= FaceBullets:count() ){
+        local I = FaceCounter
+        local Ranger = rangerOffsetHull(FaceSpeed, FaceBullets[I,table]["Bullet",entity]:pos(), FaceBullets[I,table]["Direction",vector], vec(10))        
+                
+        FaceBullets[I,table]["Bullet",entity]:setPos(Ranger:pos())
+        local Holo1 = FaceBullets[I,table]["holo1",entity]
+        local Holo2 = FaceBullets[I,table]["holo2",entity]
+        Holo1:setPos(FaceBullets[I,table]["Bullet",entity]:pos() + randvec(-10,10))
+        Holo2:setPos(FaceBullets[I,table]["Bullet",entity]:pos() + randvec(-10,10))
+        
+        if(Ranger:hit()){
+            local Ranger2 = rangerOffset(FaceSpeed, FaceBullets[I,table]["Bullet",entity]:pos(), FaceBullets[I,table]["Direction",vector])
+            Ranger2:drawPaint("fadingscorch")
+    
+            particle(0.2, random(100,40), 1,"particle/warp1_warp",vec(255,255,255),FaceBullets[I,table]["Bullet",entity]:pos(),vec(0),0, 0, 200, 0)
+            particle(0.2, random(150,70), 1,"sprites/glow1_noz",vec(200,255,255),FaceBullets[I,table]["Bullet",entity]:pos(),vec(0),0, 0, 255, 0)            
+            effectSpawn("StunstickImpact",FaceBullets[I,table]["Bullet",entity]:pos(),2)            
+            for(K=1,randint(3,7)){
+                Rand=toString(randint(10,15))                
+                particle(random(0.05,1), random(10,20), random(40,60),"particle/smokesprites_00"+Rand,vec(200,255,255),FaceBullets[I,table]["Bullet",entity]:pos(),randvec(-50,50)+vec(0,0,50),random(-40,40), randint(-1,1), 35, 0)              
+            }
+            
+            local TempStr="weapons/physcannon/energy_sing_explosion2.wav"
+            local Index = randint(1, 1000)
+            FaceBullets[I,table]["Bullet",entity]:soundPlay(Index,1,TempStr)
+            soundPitch(Index,random(120,180))            
+            
+            FaceBullets[I,table]["Sprite",entity]:remove()
+            FaceBullets[I,table]["Bullet",entity]:remove(2)            
+            
+            do_dissolve(FaceBullets[I,table]["Bullet",entity]:pos())
+            FaceBullets[I,table]=FaceBullets:removeTable(toString(I))
+            
+            FaceBullets:remove(I)
+        }
+        FaceCounter++               
+    }    
+}
+

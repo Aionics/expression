@@ -1,0 +1,28 @@
+@name 1vkMusic
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+interval(1000)
+
+if(first()){
+holoCreate(1)
+holoPos(1, owner():attachmentPos("eyes"))
+holoAng(1, owner():attachmentAng("eyes"))
+holoParentAttachment(1, owner(), "eyes")
+
+holoAlpha(1,0)
+
+holoCreate(2)
+holoPos(2, holoEntity(1):pos() + holoEntity(1):up()*0 + holoEntity(1):forward()*-4)
+holoAng(2, holoEntity(1):angles())
+holoModel(2, "hq_sphere")
+holoParent(2,1)
+
+soundURLload("1","http://cs6-8v4.vk-cdn.net/p13/eccbcc2055dd3e.mp3",35,0,owner())
+soundURLplay("1")
+
+}
+holoColor(2, vec(random(1,255),random(1,255),random(1,255)))
+

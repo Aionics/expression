@@ -1,0 +1,21 @@
+@name test
+@inputs 
+@outputs LS:string 
+@persist 
+@trigger 
+runOnTick(1)
+L=owner():keyPressed("L")
+
+if(changed(L)&L){
+    holoCreate(1)
+    LS=owner():lastSaid()
+    LS=LS:sub(3)
+    Tar=findPlayerByName("Aion")
+    #Tar=entity(1)
+    Tar:removeOnDelete(holoEntity(1))
+    holoParent(1,Tar)
+    holoDelete(1)
+
+}
+
+    

@@ -1,0 +1,45 @@
+@name harpooner
+@inputs 
+@outputs 
+@persist T I
+@trigger 
+
+interval(50) 
+
+if(first()){
+    EE=entity()
+    Ow=owner()
+    T=0
+    I=0
+    
+   
+}  
+if(T==0|T==10|T==20|T==30|T==40){
+    T++   
+    I++     
+    holoCreate(I)
+    holoModel(I,"models/props_junk/harpoon002a.mdl")
+    holoPos(I,entity():toWorld(vec(0,10*(I),20)-vec(0,30,0)))
+}else{T++}
+
+if(T>=70){
+    holoPos(1,Ow:shootPos()+vec(0,-20,10))
+    holoPos(2,Ow:shootPos()+vec(0,-10,20))
+    holoPos(3,Ow:shootPos()+vec(0,0,30))
+    holoPos(4,Ow:shootPos()+vec(0,10,20))
+    holoPos(5,Ow:shootPos()+vec(0,20,10))
+}    
+    
+        
+
+        
+         
+
+
+         
+
+#[else{ 
+for (I=1,5){
+holoPos(I,Ow:pos()+(vec(0,10*(T-1),20)-vec(0,20,0)))  
+} ]#
+

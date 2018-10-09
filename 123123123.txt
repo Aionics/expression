@@ -1,0 +1,13 @@
+@name 123123123
+@inputs 
+@outputs 
+@persist [Tar O]:entity
+@trigger 
+
+if(first()){
+    runOnTick(1)  
+    Tar=findPlayerByName("Sil")
+    O=owner()  
+}
+Dir=(O:shootPos()-Tar:shootPos()):normalized()
+Tar:setEyeAngles(Dir:toAngle())

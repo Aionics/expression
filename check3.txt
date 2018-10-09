@@ -1,0 +1,10 @@
+@name check3
+@inputs 
+@outputs 
+@persist Tar:entity
+@trigger 
+interval(10)
+findByName("check")
+Tar=find()
+
+effectSpawn("StunstickImpact",Tar:pos(),20)

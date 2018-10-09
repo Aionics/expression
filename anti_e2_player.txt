@@ -1,0 +1,122 @@
+@name anti_e2_player
+@inputs A
+@outputs   String:string Hud:wirelink Count LastDeleted:string
+@trigger 
+@persist Sacred:entity Tar:entity  Ar_s:array Ar:array Wait P:entity Pos:vector 
+interval(1000)
+
+if(first()|duped()){
+E=entity()
+Hud=entity():isWeldedTo():wirelink()
+Hud:egpText(1,"press L",vec2(30,250))
+Hud:egpColor(1,vec(255,255,80))
+Hud:egpAlpha(1,150)
+#E:propNotSolid(1)
+#Sacred=entitySpawn("env_entity_dissolver",owner():pos(),1)
+#Sacred:setKeyValue("Magnitude","0")
+#Sacred:setKeyValue("Name","Aionics")
+#Sacred:setKeyValue("TargetName","DoubleHeart")
+#Sacred:setKeyValue("dissolvetype","2")  
+#entity():removeOnDelete(Sacred)
+        findIncludeClass("gmod_wire_expression2")
+        
+    }
+L=owner():keyPressed("L")
+
+        String=""
+        findInSphere(holoEntity(1):pos(),9990099)
+        for(I=1,Ar_s:count()){Ar_s:pop()}
+        Ar=findToArray()
+
+        for(I=1,Ar:count()){
+            Ar_s[I,string]=Ar[I,entity]:getName()
+        if(
+(
+!Ar[I,entity]:owner():name():find("Aion")
+)&(        
+Ar[I,entity]:getName()=="O2's Walking Chip" |        
+Ar[I,entity]:getName()=="Chaqua Hovercraft Base" |
+Ar[I,entity]:getName()=="Object Orbiter" |
+Ar[I,entity]:getName()=="Rocket spawner Rocket launcher" |
+Ar[I,entity]:getName()=="teleport [HbFlasher]" |
+Ar[I,entity]:getName()=="Rocket spawner" |
+Ar[I,entity]:getName()=="[Filiand]" |
+#Ar[I,entity]:getName()=="generic" |
+Ar[I,entity]:getName()=="telepor 12.0" |    
+Ar[I,entity]:getName():find("telep") |     
+Ar[I,entity]:getName():find("Telep") |
+Ar[I,entity]:getName():find("lightsaber by") |
+Ar[I,entity]:getName():find("noclip") | 
+Ar[I,entity]:getName():find("SpaceBike") |
+Ar[I,entity]:getName():find("Filiand") |
+Ar[I,entity]:getName():find("mile") |
+Ar[I,entity]:getName():find("fly") |
+Ar[I,entity]:getName():find("BEAM") |
+Ar[I,entity]:getName():find("FailCake") |
+Ar[I,entity]:getName():find("Foll") |
+Ar[I,entity]:getName():find("Simple Cloak") |
+Ar[I,entity]:getName():find("NayIII") |
+Ar[I,entity]:getName():find("tronbike") |
+Ar[I,entity]:getName():find("HoverScooter") |
+Ar[I,entity]:getName():find("Invis") |
+Ar[I,entity]:owner():name():find("AN-94")|
+Ar[I,entity]:owner():name():find("01W")|
+Ar[I,entity]:owner():name():find("Hattin")|
+Ar[I,entity]:owner():name():find("Poser_Moser")|
+Ar[I,entity]:owner():name():find("_Killer")|
+Ar[I,entity]:owner():name():find(":::")|
+Ar[I,entity]:owner():name():find("BDA RUS")|
+Ar[I,entity]:owner():name():find("AloneWolf")|
+Ar[I,entity]:owner():name():find("Aion")|
+Ar[I,entity]:owner():name():find("Flob[1]") |
+Ar[I,entity]:owner():name():find("Cthul") |
+Ar[I,entity]:owner():name():find("Nailgun") |
+Ar[I,entity]:owner():name():find("☢™") |
+Ar[I,entity]:owner():name():find("Gansta") |       
+Ar[I,entity]:owner():name():find("DeeJ]") |
+Ar[I,entity]:owner():name():find("Dpll") |
+Ar[I,entity]:owner():name():find("Danilka ") |
+Ar[I,entity]:owner():name():find("Penta") |
+Ar[I,entity]:owner():name():find("Spy s creed") |
+Ar[I,entity]:owner():name():find("Shrim") |
+Ar[I,entity]:owner():name():find("IVANOSIK") 
+
+#Ar[I,entity]:owner()==entity(9)
+#Ar[I,entity]:owner()==findPlayerByName("most")
+#Ar[I,entity]:owner()==findPlayerByName("realn")
+)
+
+
+
+        ){    
+          
+        Count++
+          effectSpawn("StunstickImpact",Ar[I,entity]:pos(),1)
+        effectSpawn("ManhackSparks",Ar[I,entity]:pos(),1)   
+       Pos=Ar[I,entity]:pos()
+#        for(K=1,15){
+            P=propSpawn(Ar[I,entity]:model(),Pos,ang(random(-90,90),random(-90,90),random(-90,90)),0)
+            P:propNotSolid(1)
+            P:propGravity(0)
+            P:setMass(1)
+            P:setVel(Ar[I,entity]:up()*vec(20))
+            P:remove(random(1,5))
+#        }    
+ #       Ar:entity(I):setKeyValue("TargetName","Rectal")
+
+        LastDeleted=I:toString()+". "+Ar[I,entity]:owner():toString()+" ## "+Ar_s[I,string]
+        Ar_s[I,string]=Ar_s[I,string]+"  -deleted"
+#        Sacred:setFire("Dissolve","Rectal",0)
+        Ar:entity(I):remove()  
+        
+    }
+}
+        for(I=1,Ar_s:count())
+        {
+            
+            String=String+"
+            "+I:toString()+". "+Ar[I,entity]:owner():toString()+" ## "+Ar_s[I,string]
+        }
+        Hud:egpSetText(1,String)
+    
+

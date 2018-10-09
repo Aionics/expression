@@ -1,0 +1,51 @@
+@name Holo_TP_test
+@persist [EE Ow H]:entity Radius Smooth I360
+
+interval(50)
+
+if(first()){
+On=1   
+    runOnTick(1)
+    
+    E=entity()
+   
+    EE=owner()
+    Ow=owner()
+    Smooth=10
+    Radius=50
+    
+    
+    On=1 #pereves suda (za4em 2 raza (if first))
+    
+    H=holoCreate(1)
+    H:soundPlay(1,0,"npc/scanner/scanner_scan_loop1.wav")
+    H:setTrails(10,0,0.8,"trails/plasma",vec(255),255)
+    holoPos(1,Ow:toWorld(vec(0,0,25)))
+    holoModel(1,"models/holograms/icosphere3.mdl")
+    holoScale(1,vec(0.5))
+    holoMaterial(1,"models/cs_italy/light_orange")
+}
+At1=Ow:keyAttack1()
+At2=Ow:keyAttack2()
+if(!At2) {
+I360=(I360+0.5)%360
+EndPos=Ow:shootPos()+vec(sin(I360)*Radius,cos(I360)*Radius,cos(I360*10)*Radius/5)
+Elevation=H:pos()+(EndPos-H:pos())/Smooth
+holoPos(1,Elevation)
+
+
+    
+}
+else {
+
+
+       
+     
+        
+        H:setPos(Ow:aimPos()+vec(0,0,20))  
+        if(changed(At1)&At1){
+            Ow:setPos(H:pos())
+           
+        }
+    
+}

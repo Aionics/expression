@@ -1,0 +1,97 @@
+@name SWORDOTA
+#
+@inputs 
+#
+@outputs 
+#
+@persist [E O]:entity R
+@persist 
+@persist 
+@persist 
+@persist 
+@persist 
+#
+@model
+#
+
+interval(1)
+
+if(first())
+{
+    E = entity()
+    
+    O = owner()
+
+    ########### PRI SPAVNE E2 NE SHEVELITSA, A TO HOLKI KRIVO PRIPARENTATSA K RUKE I K SPINE
+    
+    function holoOnHand(Index:number,Num:number)
+    {
+        if(Num)
+        {
+            holoUnparent(Index) 
+            holoPos(Index,holoEntity(0):pos())
+            holoAng(Index,holoEntity(0):toWorld(ang(0,-60,0)))
+            holoParent(Index,holoEntity(0))
+        } 
+        else
+        {
+            holoUnparent(Index) 
+            holoPos(Index,holoEntity(13):toWorld(vec(-6,5.5,10)))
+            holoAng(Index,holoEntity(13):toWorld(ang(0,0,160)))
+            holoParent(Index,holoEntity(13))
+        }
+    }
+   
+    function weaponMat(Number:number)
+    {
+        if(Number)
+        {
+            O:weapon():setAlpha(0)
+            holoEntity(1):soundPlay(64,1.5,"npc/roller/blade_out.wav") soundPitch(64,randint(85,105)) soundVolume(64,0.5) 
+        }
+        else
+        {
+            O:weapon():setAlpha(255)
+        }
+    }
+
+    local Color1 = vec(150)  # Metal
+    local Color2 = vec(67)  # Accessory
+    local Color3 = vec(52,42,28)  # Other
+
+    local Mat1 = "models/debug/debugwhite"  # Metal 
+    local Mat2 = "phoenix_storms/iron_rails"  # Accessory 
+    local Mat3 = "phoenix_storms/iron_rails"  # Other 
+
+    ##### NE TROGAT ETO :D
+    holoCreate(0,O:attachmentPos("anim_attachment_RH"))
+    holoAng(0,O:attachmentAng("anim_attachment_RH"))
+    holoParentAttachment(0,O,"anim_attachment_RH")
+    holoAlpha(0,0)
+    holoCreate(13,(owner():attachmentPos("chest")))
+    holoAng(13,(O:attachmentAng("chest") ))
+    holoParentAttachment(13,O,"chest")
+    holoAlpha(13,0)
+    ##### NE TROGAT ETO :D
+
+
+    holoCreate(1,E:toWorld(vec(0,0,30)),vec(0.1,0.1,0.56),E:toWorld(ang(0,0,0)),Color3,"octagon")
+    holoParent(1,E) holoMaterial(1,Mat2) holoDisableShading(1,1)
+    
+    holoCreate(2,holoEntity(1):toWorld(vec(0,0,26)),vec(1,1,1),holoEntity(1):toWorld(ang(90,0,0)),Color1,"models/props_junk/sawblade001a.mdl")
+    holoParent(2,holoEntity(1)) holoMaterial(2,Mat1) holoDisableShading(2,1)
+
+
+
+
+}
+    R=(R-1)%360
+    holoEntity(2):setAng(holoEntity(2):angles()+ang(1,0,0))
+#[if(changed(O:weapon():type()))
+{
+    local Num = (O:weapon():type() == "weapon_crowbar")
+    weaponMat(Num) holoOnHand(1,Num)
+}
+
+
+

@@ -1,0 +1,33 @@
+@name AutoTurret
+@inputs 
+@outputs 
+@persist E:entity Pl:entity
+@trigger 
+
+#runOnTick(1)
+interval(100)
+
+#E:noCollideAll(1)
+#E:setPos(owner():pos()+vec(0,0,80))
+if(first()){
+    
+    findIncludeClass("player")
+    #findExcludePlayer("banan")
+    Pl=findPlayerByName("banan")
+    
+holoCreate(1)
+holoModel(1,"models/hunter/plates/plate1x1.mdl")
+holoPos(1,entity():pos()+vec(0,5,30))
+holoParent(1,entity())
+}
+#Pl = find()
+findInSphere(entity():toWorld(vec(0,0,0)),5000)
+
+holoAng(1,(Pl:pos()-entity():pos()):toAngle())
+
+holoEntity(1):shootTo(holoEntity(1):toWorld(vec(23,0,0)),(Pl:pos()-holoEntity(1):pos()+vec(0,0,20)),5,50,0,"HelicopterTracer")
+
+holoCreate(2)
+holoModel(2,"models/hunter/blocks/cube025x025x025.mdl")
+holoScale(2,vec(0.3))
+holoPos(2,holoEntity(1):toWorld(vec(23,-0,0)))

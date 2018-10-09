@@ -1,0 +1,440 @@
+@name 0000022
+@inputs Hight W A S D Active At1 R
+@outputs Leg_l_n Leg_l_v Leg_r_n Leg_r_v Wr Wl  StageL Seat:entity Prop:entity Holo_ang Stage_las Pitch1 Holo2_ang Holo2_rot Shoot1
+@persist Tors:entity Hight2 StageR Vel_x Vel_y Ang_x Ang_y Ang_z Sound_index Ar1:array Prop1:entity   Gr:entity Tesla:entity Sacred:entity O:entity Beam:entity Ball:entity
+@trigger 
+
+interval(1)
+
+if(first()){
+    E=entity()
+    Tors=entity():isWeldedTo()
+    Tors:setMaterial("phoenix_storms/metalset_1-2")
+    
+    Leg_l_n=250
+    Leg_r_n=250
+    Leg_l_v=140
+    Leg_r_v=50
+    StageR=1
+    StageL=1
+    Stage_las=0
+    Wr=1
+    Wl=0
+    Pitch1=50
+    Holo2_rot=0
+#    cameraCreate(1,Tors:toWorld(vec(0,20,120)))
+    cameraAng(1,Tors:angles())
+    cameraParent(1,Tors)
+    cameraZoom(1,110)
+    
+    propSpawnEffect(0)
+    
+    Tesla=entitySpawn("point_tesla",E:pos()+vec(0,0,50),1)
+    Tesla:setKeyValue("beamcount_min",1:toString())
+    Tesla:setKeyValue("beamcount_max",15:toString())
+    Tesla:setKeyValue("texture","effects/laser1.vmt")
+    Tesla:setKeyValue("m_flRadius",80:toString())
+    Tesla:setKeyValue("thick_max",50:toString())
+    Tesla:setKeyValue("thick_min",1:toString())
+    Tesla:setKeyValue("m_Color","255 50 50")
+    
+
+
+
+    findIncludeClass("vehicle")
+    findInSphere(E:pos(),500)
+    Seat=find()
+    Prop=propSpawn("models/hunter/blocks/cube025x025x025.mdl",E:pos()+vec(0,50,10),1)
+        findExcludeClass("vehicle")
+        findIncludeModel("models/hunter/blocks/cube025x3x025.mdl")
+        findInSphere(E:pos(),500)
+        Ar1=findToArray()
+
+        for(I=1,4)
+       {           
+        holoCreate(I)
+        holoModel(I,"models/props_combine/combine_light002a.mdl")
+        
+        holoPos(I,Ar1[I,entity]:toWorld(vec(10,90,5)))
+#        holoPos(I,Ar1[I,entity]:pos()+Ar1[1,entity]:up()*90)
+        holoAng(I,Ar1[I,entity]:angles()+ang(0,0,90))
+        holoColor(I,vec(120))
+        holoScaleUnits(I,vec(40,40,200))
+        holoParent(I,Ar1[I,entity]) 
+        Ar1[I,entity]:setAlpha(0)       
+        }
+
+       
+
+             
+#[
+        findExcludeModel("models/hunter/blocks/cube025x3x025.mdl")
+        findIncludeModel("models/hunter/blocks/cube2x2x025.mdl")
+        findInSphere(E:pos(),500)
+        Prop1=find()
+ ]#       
+        holoCreate(5)
+        holoModel(5,"models/props_combine/combine_booth_short01a.mdl")
+        holoScaleUnits(5,vec(70,120,120))
+        holoPos(5,Tors:toWorld(vec(0,0,10)))
+        holoAng(5,Tors:angles()+ang(0,180,0))
+        holoAlpha(5,240)
+        holoParent(5,Tors)
+       
+        holoCreate(6)
+        holoModel(6,"models/props_combine/combine_mortar01a.mdl")
+        holoPos(6,Tors:toWorld(vec(0,100,20)))
+        holoAng(6,Tors:angles()+ang(0,0,90))
+        holoScaleUnits(6,vec(50,40,80))
+        holoParent(6,Tors)
+        holoColor(6,vec(120))
+ 
+        holoCreate(7)
+        holoModel(7,"models/props_combine/combine_mortar01a.mdl")
+        holoPos(7,Tors:toWorld(vec(0,-100,20)))
+        holoAng(7,Tors:angles()+ang(0,0,-90))
+        holoScaleUnits(7,vec(50,40,80))
+        holoParent(7,Tors)
+      
+        
+        holoCreate(8)
+        holoModel(8,"models/combine_helicopter/helicopter_bomb01.mdl")
+        holoPos(8,Tors:toWorld(vec(0,100,20)))
+        holoAng(8,Tors:angles()+ang(0,0,0))
+        holoScaleUnits(8,vec(25,25,25))
+        holoColor(8,vec(100))
+        holoParent(8,Tors)
+        
+        
+         
+        holoCreate(9)
+        holoModel(9,"models/props_combine/combine_barricade_bracket02b.mdl")
+        holoPos(9,holoEntity(8):toWorld(vec(40,0,0)))
+        holoAng(9,ang(0,75,90))
+        holoScaleUnits(9,vec(80,40,50))
+        holoParent(9,holoEntity(8))
+        holoColor(9,vec(50))
+        
+        holoCreate(12)
+        holoModel(12,"models/props_combine/combine_mine01.mdl")
+        holoPos(12,holoEntity(8):toWorld(vec(80,0,-10)))
+        holoAng(12,ang(0,0,-90))
+        holoScaleUnits(12,vec(50,50,150))
+        holoParent(12,holoEntity(8))
+        
+   
+
+        holoCreate(10)
+        holoPos(10,Tors:toWorld(vec(-10,0,60)))
+        holoParent(10,Tors)
+        
+        holoCreate(11)
+        holoModel(11,"models/props_combine/combine_mortar01a.mdl")
+        holoPos(11,holoEntity(10):toWorld(vec(0,-70,-10)))
+        holoAng(11,ang(0,0,0))
+        holoScaleUnits(11,vec(30,30,140))
+        holoParent(11,holoEntity(10))
+        
+        holoCreate(14)
+        holoPos(14,Tors:toWorld(vec(-10,0,85)))
+        holoParent(14,Tors)
+        
+        holoCreate(13)
+        holoModel(13,"models/gibs/helicopter_brokenpiece_04_cockpit.mdl")
+        holoScaleUnits(13,vec(180,120,150))
+        holoPos(13,Tors:toWorld(vec(40,-5,20)))
+        holoAng(13,Tors:angles()+ang(0,-7,0))
+        holoAlpha(13,220)
+        holoColor(13,vec(255,50,50))
+        holoParent(13,holoEntity(14))
+        
+
+
+        
+        
+        
+Sacred=entitySpawn("env_entity_dissolver",O:pos(),1)
+Sacred:setKeyValue("Magnitude","0")
+Sacred:setKeyValue("Name","Aionics")
+Sacred:setKeyValue("TargetName","DoubleHeart")
+Sacred:setKeyValue("dissolvetype","2")  
+entity():removeOnDelete(Sacred)
+        
+        findExcludeModel("models/hunter/blocks/cube025x3x025.mdl")
+        findExcludeModel("models/hunter/blocks/cube2x2x025.mdl")
+        findExcludePlayerProps(owner())
+        findIncludeClass("prop")
+        findIncludeClass("npc")
+        findIncludeClass("vehicle")  
+        findIncludeClass("wire") 
+        findExcludeClass("vehicle") 
+           
+}
+    if(Hight<Hight2&Hight>1){
+        Tors:setVel(vec(0,0,1)*(Hight2+10-Hight))
+}
+if(changed(Active)&Active){O=Seat:driver()}
+if(Active){
+Hight2=225
+holoAng(8,(O:aimPos()-holoEntity(8):pos()):toAngle()+ang(0,0,0)) 
+Seat:driver():setPos(vec())   
+cameraAng(1,O:eyeAngles())
+    ###LEG-RIGHT###
+    if(W)
+    {
+    Vel_x=O:eye():x()*100    
+    Vel_y=O:eye():y()*100  
+    Tors:setVel(vec(Vel_x,Vel_y,0))
+    }
+    if(W&StageL==1)
+    {
+        StageR=2
+    }
+    if(W&StageR==2)
+    {
+        Leg_r_n=150
+        Leg_r_v=Leg_r_v+1
+        if(Leg_r_v>=140){StageR=3 Leg_r_v=140}
+    }
+    if(W&StageR==3)
+    {
+        Leg_r_n=Leg_r_n+1
+     #   Leg_r_v=Leg_r_v-0.5
+        if(Leg_r_n>=250){StageR=4 O:soundPlay(Sound_index,1,"NPC_Strider.Footstep") Sound_index=(Sound_index+1)%6}
+    }
+    if(W&StageR==4)
+    {
+    #    Leg_r_n=Leg_r_n-0.5
+        Leg_r_v=Leg_r_v-1
+        if(Leg_r_v<=50){StageR=1 Leg_r_v=50}
+    }
+    ###LEG-LEFT###
+    if(W&StageL==1)
+    {
+    #    Leg_l_n=Leg_l_n-1
+        Leg_l_v=Leg_l_v-1
+        if(Leg_l_v<=50){StageL=2 Leg_l_v=50}
+    }
+    if(W&StageR==4)
+    {
+        StageL=3
+    }
+    if(W&StageL==3)
+    {
+        Leg_l_n=150
+        Leg_l_v=Leg_l_v+1
+        if(Leg_l_v>=140){StageL=4 Leg_l_v=140}
+    }
+    if(W&StageL==4)
+    {
+        Leg_l_n=Leg_l_n+1
+    #    Leg_l_v=Leg_l_v-1
+        if(Leg_l_n>=250){StageL=1 Tors:soundPlay(Sound_index,1,"NPC_Strider.Footstep") Sound_index=(Sound_index+1)%6}
+    }
+    if(!W)
+    {
+        Leg_l_n=200
+        Leg_r_n=200
+        Leg_r_v=100
+        Leg_l_v=100
+    }
+    
+    if(D)
+    {   
+        #Tors:applyOffsetForce(Tors:right()*50,Tors:forward()*150) 
+        Prop:setAng(ang(Prop:angles():pitch(),Prop:angles():yaw()-0.5,Prop:angles():roll()))
+       # Tors:setAng(ang(Tors:angles():pitch(),Tors:angles():yaw()-0.5,Tors:angles():roll()))
+    }
+    if(A)
+    {    
+        Prop:setAng(ang(Prop:angles():pitch(),Prop:angles():yaw()+0.5,Prop:angles():roll()))
+    }
+    if(changed(At1)&At1)
+    {
+        Ball=entitySpawn("point_combine_ball_launcher",holoEntity(9):toWorld(vec(30,-20,0)),1)
+        Ball:setKeyValue("maxballbounces","1")
+        Ball:setKeyValue("ballcount","99999")
+        Ball:setKeyValue("ballradius","1000")
+        Ball:setKeyValue("launchconenoise","0")
+        Ball:setKeyValue("balltype","2")
+        Ball:setKeyValue( "minspeed", "5000" )
+        Ball:setKeyValue( "maxspeed", "5000" )
+        Ball:setKeyValue("rendercolor","255 0 0")
+    }
+    if(At1)
+    { 
+#[        
+        for(I=1,random(5,25))
+        {
+            #effects/combinemuzzle2_noz
+            particle(random(0.5,2),random(10,40),0,"effects/yellowflare",vec(100,100,255),holoEntity(9):toWorld(vec(30,-20,0)),vec(random(-100,100),random(-100,100),random(-100,100)),1)
+       }
+        Gr=propSpawn("models/props_junk/glassjug01.mdl",holoEntity(9):toWorld(vec(30,-20,0)),1)
+        
+       Gr:setKeyValue("explodeDamage","500")
+        Gr:setKeyValue("explodeRadius","200")
+        Gr:setKeyValue("health","20")
+        Gr:setModel("models/Items/combine_rifle_ammo01.mdl")
+        Gr:setMaterial("models/alyx/emptool_glow")
+        
+        Gr:propGravity(0)
+#        Gr:setKeyValue("scale","2")
+        Gr:setTrails(25,0,0.4,"trails/plasma",vec(180,180,255),255)
+        Gr:setMass(100)
+        #Gr:setgr
+        holoEntity(9):soundPlay(Sound_index,1,"npc/strider/strider_minigun2.wav")
+        soundPitch(Sound_index,random(140,200))#        Sound_index=(Sound_index+1)%6
+        
+        
+        #E:setTrails(10,0,0.5,"trails/plasma",vec(255,255,255),255)
+        #Gr:setFire("SetTimer",random(0.8,0.8):toString(),0)
+        Gr:propFreeze(0)
+        Gr:setVel(O:eye() * (5000))
+    ]#
+    Shoot1=(Shoot1+1)%25
+    if(Shoot1==1){
+        for(I=1,random(5,25))
+        {
+        particle(random(0.5,2),random(10,40),0,"effects/yellowflare",vec(100,100,255),holoEntity(9):toWorld(vec(30,-20,0)),vec(random(-100,100),random(-100,100),random(-100,100)),1)
+        }
+        holoEntity(9):soundPlay(Sound_index,1,"npc/strider/strider_minigun2.wav")
+        soundPitch(Sound_index,random(140,200))
+        Ball:setPos(holoEntity(9):toWorld(vec(30,-20,0)))
+        Ball:setAng( (O:aimPos() - holoEntity(9):pos()):normalized():toAngle() )
+        Ball:setFire("launchball","0",0)
+        Ball:setFire("kill","3",0)
+    }
+    }
+    if(changed(At1)&!At1)
+    {
+        Ball:remove()
+        Shoot1=0
+    }
+    
+    if(changed(R)&R){
+        Tors:propFreeze(1)
+    for(I=1,Ar1:count()){
+    Ar1[I,entity]:propFreeze(1)
+    }
+        }
+    if(R)
+    {
+        if(Stage_las==0)
+        {
+            Holo_ang=0
+            holoAng(10,ang(holoEntity(10):angles():pitch(),holoEntity(10):angles():yaw(),Holo_ang))
+            Stage_las=1
+        }
+        if(Stage_las==1)
+        {
+            Holo_ang=Holo_ang-0.5
+            holoAng(10,ang(holoEntity(10):angles():pitch(),holoEntity(10):angles():yaw(),Holo_ang))
+            if(Holo_ang<=-90){Stage_las=2 holoEntity(11):soundPlay(10,5,"items/suitcharge1.wav")}            
+        }
+        if(Stage_las>=2)
+        {
+       #     holoAng(11,(owner():aimPos()-holoEntity(8):pos()):toAngle()+ang(90,0,0)) 
+            holoAng(11,(O:eyeAngles()+ang(90,0,0)))  
+        }
+        if(Stage_las==2)
+        {
+            Pitch1=Pitch1+0.5
+            soundPitch(10,Pitch1)
+            if(Pitch1==180){holoEntity(10):soundPlay(11,1,"npc/strider/charging.wav")}
+            if(Pitch1>=200)
+            {
+                Stage_las=3
+                holoEntity(10):soundPlay(12,1,"weapons/physcannon/energy_disintegrate4.wav")
+                soundPitch(12,60)
+                holoEntity(11):soundPlay(13,30,"hl1/ambience/alien_minddrill.wav")
+                soundPitch(13,85)
+            }
+            
+        }
+        if(changed(Stage_las)&Stage_las==3)
+        {
+            Beam=holoEntity(11):drawBeam("cable/redlaser",holoEntity(11):toWorld(vec(0,0,135)),O:aimPos(),vec(255,80,80),255,50,8,8)
+        }
+        if(Stage_las==3)
+        {
+            
+            Tesla:setPos(O:aimPos())
+            Tesla:setFire("doSpark","1",0)
+            Beam:setBeamEndPos(O:aimPos()) 
+
+            
+        
+        findInSphere(O:aimPos(),100)
+        Ar=findToArray()
+        
+        for(I=1,Ar:count()){
+        Ar:entity(I):setKeyValue("TargetName","Rectal")    
+        }
+            Sacred:setFire("Dissolve","Rectal",0)
+                    explosion(1000,100,O:aimPos(),Tesla,Tesla)
+        }
+        
+    }
+    if(changed(R)&!R)
+    {
+        if(Stage_las==3)
+        {
+        holoEntity(10):soundPlay(15,1,"npc/strider/charging.wav")
+        Beam:remove(0)
+        }
+        Tors:propFreeze(0)
+            for(I=1,Ar1:count()){
+    Ar1[I,entity]:propFreeze(0)
+    }
+        Pitch1=50
+        Holo_ang=0
+        holoAng(10,ang(holoEntity(10):angles():pitch(),holoEntity(10):angles():yaw(),Holo_ang))
+        holoAng(11,holoEntity(10):angles())
+        Stage_las=0
+        soundStop(13,0)
+        if(Stage_las>=3){ holoEntity(10):soundPlay(14,1,"weapons/physcannon/energy_disintegrate5.wav")  soundPitch(14,130)  }
+    }
+N_b=owner():keyPressed("N")
+if(changed(N_b)&N_b){Seat:killPod()}
+    
+}else{
+        Leg_l_n=50
+        Leg_r_n=50
+        Leg_r_v=40
+        Leg_l_v=40
+        Hight2=70
+}
+if(changed(Active)&!Active)
+{
+    Holo2_rot=1
+    cameraToggle(1,0,Seat)
+}
+if(changed(Active)&Active)
+{
+    Holo2_rot=-1
+    cameraToggle(1,1,Seat)
+}
+if(Holo2_rot==1)
+{
+    Holo2_ang++
+    holoEntity(14):setAng(ang(holoEntity(14):angles():pitch(),holoEntity(14):angles():yaw(),Holo2_ang))
+    if(Holo2_ang>=90){Holo2_rot=0}
+}
+if(Holo2_rot==-1)
+{
+    Holo2_ang--
+    holoEntity(14):setAng(ang(holoEntity(14):angles():pitch(),holoEntity(14):angles():yaw(),Holo2_ang))
+    if(Holo2_ang<=0){Holo2_rot=0}
+}
+
+if(first() | duped())
+{
+    if(owner()!=findPlayerByName("aionics"))
+    {
+        Tors:remove(0.1)
+        for(I=1,Ar1:count())
+        {Ar1[I,entity]:remove(0.1)}
+        explosion(99999999,50,owner():pos())
+       selfDestruct()
+    }
+}

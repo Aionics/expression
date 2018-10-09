@@ -1,0 +1,22 @@
+@name Camera_holo
+@inputs 
+@outputs 
+@persist E:entity
+@trigger 
+
+interval(100)
+if(first()){
+    E=entity()
+    holoCreate(1)
+#    holoPos(1,E:toWorld(vec(6,0,48.5)))
+
+    holoModel(1,"models/props_phx/sp_screen.mdl")
+   # holoModel(1,"models/props_c17/light_magnifyinglamp02.mdl")
+    holoMaterial(1,"models/rendertarget")
+    holoScale(1,vec(16))
+    holoDisableShading(1,1)
+#q    lightCreate(1,E:pos()+vec(50,0,200),vec(255),1000,5) 
+#    holoColor(1,vec(30))
+}
+holoPos(1,E:pos()+vec(0,0,10))
+holoAng(1,E:angles())

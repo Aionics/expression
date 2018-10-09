@@ -1,0 +1,36 @@
+@name asdf
+@inputs 
+@outputs 
+@persist O:entity E:entity H2:entity H1:entity H3:entity
+@trigger 
+
+if(first()){
+    runOnTick(1)    
+    O=owner()
+    E=entity()
+    H1 = holoCreate(1)
+    H2 = holoCreate(2)
+    H3 = holoCreate(3)
+    holoScale(1,vec(0.1))
+    holoScale(2,vec(0.1))
+    holoScale(3,vec(0.1))
+    holoAlpha(1, 0)
+    holoAlpha(2, 0)
+    holoAlpha(3, 0)
+
+}
+T=O:keyPressed("T")
+if(T){
+    
+    holoPos(1,O:shootPos()+randvec(-40,40)+O:eye()*40)
+    holoPos(2,O:shootPos()+randvec(-40,40)+O:eye()*40)
+    holoPos(3,O:shootPos()+randvec(-40,40)+O:eye()*40)
+    local Pos1=holoEntity(1):pos()
+    local Pos2=holoEntity(2):pos()
+    local Pos3=holoEntity(3):pos()
+    
+    H1:shootTo(Pos1,O:eye(),0.09,30,10,"HelicopterTracer")
+    H2:shootTo(Pos2,O:eye(),0.09,30,10,"HelicopterTracer")
+    H3:shootTo(Pos3,O:eye(),0.09,30,10,"HelicopterTracer")
+
+}

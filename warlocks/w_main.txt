@@ -1,0 +1,197 @@
+@persist [OW]:entity
+@persist [GameState GameObjects]:table
+@persist WhileCounter TickCounter
+
+if( first() ) {
+    
+    #include "warlocks/w_coreFunctions"
+    #include "warlocks/w_skillsFunctions"
+    runOnTick(1)
+    runOnChat(1)
+    OW = owner()
+    
+    GameState = table(
+        "state" = "init",
+        "round" = 0,
+        "round_time" = 0,
+        "center" = vec(0),
+        "ground_size" = 1420,
+        "ground_holo" = noentity(),
+        "ground_holo_scale" = 30,        
+        "players" = table(),
+        "global_counters" = table("holoindex" = 0),
+        "global_constants" = table(
+            "preparing_duration" = 30,
+            "ground_holo_scale" = 30,
+            "ground_size" = 1420,
+            "ground_size_scaler" = 95
+        )
+    )
+    GameObjects = table(
+        "floor" = table(
+            "x_left" = 0,
+            "y_left" = 0,
+            "entitys" = array(),
+            "ground" = noentity()
+        )
+    )
+    
+    WhileCounter = 1
+    TickCounter = 0
+    
+    entity():setPos(entity():pos() + vec(0,0,50))
+}
+TickCounter++
+if(clk("updateHUD")){
+    do_updateHUD(GameState)
+    timer("updateHUD", 500)
+}
+if(clk("updateLocalState")){
+    do_updateLocalState(GameState)
+    timer("updateLocalState", 100)
+}
+if(clk("updateGlobalState")){
+    do_updateGlobalState(GameState)
+    timer("updateGlobalState", 500)
+}
+if(clk("startRound")) {
+    #GameState["state", string] = "preparing"
+}
+if(clk("spawnFloorItem")){
+    local Center = GameState["center", vector]
+    local Prop = noentity()
+    if (GameObjects["floor", table]["x_left", number] >= 0) {
+        while(GameObjects["floor", table]["y_left", number] >= 0) {
+            local Xleft = GameObjects["floor", table]["x_left", number]
+            local Yleft = GameObjects["floor", table]["y_left", number]
+            Prop = propSpawn("models/hunter/blocks/cube8x8x025.mdl", Center + vec(Xleft*380,Yleft*380,0) - vec(15*380,15*380,0) / 2, ang(0), 1)
+            GameObjects["floor", table]["entitys", array]:pushEntity(Prop)
+            timer("spawnFloorItem", 200)
+            GameObjects["floor", table]["y_left", number] = GameObjects["floor", table]["y_left", number] - 1
+        }
+        GameObjects["floor", table]["y_left", number] = 15
+        GameObjects["floor", table]["x_left", number] = GameObjects["floor", table]["x_left", number] - 1
+    }
+    
+}
+
+if (chatClk()) {
+    local Ls = lastSaid()        
+    local PlayerLastSaid = lastSpoke()
+    if (GameState["state", string] == "init") {
+        if (Ls == "!j") {           
+            do_joinPlayer(GameState, PlayerLastSaid)
+            do_purchaseSkill(GameState, PlayerLastSaid, "fireball")
+        }
+        if (Ls == "!s" && PlayerLastSaid == OW) {
+            for (I=1, GameState["players", table]:count()) {
+                local PlayerE = GameState["players", table][I, table]["entity", entity]
+                runOnKeys(PlayerE, 1)
+            }
+            
+            do_initGame(GameObjects, GameState, PlayerLastSaid)
+            do_initPreparing(GameState)
+            timer("updateHUD", 500)
+            timer("updateLocalState", 1)
+            timer("updateGlobalState", 3000)
+            timer("startRound", 30000)
+            
+        }
+    } elseif (GameState["state", string] == "preparing") {
+        local Command = Ls:explode(" ")
+        if (Command[1, string] == "!buy") {           
+            do_purchaseSkill(GameState, PlayerLastSaid, Command[2, string])
+        }
+    }
+    
+}
+
+if( keyClk() ){ 
+    local TargetPlayer = keyClk()
+    local KeyPressed = keyClkPressed()
+    local Players = GameState["players", table]
+    for (I=1, Players:count()) {
+        local Player = Players[I,table]
+        local Skills = Player["skills", table]
+        for (J=1, Skills:count()) {
+
+            local Skill = Skills[J,table]
+            local PlayerE = Player["entity", entity]
+            if (TargetPlayer == PlayerE && KeyPressed == Skill["hotkey", string]) {
+                do_castSpell(Player, Skill)
+                break
+            }
+        }
+    }
+    exit()
+}
+if (GameState["state", string] == "init") {
+    local Players = GameState["players", table]
+    if (GameState["state", string] == "init") {
+        for (I=1, Players:count()) {
+            local Player = Players[I, table]
+            E = Player["entity", entity]:keyPressed("E")
+            if (changed(E)&&E) {
+                local AimEntity = Player["entity", entity]:aimEntity()
+                print(AimEntity:model())
+                if (AimEntity:model() == "models/props_lab/monitor02.mdl" || AimEntity:model() == "models/bull/dynamicbutton.mdl" && !Player["hud_entity", entity]) {
+                    Player["hud_entity", entity] = AimEntity
+                    Player["hud_entity", entity]:setPos(entity():pos() + vec(0,0,-200))
+                    #Player["hud", wirelink] = AimEntity:wirelink()                  
+                }
+            }
+        }
+    }
+}
+
+for (I=1, GameState["players", table]:count()) {
+    local Projectiles = GameState["players", table][I, table]["projectiles", table]
+    if(Projectiles:count()){
+        if (WhileCounter > Projectiles:count()) {WhileCounter=1}
+        while (perf() && WhileCounter <= Projectiles:count()) {
+            local J = WhileCounter
+            local Projectile = Projectiles[J, table]
+            if (Projectile["type", string] == "direct") {
+                rangerFilter(Projectile["owner", table]["entity", entity])
+                Ranger = rangerOffsetHull(Projectile["skill", table]["speed", number], Projectile["anchor",entity]:pos(), Projectile["direction", vector], vec(Projectile["skill", table]["size", number]))
+            } elseif (Projectile["type", string] == "target") {
+                rangerFilter(Projectile["ignore", entity])
+                local Direction = (Projectile["target_e", entity]:pos() + vec(0,0,50) - Projectile["anchor", entity]:pos()):normalized()
+                Ranger = rangerOffsetHull(Projectile["skill", table]["speed", number], Projectile["anchor",entity]:pos(), Direction, vec(Projectile["skill", table]["size", number]))
+            }
+            Projectile["anchor",entity]:setPos(Ranger:pos())
+            if (TickCounter%1==0&&Projectile["particles", table]:count() > 0) {
+                do_emiteParticle(Projectile["particles", table])
+            }
+            if(Ranger:hit()){
+                do_projectileImpact(Projectile, Ranger)
+                Projectiles:remove(J)
+            }
+            WhileCounter++
+        }
+    }
+}
+
+local B = OW:keyPressed("B")
+local K = OW:keyPressed("K")
+local N = OW:keyPressed("N")
+local M = OW:keyPressed("M")
+if (changed(B)&&B) {
+    local OutputFile = spawnExpression2(OW:shootPos() + OW:eye() * 30, OW:eye():toAngle() + ang(90,0,0), "models/props_junk/garbage_newspaper001a.mdl")
+    #OutputFile:remoteSetCode("#[
+    #" + jsonEncode(GameState, 1))
+}
+if (changed(K)&&K) {
+    local Floor = GameObjects["floor", table]["entitys", array]
+    for(I=1, Floor:count()){
+        Floor[I, entity]:remove()
+    }    
+}
+if (changed(N)&&N) {
+    do_initPreparing(GameState)  
+}
+if (changed(M)&&M) {
+    do_initRound(GameState)  
+}
+
+

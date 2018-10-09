@@ -1,0 +1,36 @@
+
+
+@name forcefield
+@inputs ON
+@outputs T
+@persist T [E Ow]:entity P:entity
+@model models/hunter/blocks/cube2x2x2.mdl
+
+
+
+if(first()){
+    runOnTick(1)
+    E=entity()
+    Ow=owner()
+    E:setAlpha(0)
+    E:setMass(9000000)
+   
+}
+E:setPos(Ow:pos()+vec(0,0,30))
+#noCollideAll(Ow,1)
+T=Ow:keyPressed("T")
+
+if(T){E:propNotSolid(1)}else{E:propNotSolid(0)}
+
+
+if(E:getDamage()){particle(1,5,100,"particle/warp1_warp",vec(255),Ow:pos()+vec(0,0,50),vec(0)) 
+  #  L=lightCreate(1,Ow:pos(),vec(255),300,2):remove(0.5)
+}
+
+
+    #if(owner():health()<220&owner():health()>0) {
+    #Ow:setKeyValue("health",220)}
+
+
+  #    if(owner():health()<2299999999&owner():health()>0) {
+ #   Ow:setKeyValue("health",2209999999)}

@@ -1,0 +1,32 @@
+@name testBoxes
+@persist Box:entity Arr:array ArrPos:array
+
+interval(300)
+
+if(first()){
+    Box=propSpawn("models/props_junk/wood_crate001a_damaged.mdl",entity():pos() +vec(0,0,0), 0)
+    Arr:pushEntity(Box)
+    ArrPos:pushVector(Box:pos()) 
+    entity():setPos(entity():pos() - vec(0,0,30))
+}
+for(I=1, Arr:count()){
+    if(Arr[I, entity]){
+        ArrPos[I, vector] = Arr[I, entity]:pos()
+    }    
+}
+        
+for(I=1, Arr:count()){
+    if(!Arr[I, entity]){
+        Arr:remove(I)
+        
+        Box=propSpawn("models/props_junk/wood_crate001a_damaged.mdl",ArrPos[I, vector], 0)
+        Arr:pushEntity(Box)
+
+        Box=propSpawn("models/props_junk/wood_crate001a_damaged.mdl",ArrPos[I, vector], 0)
+        Arr:pushEntity(Box)
+
+        
+        
+        ArrPos:remove(I)
+    }    
+}

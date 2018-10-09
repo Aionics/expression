@@ -1,0 +1,21 @@
+@name findex_aim
+@inputs 
+@outputs 
+@persist Ar:array
+@trigger 
+
+interval(10)
+
+if(first()){
+findIncludeClass("player")
+findInSphere(owner():pos(),50000)
+Ar=findToArray()
+
+
+}
+for(I=1,Ar:count()){
+    if(Ar[I,entity]:aimEntity()==owner())
+    {
+         owner():drawBeam("cable/redlaser",owner():shootPos(),Ar[I,entity]:pos(),vec(255,80,80),255,30,8,4):remove(0.5)
+    }
+}

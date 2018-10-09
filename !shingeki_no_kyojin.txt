@@ -1,0 +1,146 @@
+@name !shingeki_no_kyojin
+@persist Ow:entity
+@persist Hooks:table Drawing:table
+@persist IsDrawing
+
+if (first()) {
+    runOnTick(1)
+    Ow = findPlayerByName("Aionics")
+    
+    IsDrawing = 0
+
+    function table hook() {
+        return table(
+            "state" = "inactive",
+            "entity" = noentity(),
+            "length" = 0
+        )
+    }
+
+    Hooks = table(
+        "left" = hook(),
+        "right" = hook()
+    )
+    
+    if (IsDrawing) {
+        local Colors = array()
+        Colors:pushVector(vec(100,100,255))
+        Colors:pushVector(vec(255,100,100))
+        Colors:pushVector(vec(100,255,100))
+        for (I=1, 3) {
+            J = I + 510
+            holoCreate(J)
+            holoScale(J, vec(0.2))
+            holoAlpha(J, 50)
+            local Beam = holoEntity(J):drawBeam("trails/laser",holoEntity(J):pos(),Ow:pos(),Colors[I, vector],255,3,1,1)
+            Beam:setBeamEndEnt(Ow)
+        }
+        Drawing = table(
+            "o_vel" = holoEntity(511),
+            "rope_f" = holoEntity(512),
+            "dir" = holoEntity(513)
+        )
+    }
+    
+    #FUNCTIONS################################
+    
+    function void do_shoot(KeyTag:string) {
+        local Prop = propSpawn("models/hunter/blocks/cube025x025x025.mdl", Ow:shootPos() + Ow:eye() * 50, 0)
+        Prop:setAlpha(0)
+        Prop:setMass(100)
+        Prop:setVel(Ow:eye() * 3000)
+        Prop:noCollideAll(1)
+        Prop:propNotSolid(1)
+        
+        local HoloIndex = KeyTag == "left" ? 500 : 501
+        holoCreate(HoloIndex)
+        holoModel(HoloIndex, "models/props_combine/combine_mine01.mdl")
+        holoScale(HoloIndex, vec(0.17,0.17,0.6))
+        holoPos(HoloIndex, Prop:pos())
+        holoParent(HoloIndex, Prop)
+        holoPos(HoloIndex, Prop:pos())
+        holoAng(HoloIndex, Ow:eyeAngles() + ang(90,0,0))
+        
+        local Beam = Prop:drawBeam("cable/cable2",Prop:pos(),Ow:pos(),vec(50),255,2,1,1)
+        Beam:setBeamEndEnt(Ow)
+        
+        Hooks[KeyTag, table]["state", string] = "flying"
+        Hooks[KeyTag, table]["entity", entity] = Prop
+    }
+    
+    function void do_removeHook(KeyTag:string) {
+        Hooks[KeyTag, table]["state", string] = "inactive"
+        Hooks[KeyTag, table]["length", number] = 0
+        Hooks[KeyTag, table]["entity", entity]:remove()
+    }
+}
+local LeftKey = Ow:keySprint()
+local RightKey = Ow:keyReload()
+local SpaceKey = Ow:keyJump()
+
+if (changed(LeftKey) & LeftKey) {
+    do_shoot("left")
+}
+if (changed(RightKey) & RightKey) {
+    do_shoot("right")
+}
+if (changed(LeftKey) & !LeftKey) {
+    do_removeHook("left")
+}
+if (changed(RightKey) & !RightKey) {
+    do_removeHook("right")
+}
+
+local RopeForces = array()
+foreach (KeyTag, Hook:table=Hooks) {
+    local HookProp = Hook["entity", entity]
+    if (Hook["state", string] == "flying") {
+        rangerFilter(HookProp)
+        rangerFilter(Ow)
+        local Ranger = rangerOffsetHull(50, HookProp:pos(), HookProp:vel():normalized(), vec(5))
+        
+        if (Ranger:hit()) {
+            if (Ranger:entity()) {
+                HookProp:parentTo(Ranger:entity())
+            }
+            HookProp:setPos(Ranger:pos())
+            HookProp:propFreeze(1)
+
+            Hook["state", string] = "stucked"
+            Hook["length", number] = HookProp:pos():distance(Ow:pos())
+        }
+    }
+    
+    if (Hook["state", string] == "stucked") {
+        local PlayerVel = Ow:vel()
+        local CurrentDistance = Ow:pos():distance(HookProp:pos())
+        
+        local RopeForce = vec(0)
+        if (PlayerVel != vec(0) & CurrentDistance > Hook["length", number] - 20) {
+            local RopeDirection = (HookProp:pos() - Ow:pos()):normalized()
+            local OffsetCoefficient = (CurrentDistance - Hook["length", number]) / 2
+            local CosBetweenRopeDirAndVel = (PlayerVel:x() * RopeDirection:x() + PlayerVel:y() * RopeDirection:y() + PlayerVel:z() * RopeDirection:z()) / 
+                ( (RopeDirection:x() ^ 2 + RopeDirection:y() ^ 2 + RopeDirection:z() ^ 2) ^ 0.5 * (PlayerVel:x() ^ 2 + PlayerVel:y() ^ 2 + PlayerVel:z() ^ 2) ^ 0.5 )
+            RopeForce = RopeDirection * PlayerVel:length() * min(CosBetweenRopeDirAndVel, 0) * -1 + OffsetCoefficient * RopeDirection
+        }        
+        
+        RopeForces:pushVector(RopeForce)
+        
+        if (IsDrawing & KeyTag == "left") {
+            Drawing["o_vel", entity]:setPos(Ow:pos() + PlayerVel)
+            Drawing["rope_f", entity]:setPos(Ow:pos() + RopeForce)
+            Drawing["dir", entity]:setPos(Ow:pos() + PlayerVel + RopeForce)
+        }
+    }
+}
+
+local ForcesAmount = RopeForces:count()
+if (ForcesAmount) {
+    local SumForce = vec(0)
+    foreach (I, RopeForce:vector=RopeForces) {
+        SumForce+=RopeForce
+    }
+    SumForce/=ForcesAmount
+    
+    Ow:setVel(SumForce)
+}

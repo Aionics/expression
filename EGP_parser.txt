@@ -1,0 +1,8 @@
+@name EGP_parser
+@inputs 
+@outputs 
+@persist EGP:wirelink
+@trigger 
+
+interval(10)
+EGP = entity():isWeldedTo():wirelink()

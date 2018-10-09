@@ -1,0 +1,7 @@
+@name afk
+@inputs 
+@outputs 
+@persist Seat:entity
+@trigger 
+
+interval(20)

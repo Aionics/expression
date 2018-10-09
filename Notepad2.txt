@@ -1,0 +1,18 @@
+@name Notepad
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+Prop:setVel((E:forward() * 999999 ))
+explosion(5,500,H+vec(0,0,50))
+
+
+ if(owner():health()<170&owner():health()>0) {
+    O:setKeyValue("health",170)}
+ if(owner():armor()<100){
+     O:setKeyValue("armor",100)
+       
+Sm1Le
+    entitySpawn("prop_combine_ball",entity():pos()+vec(0,0,40),0)
+https://clck.ru/9SHCj

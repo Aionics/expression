@@ -1,0 +1,382 @@
+#include "warlocks/w_skillsInfo"
+#include "warlocks/w_skillsFunctions"
+
+function void do_drawPreparing(PlayersHUD:wirelink, PlayersSkills:table, Globals:table) {
+    local YOffset1 = 40
+    local YOffset2 = 500
+    local Margin = 20
+    local XOffset = 220
+    local TabSize = 20
+    
+    local SkillsCount = Skills:count()
+    
+    PlayersHUD:egpText(1000,"Avalible skills:",vec2(10, YOffset1-20))
+    PlayersHUD:egpSize(1000, 30)
+    PlayersHUD:egpColor(1000, vec(255,255,0))
+    
+    PlayersHUD:egpText(999,"next round in: " + round(Globals["timer", number]) + " sec",vec2(500, 0))
+    PlayersHUD:egpSize(999, 50)
+    PlayersHUD:egpColor(999, vec(255,255,0))
+    
+    PlayersHUD:egpText(1001,"Your skills:",vec2(10,YOffset2))
+    for (I=1, SkillsCount) {
+        local BasicSkill = Skills[I, table]
+        local Level = 1
+        for (J=1, PlayersSkills:count()) {
+            local PlayersSkill = PlayersSkills[J, table]
+            if (BasicSkill["name", string] == PlayersSkill["name", string]) {
+                Level = PlayersSkill["level", number] + 1
+                break
+            }
+        }
+
+
+        
+        local BoxSize = vec2(XOffset*0.8 + Margin, Margin * 9)
+        local BoxPos = vec2(10 + (I-1) * XOffset - Margin/2,YOffset1 + Margin/2) + BoxSize/2
+        PlayersHUD:egpBox(I + SkillsCount * 8, BoxPos, BoxSize)
+        PlayersHUD:egpColor(I + SkillsCount * 8, vec4(0,0,0,200))
+        
+        PlayersHUD:egpText(I,BasicSkill["name", string] + " lvl" + Level,vec2(10 + (I-1) * XOffset,YOffset1 + Margin))
+        PlayersHUD:egpColor(I, vec(200,180,255))
+        PlayersHUD:egpText(I + SkillsCount * 1,"hotkey: " + BasicSkill["hotkey", string],vec2(10 + (I-1) * XOffset + TabSize,YOffset1 + Margin * 2))
+        PlayersHUD:egpText(I + SkillsCount * 2,"type: " + BasicSkill["type", string],vec2(10 + (I-1) * XOffset + TabSize,YOffset1 + Margin * 3))
+        PlayersHUD:egpText(I + SkillsCount * 3,"damage: " + (BasicSkill["damage", number] + Level * 10),vec2(10 + (I-1) * XOffset + TabSize,YOffset1 + Margin * 4))
+        PlayersHUD:egpText(I + SkillsCount * 4,"aoe: " + (BasicSkill["aoe", number] + Level * 10),vec2(10 + (I-1) * XOffset + TabSize,YOffset1 + Margin * 5))
+        PlayersHUD:egpText(I + SkillsCount * 5,"knockback: " + (BasicSkill["knockback", number] + Level * 10),vec2(10 + (I-1) * XOffset + TabSize,YOffset1 + Margin * 6))
+        PlayersHUD:egpText(I + SkillsCount * 6,"cooldown: " + (BasicSkill["cd", number]),vec2(10 + (I-1) * XOffset + TabSize,YOffset1 + Margin * 7))
+        PlayersHUD:egpText(I + SkillsCount * 7,"price: " + (BasicSkill["price", number] + Level * 10),vec2(10 + (I-1) * XOffset + TabSize,YOffset1 + Margin * 8))
+    }
+    local K = 0
+    
+    local PurchasedSkillsCount = PlayersSkills:count()
+    for (I=1, PurchasedSkillsCount) {
+        local I_id = I + 200
+        local BasicSkill = PlayersSkills[I, table]
+        local Level = BasicSkill["level", number]
+        #local BoxSize = vec2(XOffset*0.8 + Margin, Margin * 9)
+        #local BoxPos = vec2(10 + (I-1) * XOffset - Margin/2,YOffset2 + Margin/2) + BoxSize/2
+        #PlayersHUD:egpBox(I_id + Skills:count() * 8, BoxPos, BoxSize)
+        #PlayersHUD:egpColor(I_id + Skills:count() * 8, vec4(0,0,0,200))
+        
+        
+        PlayersHUD:egpText(I_id, BasicSkill["name", string] + " lvl" + Level, vec2(10 + (I-1) * XOffset,YOffset2 + Margin))
+        #PlayersHUD:egpColor(I_id, vec(200,180,255))
+        PlayersHUD:egpText(I_id + PurchasedSkillsCount * 1,"hotkey: " + BasicSkill["hotkey", string],vec2(10 + (I-1) * XOffset + TabSize,YOffset2 + Margin * 2))
+        PlayersHUD:egpText(I_id + PurchasedSkillsCount * 2,"type: " + BasicSkill["type", string],vec2(10 + (I-1) * XOffset + TabSize,YOffset2 + Margin * 3))
+        PlayersHUD:egpText(I_id + PurchasedSkillsCount * 3,"damage: " + (BasicSkill["damage", number] + Level * 10),vec2(10 + (I-1) * XOffset + TabSize,YOffset2 + Margin * 4))
+        PlayersHUD:egpText(I_id + PurchasedSkillsCount * 4,"aoe: " + (BasicSkill["aoe", number] + Level * 10),vec2(10 + (I-1) * XOffset + TabSize,YOffset2 + Margin * 5))
+        PlayersHUD:egpText(I_id + PurchasedSkillsCount * 5,"knockback: " + (BasicSkill["knockback", number] + Level * 10),vec2(10 + (I-1) * XOffset + TabSize,YOffset2 + Margin * 6))
+        PlayersHUD:egpText(I_id + PurchasedSkillsCount * 6,"cooldown: " + (BasicSkill["cd", number]),vec2(10 + (I-1) * XOffset + TabSize,YOffset2 + Margin * 7))
+    }
+    
+    
+    #[for (I=1, SkillsCount) {
+        local BasicSkill = Skills[I, table]
+        local IsSkillPurchased = 0
+        local Level = 1
+        for (J=1, PlayersSkills:count()) {
+            local PlayersSkill = PlayersSkills[J, table]
+            if (BasicSkill["name", string] == PlayersSkill["name", string]) {
+                IsSkillPurchased = 1
+                Level = PlayersSkill["level", number]
+                K++
+                break
+            }
+        }
+        if (IsSkillPurchased) {
+            local K_id = K + 200
+            
+            #local BoxSize = vec2(XOffset*0.8 + Margin, Margin * 9)
+            #local BoxPos = vec2(10 + (K-1) * XOffset - Margin/2,YOffset2 + Margin/2) + BoxSize/2
+            #PlayersHUD:egpBox(K_id + Skills:count() * 8, BoxPos, BoxSize)
+            #PlayersHUD:egpColor(K_id + Skills:count() * 8, vec4(0,0,0,200))
+            
+            
+            PlayersHUD:egpText(K_id, BasicSkill["name", string] + " lvl" + Level, vec2(10 + (K-1) * XOffset,YOffset2 + Margin))
+            #PlayersHUD:egpColor(K_id, vec(200,180,255))
+            PlayersHUD:egpText(K_id + Skills:count() * 1,"hotkey: " + BasicSkill["hotkey", string],vec2(10 + (K-1) * XOffset + TabSize,YOffset2 + Margin * 2))
+            PlayersHUD:egpText(K_id + Skills:count() * 2,"type: " + BasicSkill["type", string],vec2(10 + (K-1) * XOffset + TabSize,YOffset2 + Margin * 3))
+            PlayersHUD:egpText(K_id + Skills:count() * 3,"damage: " + (BasicSkill["damage", number] + Level * 10),vec2(10 + (K-1) * XOffset + TabSize,YOffset2 + Margin * 4))
+            PlayersHUD:egpText(K_id + Skills:count() * 4,"aoe: " + (BasicSkill["aoe", number] + Level * 10),vec2(10 + (K-1) * XOffset + TabSize,YOffset2 + Margin * 5))
+            PlayersHUD:egpText(K_id + Skills:count() * 5,"knockback: " + (BasicSkill["knockback", number] + Level * 10),vec2(10 + (K-1) * XOffset + TabSize,YOffset2 + Margin * 6))
+            PlayersHUD:egpText(K_id + Skills:count() * 6,"cooldown: " + (BasicSkill["cd", number]),vec2(10 + (K-1) * XOffset + TabSize,YOffset2 + Margin * 7))
+            
+        }
+    }]#
+}
+
+function void do_drawRound(PlayersHUD:wirelink, PlayersSkills:table) {
+    local YOffset1 = 30
+    local YOffset2 = 800
+    local Margin = 20
+    PlayersHUD:egpText(1001,"Your skills:",vec2(10,YOffset2))
+    
+    for (I=1, PlayersSkills:count()) {
+        local Skill = PlayersSkills[I, table]        
+        local Level = Skill["level", number]
+        local K_id = I
+        PlayersHUD:egpText(K_id, Skill["name", string] + " (" + Level + ")",vec2(10 + (I-1) * 150,YOffset2 + Margin))
+        PlayersHUD:egpText(K_id + PlayersSkills:count() * 1,"hotkey: " + Skill["hotkey", string],vec2(10 + (I-1) * 150 + 20,YOffset2 + Margin * 2))
+        if (Skill["cd_timer", number] > 0) {
+            PlayersHUD:egpText(K_id + PlayersSkills:count() * 2,"cooldown: " + (Skill["cd_timer", number]),vec2(10 + (I-1) * 150 + 20,YOffset2 + Margin * 3))
+        } else {
+            PlayersHUD:egpRemove(K_id + PlayersSkills:count() * 2)
+        }      
+            
+    }
+}
+
+function void do_updateHUD(GameState:table) {
+    local Players = GameState["players", table]
+    for (I=1, Players:count()) {
+        local PlayersHUD = Players[I, table]["hud", wirelink]
+        local PlayersSkills = Players[I, table]["skills", table]
+        PlayersHUD:egpClear()
+        if (GameState["state", string] == "preparing"){
+            do_drawPreparing(PlayersHUD, PlayersSkills, table("timer" = GameState["round_time", number]))
+        } elseif (GameState["state", string] == "round") {
+            do_drawRound(PlayersHUD, PlayersSkills)
+        }
+    }    
+}
+
+function void do_initPreparing(GameState:table) {
+    GameState["state", string] = "preparing"
+    GameState["round_time", number] = GameState["global_constants", table]["preparing_duration", number]
+    GameState["ground_holo_scale", number] = GameState["global_constants", table]["ground_holo_scale", number]
+    GameState["ground_size", number] = GameState["global_constants", table]["ground_size", number]
+    holoScale(holoIndex(GameState["ground_holo", entity]), vec(GameState["ground_holo_scale", number], GameState["ground_holo_scale", number], 1))
+    do_updateHUD(GameState)
+}
+function void do_initRound(GameState:table) {
+    GameState["state", string] = "round"
+    GameState["round_time", number] = 0
+    do_updateHUD(GameState)
+}
+
+
+function void do_joinPlayer(GameState:table, PlayerToJoin:entity) {
+    local IsPlayerToJoinInPlayers = 0
+    local Players = GameState["players", table]
+    for (I=1, Players:count()) {
+        if (Players[I, table]["entity", entity] == PlayerToJoin) {
+            print(PlayerToJoin, "  already in players")
+            IsPlayerToJoinInPlayers = 1
+            break
+        }
+    }
+    if (!IsPlayerToJoinInPlayers) {
+        if (PlayerToJoin!=owner()) {
+            local HudEntity = entitySpawn("gmod_wire_egp_hud",entity():pos(),1)
+            HudEntity:setModel("models/props_lab/monitor02.mdl")
+            HudEntity:setAlpha(0)
+            
+            local Holo = holoCreate(GameState["global_counters", table]["holoindex", number])
+            GameState["global_counters", table]["holoindex", number] = GameState["global_counters", table]["holoindex", number] + 1
+            holoParent(holoIndex(Holo), HudEntity)
+            Holo:setPos(HudEntity:pos())
+            Holo:setModel("models/props_lab/monitor02.mdl")
+            Holo:setAlpha(220)
+            #holoRenderFX(holoIndex(Holo),24)
+            Holo:setColor(vec(180,255,255))
+            holoDisableShading(holoIndex(Holo), 1)
+            
+            local Holo2 = holoCreate(GameState["global_counters", table]["holoindex", number])
+            GameState["global_counters", table]["holoindex", number] = GameState["global_counters", table]["holoindex", number] + 1
+            holoParent(holoIndex(Holo2), HudEntity)
+            Holo2:setPos(HudEntity:pos() + vec(0,0,50))
+            Holo2:setAng(ang(180,90,0))
+            Holo2:setModel("models/sprops/misc/alphanum/alphanum_arrow_a.mdl")
+            Holo2:setAlpha(200)
+            holoScale(holoIndex(Holo2), vec(2))
+            Holo2:setMaterial("models/debug/debugwhite")
+            holoRenderFX(holoIndex(Holo2),24)
+            Holo2:setColor(vec(180,255,255))
+            holoDisableShading(holoIndex(Holo2), 1)        
+            
+            HudEntity:setAng((PlayerToJoin:eye() * -1):normalized():toAngle())
+            HudEntity:setPos(PlayerToJoin:shootPos() + PlayerToJoin:eye() * 20 + vec(0,0,-20))
+        }
+        Players:pushTable(table(
+            "entity" = PlayerToJoin,
+            "status" = "alive",
+            "kills" = 0,
+            "gold" = 500,
+            "skills" = table(),
+            "hud_entity" = noentity(),
+            "hud" = nowirelink(),
+            "scr_size" = vec2(),
+            "projectiles" = table(),
+            "effects" = table(),
+            "last_attacker" = noentity(),
+            "casting_spell" = table(),
+            "last_key_pressed" = "",
+            "cast_timer" = -1
+        ))
+        print(PlayerToJoin, "  joined")
+    }
+}
+
+function void do_purchaseSkill(GameState:table, TargetPlayer:entity, TargetSkill:string) {
+    print(TargetSkill)
+    local IsSkillExist = 0
+    local SelectedSkill = table()
+    for (I=1, Skills:count()) {
+        local Skill = Skills[I, table]
+        if (Skill["name", string] == TargetSkill) {
+            IsSkillExist = 1
+            SelectedSkill = Skill
+            break
+        }
+    }
+    if (!IsSkillExist) {
+        print("spell " + TargetSkill + " does not exist")
+        return
+    }
+    local Players = GameState["players", table]
+    for (I=1, Players:count()) {
+        local Player = Players[I, table]
+        if (Player["entity", entity] == TargetPlayer) {
+            local IsPlayerHasSkill = 0
+            for (J=1, Player["skills", table]:count()) {
+                local PlayersSkill = Player["skills", table][J,table]
+                if (PlayersSkill["name", string] == SelectedSkill["name", string]) {
+                    IsPlayerHasSkill = 1
+                    local Price = SelectedSkill["price", number] + PlayersSkill["level", number] * 10
+                    if (Player["gold", number] >= Price) {
+                        PlayersSkill["level", number] = PlayersSkill["level", number] + 1
+                        Player["gold", number] = Player["gold", number] - Price
+                    }
+                    break
+                }
+            }
+            if (!IsPlayerHasSkill) {
+                if (Player["gold", number] >= SelectedSkill["price", number]) {
+                    local NewSpell = SelectedSkill:clone()
+                    NewSpell["level", number] = 1
+                    Player["skills", table]:pushTable(NewSpell)
+                    Player["gold", number] = Player["gold", number] - SelectedSkill["price", number]
+                }
+            }
+            break
+        }
+    }
+}
+function void do_castSpell(Player:table, Skill:table) {  
+    if (Skill["cd_timer", number] == 0 && Player["cast_timer", number] <= 0) {
+        Player["entity", entity]:plyWalkSpeed(1)
+        Player["entity", entity]:plyRunSpeed(1)  
+        local SkillName = Skill["name", string]
+        Player["casting_spell", table] = Skill
+        Player["cast_timer", number] = Skill["cast_time", number]
+        Skill["cd_timer", number] = Skill["cd", number]
+    }
+}
+
+function void do_releaseSpell(Player:table, GlobalCounters:table) {
+    Player["entity", entity]:plyWalkSpeed(250)
+    Player["entity", entity]:plyRunSpeed(250)
+    local FunctionToCast = "do_" + Player["casting_spell", table]["name", string] + "Cast"
+    FunctionToCast(Player, Player["casting_spell", table], GlobalCounters)
+    Player["casting_spell", table] = table()
+}
+
+function void do_hurtPlayerOnLava(Player:table) {
+    local PlayerE = Player["entity", entity]
+    PlayerE:takeDamage(1, Player["last_attacker", entity], PlayerE)
+    local RandStr = "vo/npc/male01/ow0" + randint(1,2) + ".wav"
+    do_playSound(PlayerE, RandStr, randint(80,120))
+    for (I=1, randint(3,5)) {
+        do_emiteParticle(table(
+        "path" = "sprites/flamelet" + randint(1,5),
+        "livetime" = 1,
+        "livetime_r" = 0.5,
+        "startsize" = 10,
+        "startsize_r" = 5,
+        "endsize" = 30,
+        "endsize_r" = 20,
+        "anchor" = PlayerE,
+        "anchor2" = PlayerE,
+        "spos_r" = 0,
+        "epos_r" = 40,
+        "velocity" = vec(0,0,50),
+        "color" = vec(255),
+        "spin" = 3,
+        "startalpha" = 130,
+        "endalpha" = 0
+    ))
+    }
+}
+
+function void do_updateLocalState(GameState:table) {
+    local Players = GameState["players", table]
+    for (I=1, Players:count()) {
+        local Player = Players[I, table]
+        if (Player["cast_timer", number] >= 0) {
+            Player["cast_timer", number] = Player["cast_timer", number] - 0.1
+        } 
+        if (Player["cast_timer", number] == 0) {
+            do_releaseSpell(Player, GameState["global_counters", table])
+        }
+        local PlayersSkills = Players[I, table]["skills", table]
+        for (I=1, PlayersSkills:count()) {
+            local Skill = PlayersSkills[I, table]
+            if (Skill["cd_timer", number] > 0) {
+                Skill["cd_timer", number] = Skill["cd_timer", number] - 0.1
+            }
+        }
+    }
+
+}
+
+function void do_updateGlobalState(GameState:table) {
+    if (GameState["state", string] == "round") {
+        GameState["round_time", number] = GameState["round_time", number] + 0.5
+        if (GameState["round_time", number]%15==0 && GameState["ground_holo_scale", number] > 1) {
+            local NewScale = max(GameState["ground_holo_scale", number] - 2, 1)
+            GameState["ground_holo_scale", number] = NewScale
+            holoScale(holoIndex(GameState["ground_holo", entity]),vec(NewScale, NewScale, 1))
+            GameState["ground_size", number] = max(GameState["ground_size", number] - GameState["global_constants", table]["ground_size_scaler", number], 35)
+        }
+        local Players = GameState["players", table]
+        for (I=1, Players:count()) {
+            local Player = Players[I, table]
+            local PlayerDistance = GameState["center", vector]:distance(Player["entity", entity]:pos():setZ( GameState["center", vector]:z() ))
+            if (PlayerDistance - GameState["ground_size", number] > 0) {
+                do_hurtPlayerOnLava(Player)
+            }
+        }
+    } elseif (GameState["state", string] == "preparing") {
+        GameState["round_time", number] = GameState["round_time", number] - 0.5
+        if (!GameState["round_time", number]) {
+            do_initRound(GameState)
+        }        
+    }
+}
+function void do_projectileImpact(Projectile:table, Ranger:ranger) {
+        local SkillName = Projectile["skill", table]["name", string]
+        local FunctionName = "do_" + SkillName + "Explode"
+        FunctionName(Projectile, Ranger)
+}
+
+function void do_initGame(GameObjects:table, GameState:table, Owner:entity) {
+    GameState["center", vector] = Owner:pos()
+    GameObjects["floor", table]["x_left", number] = 15
+    GameObjects["floor", table]["y_left", number] = 15
+    for (X=1, 15) {
+        for(Y=1, 15) {            
+            local Coords = Owner:pos() + vec(X*380,Y*380,0) - vec(X*380,Y*380,0) / 2
+            timer("spawnFloorItem", 1)
+        }
+    }
+    holoCreate(1000, Owner:pos() + vec(0,0,5),vec(16,16,1),ang(0),vec(200,70,70),"models/hunter/plates/plate8x8.mdl")
+    holoMaterial(1000, "models/effects/splode_sheet")
+    
+    local Scale = GameState["global_constants", table]["ground_holo_scale", number]
+    local HoloGround = holoCreate(1001, Owner:pos() + vec(0,0,6),vec(Scale,Scale,1),ang(0),vec(255,255,255),"models/props_phx/construct/plastic/plastic_angle_360.mdl")
+    holoMaterial(1001, "phoenix_storms/potato")
+    GameState["ground_holo", entity] = HoloGround
+    do_initPreparing(GameState)
+    
+}

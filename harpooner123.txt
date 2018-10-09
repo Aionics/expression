@@ -1,0 +1,16 @@
+@name harpooner123
+@inputs 
+@outputs 
+@persist T
+@trigger 
+interval(10)
+if(first()){timer("t",1)}
+if(T<=3000&clk("t")){
+    T++
+    timer("t",100)
+        holoCreate(T)
+        holoPos(T,entity():toWorld(vec(0,10*T,10)))
+        holoScale(T,vec(0.5))
+        holoColor(T,randvec(0,255))
+        holoParent(T,entity())   
+    }

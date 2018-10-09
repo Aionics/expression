@@ -1,0 +1,25 @@
+@name Cleanup
+@inputs 
+@outputs 
+@persist Arr:array I Start
+@trigger 
+
+interval(30)
+
+if(first()){
+    Start=0
+    I=0
+    
+    findIncludeClass("prop_physics")
+    findInSphere(entity():pos(),99999)
+    findExcludeEntity(entity())
+    Arr=findToArray()
+}
+L=owner():keyPressed("L")
+if(changed(L)&L){
+    Start=!Start
+}
+if(Start){
+    Arr[I,entity]:remove()  
+    I++
+}

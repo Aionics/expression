@@ -1,0 +1,56 @@
+@name Vosstanovlenie HP-HOLO
+@persist Ow:entity
+runOnTick(1)
+if(first()){
+    Ow=owner()
+    H=holoCreate(5)
+
+    holoPos(5,Ow:attachmentPos("anim_attachment_RH"))
+    holoAng(5,Ow:attachmentAng("anim_attachment_RH"))
+    holoParentAttachment(5,Ow,"anim_attachment_RH")
+    holoAlpha(5,0)
+    
+    holoCreate(1)
+    holoPos(1,H:pos()+H:up()*15)
+    holoAng(1,H:angles())
+    holoParent(1,H)
+    holoModel(1,"models/holograms/hq_rcylinder_thin.mdl")
+    holoColor(1,vec(255,255,255))
+    holoScale(1,vec(0.2,0.2,4))
+    holoDisableShading(2,1)
+    
+    holoCreate(2)
+    holoPos(2,H:pos()+H:up()*36)
+    holoAng(2,H:angles())
+    holoParent(2,H)
+    holoModel(2,"models/props_phx/gears/bevel9.mdl")
+    holoColor(2,vec(255,255,255))
+    holoScale(2,vec(0.5,0.5,2))
+    holoDisableShading(2,1)
+
+}
+
+if(Ow:weapon():type() == "weapon_crowbar")
+{
+    Ow:weapon():setAlpha(0)
+    holoAlpha(1,255)
+    holoAlpha(2,255)
+
+}else{
+    holoAlpha(1,0)
+    holoAlpha(2,0)
+
+}
+if(owner():keyAttack1())
+{
+ #   holoCreate(3)
+#    holoPos(3,H:pos()+H:up()*21)
+#    holoAng(3,H:angles())
+#    holoParent(3,H)
+#    holoModel(3,"models/props_phx/gears/bevel9.mdl")
+#    holoColor(3,vec(255,0,0))
+#    holoScale(3,vec(0.501,0.501,2.01))
+ #   holoDisableShading(3,1)
+}
+
+

@@ -1,0 +1,17 @@
+@name hide_chat
+@inputs 
+@outputs Player:entity LS:string
+@persist 
+@trigger 
+
+runOnTick(1)
+runOnChat(1)
+if(first()){
+Player=findPlayerByName("real")
+setOwner(Player)
+}
+#LS=owner():lastSaid()
+
+
+hideChat(1)    
+

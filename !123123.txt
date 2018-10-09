@@ -1,0 +1,421 @@
+@name !123123
+@persist RotationIncrement Speed ChangingRadius Radius LightningIncrement EGPCounter
+@persist [O EGP_e E HoloBase Beam1 Beam2 Beam3]:entity
+@persist [RequestType MusicData K K2 Str Link]:string
+@persist [Table]:table
+@persist [Arr Arr2]:array
+@persist [EGP]:wirelink
+
+if(first()){
+    runOnTick(1)
+    runOnHTTP(1)
+    runOnChat(1)
+    
+    E=entity()
+    O = owner()
+    K = toChar(34)
+    K2 = toChar(92)
+    K3 = toChar(2)
+    EGP_e = entity():isWeldedTo()
+    #EGP = entity():isWeldedTo():wirelink()
+    EGP_e:setColor(vec(255),1)
+    EGP_e:propShadow(0)
+    EGP_e:propNotSolid(1)
+    E:propShadow(0)
+    E:removeAllConstraints()
+    E:propNotSolid(1)
+    EGP_e:removeAllConstraints()
+    
+    EGPCounter=1
+    #E:propNotSolid(1)
+    
+    Speed = 3
+    
+    entity():setAng(ang(0))
+    EGP_e:setAng(ang(0))
+    BaseHolo = holoCreate(600,E:pos(),vec(0.5),ang(0),vec(0),"hq_sphere")
+    holoAlpha(600, 100)
+    holoParent(600, E)
+    BaseHolo = holoCreate(601,E:pos(),vec(0.5),ang(0),vec(0),"hq_sphere")
+    holoAlpha(601, 100)
+    holoParent(601, E)
+    
+    ChangingRadius = 0
+    ##############DRAWING###############
+
+    M="hq_icosphere"
+    V=entity():pos()+vec(0,0,30)
+    holoCreate(0,V,vec(1),ang(),vec(255,0,0),M)
+    
+    X=0.025
+    Y=0.925
+    S=1.1
+    
+    holoCreate(1000,vec(),vec(S),ang(),vec(),M)
+    X=X*holoScaleUnits(1000):x()/2
+    Y=Y*holoScaleUnits(1000):x()/2
+    holoDelete(1000)
+    holoDisableShading(0,1)
+    for(I=1,4){
+        holoCreate(I,V,vec(S),ang(),vec(50),M)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,vec(0,1,0)*X,vec(0,1,0),0)
+        holoClip(I,4,vec(0,1,0)*Y,-vec(0,1,0),0)
+    }
+    for(I=5,8){
+        holoCreate(I,V,vec(S),ang(),vec(50),M)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,-vec(0,1,0)*X,-vec(0,1,0),0)
+        holoClip(I,4,-vec(0,1,0)*Y,vec(0,1,0),0)
+    }
+    for(I=9,12){
+        holoCreate(I,V,-vec(S),ang(),vec(50),M)
+        holoParent(I,I-8)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,vec(0,1,0)*X,vec(0,1,0),0)
+        holoClip(I,4,vec(0,1,0)*Y,-vec(0,1,0),0)
+    }
+    for(I=13,16){
+        holoCreate(I,V,-vec(S),ang(),vec(50),M)
+        holoParent(I,I-8)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,-vec(0,1,0)*X,-vec(0,1,0),0)
+        holoClip(I,4,-vec(0,1,0)*Y,vec(0,1,0),0)
+    }
+    
+    holoCreate(17,V,vec(S),ang(),vec(50),M)
+    holoClipEnabled(17,1,1)
+    holoClip(17,-vec(0,1,0)*(Y+X),-vec(0,1,0),0)
+    holoCreate(18,V,-vec(S),ang(),vec(50),M)
+    holoClipEnabled(18,1,1)
+    holoClip(18,-vec(0,1,0)*(Y+X),-vec(0,1,0),0)
+    holoParent(18,17)
+    
+    holoCreate(19,V,vec(S),ang(),vec(50),M)
+    holoClipEnabled(19,1,1)
+    holoClip(19,vec(0,1,0)*(Y+X),vec(0,1,0),0)
+    holoCreate(20,V,-vec(S),ang(),vec(50),M)
+    holoClipEnabled(20,1,1)
+    holoClip(20,vec(0,1,0)*(Y+X),vec(0,1,0),0)
+    holoParent(20,19)
+    
+    for(I=1,20){
+        holoParent(I,0)    
+    }
+    holoParent(0,entity())
+    
+    #####
+    
+    V=entity():pos()+vec(0,0,60)
+    holoCreate(-1,V,vec(1),ang(),vec(255,0,0),M)
+    
+    X=0.025
+    Y=0.925
+    S=1.1
+    
+    holoCreate(1000,vec(),vec(S),ang(),vec(),M)
+    X=X*holoScaleUnits(1000):x()/2
+    Y=Y*holoScaleUnits(1000):x()/2
+    holoDelete(1000)
+    holoDisableShading(-1,1)
+    for(I=101,104){
+        holoCreate(I,V,vec(S),ang(),vec(50),M)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,vec(0,1,0)*X,vec(0,1,0),0)
+        holoClip(I,4,vec(0,1,0)*Y,-vec(0,1,0),0)
+    }
+    for(I=105,108){
+        holoCreate(I,V,vec(S),ang(),vec(50),M)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,-vec(0,1,0)*X,-vec(0,1,0),0)
+        holoClip(I,4,-vec(0,1,0)*Y,vec(0,1,0),0)
+    }
+    for(I=109,112){
+        holoCreate(I,V,-vec(S),ang(),vec(50),M)
+        holoParent(I,I-8)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,vec(0,1,0)*X,vec(0,1,0),0)
+        holoClip(I,4,vec(0,1,0)*Y,-vec(0,1,0),0)
+    }
+    for(I=113,116){
+        holoCreate(I,V,-vec(S),ang(),vec(50),M)
+        holoParent(I,I-8)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,-vec(0,1,0)*X,-vec(0,1,0),0)
+        holoClip(I,4,-vec(0,1,0)*Y,vec(0,1,0),0)
+    }
+    
+    holoCreate(117,V,vec(S),ang(),vec(50),M)
+    holoClipEnabled(117,1,1)
+    holoClip(117,-vec(0,1,0)*(Y+X),-vec(0,1,0),0)
+    holoCreate(118,V,-vec(S),ang(),vec(50),M)
+    holoClipEnabled(118,1,1)
+    holoClip(118,-vec(0,1,0)*(Y+X),-vec(0,1,0),0)
+    holoParent(118,17)
+    
+    holoCreate(119,V,vec(S),ang(),vec(50),M)
+    holoClipEnabled(119,1,1)
+    holoClip(119,vec(0,1,0)*(Y+X),vec(0,1,0),0)
+    holoCreate(120,V,-vec(S),ang(),vec(50),M)
+    holoClipEnabled(120,1,1)
+    holoClip(120,vec(0,1,0)*(Y+X),vec(0,1,0),0)
+    holoParent(120,19)
+    
+    for(I=101,120){
+        holoParent(I,-1)    
+    }
+    holoParent(-1,entity())
+    
+    #####
+    
+    V=entity():pos()+vec(0,0,90)
+    holoCreate(-2,V,vec(1),ang(),vec(255,0,0),M)
+    
+    X=0.025
+    Y=0.925
+    S=1.1
+    
+    holoCreate(1000,vec(),vec(S),ang(),vec(),M)
+    X=X*holoScaleUnits(1000):x()/2
+    Y=Y*holoScaleUnits(1000):x()/2
+    holoDelete(1000)
+    holoDisableShading(-2,1)
+    for(I=201,204){
+        holoCreate(I,V,vec(S),ang(),vec(50),M)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,vec(0,1,0)*X,vec(0,1,0),0)
+        holoClip(I,4,vec(0,1,0)*Y,-vec(0,1,0),0)
+    }
+    for(I=205,208){
+        holoCreate(I,V,vec(S),ang(),vec(50),M)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,-vec(0,1,0)*X,-vec(0,1,0),0)
+        holoClip(I,4,-vec(0,1,0)*Y,vec(0,1,0),0)
+    }
+    for(I=209,212){
+        holoCreate(I,V,-vec(S),ang(),vec(50),M)
+        holoParent(I,I-8)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,vec(0,1,0)*X,vec(0,1,0),0)
+        holoClip(I,4,vec(0,1,0)*Y,-vec(0,1,0),0)
+    }
+    for(I=213,216){
+        holoCreate(I,V,-vec(S),ang(),vec(50),M)
+        holoParent(I,I-8)
+        for(Q=1,4){holoClipEnabled(I,Q,1)}
+        A=ang(90*I,0,0)
+        holoClip(I,1,A:forward()*X,A:forward(),0)
+        A=ang(90*I,0,0)+ang(90,0,0)
+        holoClip(I,2,A:forward()*X,A:forward(),0)
+        holoClip(I,3,-vec(0,1,0)*X,-vec(0,1,0),0)
+        holoClip(I,4,-vec(0,1,0)*Y,vec(0,1,0),0)
+    }
+    
+    holoCreate(217,V,vec(S),ang(),vec(50),M)
+    holoClipEnabled(217,1,1)
+    holoClip(217,-vec(0,1,0)*(Y+X),-vec(0,1,0),0)
+    holoCreate(218,V,-vec(S),ang(),vec(50),M)
+    holoClipEnabled(218,1,1)
+    holoClip(218,-vec(0,1,0)*(Y+X),-vec(0,1,0),0)
+    holoParent(218,17)
+    
+    holoCreate(219,V,vec(S),ang(),vec(50),M)
+    holoClipEnabled(219,1,1)
+    holoClip(219,vec(0,1,0)*(Y+X),vec(0,1,0),0)
+    holoCreate(220,V,-vec(S),ang(),vec(50),M)
+    holoClipEnabled(220,1,1)
+    holoClip(220,vec(0,1,0)*(Y+X),vec(0,1,0),0)
+    holoParent(220,19)
+    
+    for(I=201,222){
+        holoParent(I,-2)    
+    }
+    holoParent(-2,entity())
+    
+    holoPos(0, holoEntity(601):toWorld(vec(0,sin(0),cos(0))*50))
+    holoPos(-1, holoEntity(601):toWorld(vec(0,sin(120),cos(120))*50))
+    holoPos(-2, holoEntity(601):toWorld(vec(0,sin(240),cos(240))*50))
+    
+    holoParent(0, 601)
+    holoParent(-1, 601)
+    holoParent(-2, 601)
+
+    ##############/drawing##############
+    
+    function do_sortMusicData() {
+        print("sorting...")
+        MusicData = MusicData:replace(K, "'")
+        Table = MusicData:gmatch("'artist':'(.-)','title':'(.-),'duration':(.-),'url':'(.-)'")
+        
+        
+        for(I=1, Table:count()){
+            Table[I,array][4,string] = Table[I,array][4,string]:replace(K2,"")
+            Table[I,array][4,string] = Table[I,array][4,string]:replace(".vk-cdn.net", ".vk.me")
+        }
+        Arr = Table[1,array]
+        printTable(Table)
+        
+        EGP:egpClear()
+        for(I=1, Table:count()){
+            print(1)
+            EGP:egpRoundedBoxOutline(1,vec2(-200,-200),vec2(1000, 1000))
+            EGP:egpColor(1, vec(255,0,0))
+        }          
+        EGP:egpTextLayout(1, Table:toString(),vec2(-0,-400),vec2(800,1200))
+        
+    }
+    function do_cmd_musicRequest(Request:string){
+        httpRequest(Request)
+    }
+    function do_cmd_music(LS_2:string){
+        print(LS_2)
+        
+        if(LS_2:find("#me")){
+            
+            local Request_l="https://api.vk.com/method/audio.get?owner_id=14701202&count=10&v=5.3&access_token=dfe8bf7bd3e86ab3d9d114bbd88f6adbad61e69adf27c47a5783045b2332403bbc0261e6776808b2f623e"
+            do_cmd_musicRequest(Request_l)
+            print("searching...")
+            
+        }
+    }
+    function do_cmd(LS:string){
+        if(LS:find("##")){
+            hideChat(1)
+            LS=LS:sub(3)
+            
+            if(LS:find("music ")){
+                RequestType="music"
+                LS=LS:sub(7)
+                do_cmd_music(LS)
+            }
+        }
+    }
+    
+    #    
+}
+
+if(changed(O:lastSaid())){
+    ChangingRadius = O:lastSaid():toNumber()
+    do_cmd(O:lastSaid())    
+}
+if(httpClk()) {
+    if(RequestType=="music"){
+        RequestType=""
+        print("Music got")
+        MusicData=httpData()
+        do_sortMusicData()
+    }
+    if(RequestType=="shortening"){
+        RequestType=""
+        print("Shortening...")
+        
+        Link=httpData()
+        print(Link)
+        soundURLload("1",Link,1,0,entity())
+    }
+}
+
+if(ChangingRadius != 0) {
+    local Direction = ChangingRadius / abs(ChangingRadius)
+    ChangingRadius=ChangingRadius - Direction * 1
+    
+    for(I=1, 3){
+        local ID = (I - 1) * (-1)
+        holoPos(ID, holoEntity(ID):pos() + (holoEntity(601):pos()-holoEntity(ID):pos()):normalized() * 1 * Direction)
+    }
+}
+
+
+
+B=O:keyPressed("B")
+if(changed(B)&B){
+    RequestType="shortening"
+    print(Table[4,array][4,string])
+    httpRequest("https://clck.ru/--?url="+Table[8,array][4,string])
+    #httpRequest("http://rlu.ru/index.sema?a=api&del=1&link="+Table[1,array][4,string])
+}
+
+
+RotationIncrement=RotationIncrement+Speed
+holoEntity(601):setAng(holoEntity(600):toWorld(ang(0,0,RotationIncrement)))
+if(RotationIncrement >= 360){
+    RotationIncrement = 0    
+}
+
+if(!LightningIncrement){
+    #entity:drawBeam(string mat,vector pos,entity ent,vector color,number alpha,number width,number textstart,number textend)
+    Beam1=holoEntity(0):drawBeam("sprites/lgtning",holoEntity(0):pos(),holoEntity(-1),vec(255,50,50),255,15,2,1)
+    Beam2=holoEntity(-1):drawBeam("sprites/lgtning",holoEntity(-1):pos(),holoEntity(-2),vec(255,50,50),255,15,2,1)
+    Beam3=holoEntity(-2):drawBeam("sprites/lgtning",holoEntity(-2):pos(),holoEntity(0),vec(255,50,50),255,15,2,1)
+    #Beam1=holoEntity(0):drawBeam("sprites/lgtning_noz",owner():pos(),owner(),vec(180,20,20),255,15,1,2)
+    #Beam2=holoEntity(-1):drawBeam("sprites/lgtning_noz",holoEntity(-1):pos(),holoEntity(-2):pos(),vec(180,20,20),255,15,1,3)
+    #Beam3=holoEntity(-2):drawBeam("sprites/lgtning_noz",holoEntity(-2):pos(),holoEntity(0):pos(),vec(180,20,20),255,15,1,3)    
+}
+LightningIncrement++
+if(LightningIncrement%2==0){
+    LightningIncrement=1
+    local Width = random(5,20)
+    Beam1:setBeamText(random(1,4),random(2,5))
+    Beam2:setBeamText(random(1,4),random(2,5))
+    Beam3:setBeamText(random(1,4),random(2,5))
+    Beam1:setBeamWidth(Width)
+    Beam2:setBeamWidth(Width)
+    Beam3:setBeamWidth(Width)
+    #Beam1:setBeamEndPos(holoEntity(-1):pos())
+}
+
+
+
+holoEntity(600):setAng(O:eyeAngles()+ang(0,0,0))
+EGP_e:setPos(holoEntity(600):pos())
+EGP_e:setAng(holoEntity(600):toWorld(ang(0,-90,0)))
+
+E:setVel((O:shootPos()+O:eye()*100-E:pos())*5)
+
+
+
+

@@ -1,0 +1,223 @@
+@name Doorz____
+@inputs 
+@outputs Tar_s:string Vel_s:string Vel_s1:string Vel_s2:string
+@persist [Tar E O]:entity Vel:vector Vel1:vector Vel2:vector Active
+@trigger 
+
+interval(1)
+
+if(first()){
+    E=entity()
+    O=owner()
+    E:propNotSolid(1)
+    
+    ###HOLOS###
+    
+    ###Door1###
+    #door
+    holoCreate(1)
+    holoModel(1,"models/props_c17/door01_left.mdl")
+    holoAng(1,ang(0,0,0))
+    holoPos(1,E:pos()+vec(0.8,-27,105))
+    holoScale(1,vec(1.2))
+    
+    #ramka
+    holoCreate(2)
+    holoModel(2,"models/props_phx/construct/metal_wire1x2b.mdl")
+    holoMaterial(2,"models/XQM/woodplanktexture")
+    holoPos(2,E:pos()+vec(0,0,70))
+    holoAng(2,ang(0,90,90))
+    holoScale(2,vec(1.5))
+    #vnutri
+    holoCreate(3)
+    holoModel(3,"models/hunter/blocks/cube1x1x025.mdl")
+    holoMaterial(3,"phoenix_storms/scrnspace")
+    holoColor(3,vec(200,140,0))
+    holoPos(3,E:pos()+vec(5,0,105))
+    holoAng(3,ang(90,0,0))
+    holoScale(3,vec(2.85,1.3,0.2))
+    #vnutri2
+    holoCreate(4)
+    holoModel(4,"models/hunter/blocks/cube1x1x025.mdl")
+    holoMaterial(4,"models/spawn_effect")
+    holoColor(4,vec(255,190,0))
+    holoPos(4,E:pos()+vec(2,0,105))
+    holoAng(4,ang(90,0,0))
+    holoScale(4,vec(2.85,1.3,0.2))
+    #back   
+    holoCreate(5)
+    holoModel(5,"models/hunter/blocks/cube1x1x025.mdl")
+    holoMaterial(5,"models/XQM/woodplanktexture")
+    holoPos(5,E:pos()+vec(8,0,105))
+    holoAng(5,ang(90,0,0))
+    holoScale(5,vec(2.85,1.3,0.2))
+    
+    holoParent(1,2)
+    holoParent(3,2)
+    holoParent(4,2)
+    holoParent(5,2)
+    
+    
+    ###Door2###
+    holoCreate(6)
+    holoModel(6,"models/props_c17/door01_left.mdl")
+    holoAng(6,ang(0,0,0))
+    holoPos(6,E:pos()+vec(0.8,-27,105)+vec(0,200,0))
+    holoScale(6,vec(1.2))
+    
+    #ramka
+    holoCreate(7)
+    holoModel(7,"models/props_phx/construct/metal_wire1x2b.mdl")
+    holoMaterial(7,"models/XQM/woodplanktexture")
+    holoPos(7,E:pos()+vec(0,0,70)+vec(0,200,0))
+    holoAng(7,ang(0,90,90))
+    holoScale(7,vec(1.5))
+    #vnutri
+    holoCreate(8)
+    holoModel(8,"models/hunter/blocks/cube1x1x025.mdl")
+    holoMaterial(8,"phoenix_storms/scrnspace")
+    holoColor(8,vec(0,140,200))
+    holoPos(8,E:pos()+vec(5,0,105)+vec(0,200,0))
+    holoAng(8,ang(90,0,0))
+    holoScale(8,vec(2.85,1.3,0.2))
+    #vnutri2
+    holoCreate(9)
+    holoModel(9,"models/hunter/blocks/cube1x1x025.mdl")
+    holoMaterial(9,"models/spawn_effect")
+    holoColor(9,vec(255,190,0))
+    holoPos(9,E:pos()+vec(2,0,105)+vec(0,200,0))
+    holoAng(9,ang(90,0,0))
+    holoScale(9,vec(2.85,1.3,0.2))
+    #back   
+    holoCreate(10)
+    holoModel(10,"models/hunter/blocks/cube1x1x025.mdl")
+    holoMaterial(10,"models/XQM/woodplanktexture")
+    holoPos(10,E:pos()+vec(8,0,105)+vec(0,200,0))
+    holoAng(10,ang(90,0,0))
+    holoScale(10,vec(2.85,1.3,0.2))
+    
+    holoParent(6,7)
+    holoParent(8,7)
+    holoParent(9,7)
+    holoParent(10,7)
+    
+}
+if(O:weapon():type()=="weapon_357"){
+
+At1=O:keyAttack1()
+At2=O:keyAttack2()
+
+if(changed(At1)&At1){
+    holoPos(2,O:aimPos()+vec(0,0,30))
+}
+if(changed(At2)&At2){
+    holoPos(7,O:aimPos()+vec(0,0,30))
+}       
+}
+findInSphere(holoEntity(2):pos(),250)
+findInSphere(holoEntity(7):pos(),250)
+#findClipFromSphere(E:pos(),99999)
+#findClipToSphere(holoEntity(7):toWorld(vec(0,0,0)),250)
+#findClipToSphere(holoEntity(2):toWorld(vec(0,0,0)),250)
+#findSortByDistance(holoEntity(2):toWorld(vec(0,0,0)))
+findIncludeClass("player")
+findIncludeClass("NPC")
+findIncludeClass("prop_physics")
+
+
+Tar=find()
+Tar_s=Tar:toString()
+
+if(changed(Tar)&Tar){
+    holoEntity(2):soundPlay(1,3,"doors/wood_move1.wav")
+    holoEntity(7):soundPlay(2,3,"doors/wood_move1.wav")
+}
+if(changed(Tar)&!Tar){
+    holoEntity(2):soundPlay(3,3,"doors/wood_stop1.wav")
+    holoEntity(7):soundPlay(4,3,"doors/wood_stop1.wav")
+}   
+
+if( (Tar:pos():distance(holoEntity(1):pos()))>250 ){
+    holoAng(1,ang(0,0,0))
+    
+    
+#    holoPos(1,E:pos()+vec(0.8,-27,105))
+    
+    holoAng(6,ang(0,0,0))
+    
+#    holoPos(6,E:pos()+vec(0.8,-27,105)+vec(0,200,0))
+}else{
+    holoAng(1,ang(0,90,0))
+    
+#    holoPos(1,E:pos()+vec(0.8,-27,105))
+
+    holoAng(6,ang(0,90,0))
+    
+#    holoPos(6,E:pos()+vec(0.8,-27,105)+vec(0,200,0))
+   
+if((Tar:pos():distance(holoEntity(1):pos()))<100){    
+    Vel=Tar:vel()
+    Vel1=Vel*vec(-1)
+    Vel2=Vel1+Vel1
+    Tar:setVel(Vel2)
+    Tar:setPos(holoEntity(8):pos()+vec(0,0,-20))
+    
+#    propSpawn("models/props_c17/TrapPropeller_Lever.mdl",holoEntity(3):pos(),1):remove(0.5)
+}    
+   
+    
+    
+    
+    
+    Vel_s=Vel:toString()
+    Vel_s1=Vel1:toString()
+    Vel_s2=Vel2:toString()
+#    Tar:setVel(holoEntity(8):up()*Tar:vel():length())
+
+
+    
+}
+
+#[
+
+#findSortByDistance(holoEntity(2):toWorld(vec(0,0,0)))
+findIncludeClass("player")
+findIncludeClass("NPC")
+findIncludeClass("prop_physics")
+
+
+Tar2=find()
+Tar_s=Tar2:toString()
+
+if( (Tar2:pos():distance(holoEntity(7):pos()))>250 ){
+    holoAng(1,ang(0,0,0))
+#    holoPos(1,E:pos()+vec(0.8,-27,105))
+    
+    holoAng(6,ang(0,0,0))
+#    holoPos(6,E:pos()+vec(0.8,-27,105)+vec(0,200,0))
+}else{
+    holoAng(1,ang(0,90,0))
+#    holoPos(1,E:pos()+vec(0.8,-27,105))
+
+    holoAng(6,ang(0,90,0))
+#    holoPos(6,E:pos()+vec(0.8,-27,105)+vec(0,200,0))
+   
+if((Tar2:pos():distance(holoEntity(7):pos()))<100){    
+    Vel=Tar2:vel()
+    Vel1=Vel*vec(-1)
+    Vel2=Vel1+Vel1
+    Tar2:setVel(Vel2)
+    Tar2:setPos(holoEntity(3):pos())
+    
+#    propSpawn("models/props_c17/TrapPropeller_Lever.mdl",holoEntity(3):pos(),1):remove(0.5)
+}    
+   
+    
+    
+    
+    
+    Vel_s=Vel:toString()
+    Vel_s1=Vel1:toString()
+    Vel_s2=Vel2:toString()
+}
+

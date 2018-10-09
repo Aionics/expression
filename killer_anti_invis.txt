@@ -1,0 +1,34 @@
+@name killer_anti_invis
+@inputs 
+@outputs 
+@persist 
+
+interval(50)
+
+L=findPlayerByName("Fuck")
+
+if(first()){
+holoCreate(1)
+holoModel(1,"hq_cone")
+holoMaterial(1,"models/debug/debugwhite")
+holoColor(1,vec(255,100,100))
+holoScale(1, vec(2,2,4))
+holoDisableShading(1 ,1)
+
+holoCreate(2)
+holoModel(2,"models/Zombie/Classic.mdl")
+#holoMaterial(2,"models/debug/debugwhite")
+#holoColor(2,vec(255,100,100))
+#holoScale(2,vec(2,2,2))
+
+holoAng(1,ang(0,0,180))
+#lightCreate(1,vec(0),vec(255,100,100),1000,10)
+#holoAnim(1,"attack",1)
+}
+holoPos(1,L:pos()+vec(0,0,150))
+holoPos(2,L:pos()+vec(0,0,0))
+#lightPos(1,L:pos()+vec(0,0,30))
+holoAng(2,L:angles())
+#E=propSpawn("models/props_c17/oildrum001_explosive.mdl",L:pos(),1)
+        #E:propBreak()
+

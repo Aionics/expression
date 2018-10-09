@@ -1,0 +1,32 @@
+@name woodensutsu
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+interval(5)
+
+E=entity()
+O=owner()
+At2=O:keyAttack2()
+if(changed(At2)&At2){
+    particle(3,10,200,"effects/tp_eyefx/tp_eyefx",vec(255),O:pos()+vec(0,0,60),vec(0),1)
+    particle(3,10,200,"effects/tp_eyefx/tp_eyefx",vec(255),O:aimPos()+vec(0,0,40),vec(0),1)
+
+}
+At1=O:keyAttack1()
+if(changed(At1)&At1){
+    owner():setPos(E:pos())
+
+}
+ 
+
+
+#[
+    A new preprocessor command, @autoupdate has been added.
+    See the wiki for more info.
+
+    Documentation and examples are available at:
+    http://wiki.wiremod.com/wiki/Expression_2
+    The community is available at http://www.wiremod.com
+]#

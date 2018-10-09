@@ -1,0 +1,30 @@
+@name killer_double_heart
+@outputs Player_s:string
+@persist Player:entity
+
+if(first()) {
+    runOnChat(1)
+    runOnTick(1)
+}
+
+if(chatClk(owner())) {
+    LS = lastSaid()
+    
+    if(LS:left(1) == "!") {
+        findExcludePlayerProps(Player)
+        Player = findPlayerByName(LS:sub(2, LS:length()))
+        
+        if(Player:isPlayer()) {
+            printColor(vec(0, 200, 0), Player:name() + "'s props will be cleaned >:3")
+            findIncludePlayerProps(Player)
+            
+        } else { printColor(vec(200, 0, 0), "No such player 3;") }
+    }
+}
+
+if(Player) {
+    findInSphere(entity():pos(), 999)
+    
+    foreach(I, E:entity = findToArray()) { E:remove() }
+    Player_s = Player:toString()
+}

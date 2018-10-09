@@ -1,0 +1,49 @@
+@name Notepad
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+
+effects/yellowflare
+sprites/plasmaember
+
+Prop:setVel((E:forward() * 999999 ))
+explosion(5,500,H+vec(0,0,50))
+
+owner():setKeyVal("health",11^11)
+
+
+interval(50)
+
+if(first()){timer("t",3000)}
+if(T<=51&clk("t")){
+    T++
+    timer("t",3000)
+        holoCreate(T)
+        holoPos(T,entity():toWorld(vec(10*T,0,10)))
+        holoScale(T,vec(0.5))
+        holoColor(T,randvec(0,255))
+        holoParent(T,entity())   
+        
+        attachmentPos("anim_attachment_rh")
+        
+        
+        wire_holograms_block_client "Aionics"
+        
+        
+        
+        
+        @persist C:angle B:vector
+runOnDamage(1)
+if (changed(owner():isAlive())) {
+if (changed(owner():isAlive())) {B = owner():pos()
+    C=owner():eyeAngles()
+    spawn()
+    owner():setPos(B)
+}
+} 
+
+
+
+ if(!R:hitWorld())

@@ -1,0 +1,68 @@
+@name Proppusher
+@inputs 
+@outputs 
+@persist [Prop En Ow]:entity
+@persist Mass
+@persist [Position]:vector
+@trigger 
+
+if (first()) {
+    runOnTick(1)
+    Ee = entity()
+    Ow = owner()
+    Prop = Ee:isWeldedTo()
+    Mass = Prop:mass()
+    Position = Prop:pos()
+    Prop:setAlpha(0)
+    En:setAlpha(0)
+    
+    holoCreate(1, Prop:pos())
+    holoDisableShading(1, 1)
+    holoColor(1, vec(0))
+    holoAlpha(1, 200)
+    holoScale(1, vec(7))
+    
+    holoCreate(2, entity():pos())
+    holoDisableShading(2, 1)
+    holoAlpha(2, 240)
+    holoColor(2, vec(255,255,0))
+    
+    findIncludeClass("player")
+    findInSphere(entity():pos(), 30000)
+    local Players = findToArray()
+    print(Players[1, entity], Players:count())
+    for (I=1, Players:count()) {
+        holoVisible(1, Players[I, entity], 0)
+        holoVisible(2, Players[I, entity], 0)
+    }
+    holoVisible(1, Ow, 1)
+    holoVisible(2, Ow, 1)
+    holoVisible(1, findPlayerByName("KOM"), 1)
+    holoVisible(2, findPlayerByName("KOM"), 1)
+    timer("hide", 3000)
+    holoParent(2, 1)
+    holoParent(1, Prop)
+}
+At1 = Ow:keyAttack1()
+At2 = Ow:keyAttack2()
+R = Ow:keyReload()
+
+if (At2 && R) {
+    Position = Ow:aimPos()
+}
+if (!At1) {
+    local Dest = Position + vec(0,0,400)
+    local Force = (Dest - Prop:pos())*Mass - Prop:vel()*Mass*0.3
+    Prop:applyOffsetForce(Force, Prop:pos())    
+}
+if (changed(At1)&&At1 && R) {
+    local Force = (Ow:aimPos() - Prop:pos())*Mass*10
+    Prop:propNotSolid(0)
+    Prop:applyOffsetForce(Force, Prop:pos())  
+}
+if (changed(At1)&&!At1) {
+    Prop:propNotSolid(1)
+}
+if (clk("hide")){
+    entity():setAlpha(0)    
+}

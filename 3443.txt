@@ -1,0 +1,12 @@
+@name 3443
+@inputs 
+@outputs 
+@persist Seat:entity Anton:entity
+@trigger 
+
+Seat=entity():isWeldedTo()
+Anton=findPlayerByName("realn")
+Seat:setPos(Anton:toWorld(vec(0,0,0)))
+Seat:parentTo(Anton)
+
+

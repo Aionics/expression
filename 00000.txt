@@ -1,0 +1,207 @@
+@name 00000
+@inputs Hight W A S D Active At1
+@outputs Leg_l_n Leg_l_v Leg_r_n Leg_r_v Wr Wl  StageL Seat:entity Prop:entity 
+@persist Tors:entity Hight2 StageR Vel_x Vel_y Ang_x Ang_y Ang_z Sound_index Ar1:array Prop1:entity Tesla:entity
+@trigger 
+
+interval(10)
+
+if(first()){
+    E=entity()
+    Tors=entity():isWeldedTo()
+    Leg_l_n=250
+    Leg_r_n=250
+    Leg_l_v=140
+    Leg_r_v=50
+    StageR=1
+    StageL=1
+    Wr=1
+    Wl=0
+    
+    findIncludeClass("vehicle")
+    findInSphere(E:pos(),500)
+    Seat=find()
+    Prop=propSpawn("models/hunter/blocks/cube025x025x025.mdl",E:pos(),1)
+        findExcludeClass("vehicle")
+        findIncludeModel("models/hunter/blocks/cube025x3x025.mdl")
+        findInSphere(E:pos(),500)
+        Ar1=findToArray()
+#[
+            holoCreate(1)
+            holoModel(1,"models/props_combine/combine_light002a.mdl")
+            holoPos(1,Ar1[1,entity]:pos()-Ar1[1,entity]:right()*80)
+            holoAng(1,Ar1[1,entity]:angles()+ang(-80,103,0))
+            holoScale(1,vec(4,5,4))
+            holoParent(1,Ar1[1,entity])
+        
+            holoCreate(2)
+            holoModel(2,"models/props_combine/combine_light002a.mdl")
+            holoPos(2,Ar1[2,entity]:pos()+Ar1[2,entity]:right()*110-Ar1[2,entity]:forward()*10)
+            holoAng(2,Ar1[2,entity]:angles()+ang(180,0,80))
+            holoScale(2,vec(4,5,4))
+            holoParent(2,Ar1[2,entity])
+            
+            holoCreate(3)
+            holoModel(3,"models/props_combine/combine_light002a.mdl")
+            holoPos(3,Ar1[3,entity]:pos()-Ar1[3,entity]:right()*70-Ar1[3,entity]:forward()*0)
+            holoAng(3,Ar1[3,entity]:angles()+ang(0,0,90))
+            holoScale(3,vec(4,4,4))
+            holoParent(3,Ar1[3,entity])
+            
+            holoCreate(4)
+            holoModel(4,"models/props_combine/combine_light002a.mdl")
+            holoPos(4,Ar1[4,entity]:pos()-Ar1[4,entity]:right()*70-Ar1[4,entity]:forward()*10+Ar1[4,entity]:up()*10)
+            holoAng(4,Ar1[4,entity]:angles()+ang(180,0,-87))
+            holoScale(4,vec(4,5,4))
+            holoParent(4,Ar1[4,entity])
+]#            
+        findExcludeModel("models/hunter/blocks/cube025x3x025.mdl")
+        findIncludeModel("models/hunter/blocks/cube2x2x025.mdl")
+        findInSphere(E:pos(),500)
+        Prop1=find()
+        holoCreate(5)
+        holoModel(5,"models/props_combine/combine_booth_short01a.mdl")
+        holoPos(5,Prop1:pos())
+        holoAng(5,Prop1:angles()+ang(0,180,0))
+        holoParent(5,Prop1)
+ #[       
+        holoCreate(6)
+        holoModel(6,"models/props_combine/combine_mortar01a.mdl")
+        holoPos(6,Prop1:pos()-Prop1:right()*120-Ar1[4,entity]:forward()*40+Ar1[4,entity]:up()*0)
+        holoAng(6,Prop1:angles()+ang(90,0,90))
+        holoScale(6,vec(1,1,0.5))
+        holoParent(6,Prop1)
+        holoCreate(7)
+        holoModel(7,"models/props_combine/combine_mortar01a.mdl")
+        holoScale(7,vec(1,1,0.5))
+        holoPos(7,Prop1:pos()+Prop1:right()*120-Ar1[4,entity]:forward()*40-Ar1[4,entity]:up()*0)
+        holoAng(7,Prop1:angles()+ang(90,0,-90))
+        holoParent(7,Prop1)
+        
+        
+        holoCreate(8)
+        holoModel(8,"models/combine_helicopter/helicopter_bomb01.mdl")
+        holoScale(8,vec(1,1,1))
+        holoPos(8,Prop1:pos()-Prop1:right()*120-Ar1[4,entity]:forward()*40-Ar1[4,entity]:up()*0)
+        holoAng(8,Prop1:angles()+ang(0,0,0))
+        holoParent(8,Prop1)
+        
+        holoCreate(9)
+        holoModel(9,"models/props_combine/combine_barricade_bracket02b.mdl")
+        holoScale(9,vec(3,1.5,2))
+        holoPos(9,holoEntity(8):pos()-Prop1:right()*0-Ar1[4,entity]:forward()*50-Ar1[4,entity]:up()*0)
+        holoAng(9,holoEntity(8):angles()+ang(-110,90,0))
+        holoParent(9,holoEntity(8))
+        holoAng(8,Prop1:angles()+ang(90,0,0))
+]#        
+    
+        
+        
+    
+}
+    if(Hight<Hight2&Hight>1){
+        Tors:setVel(vec(0,0,1)*(Hight2+10-Hight))
+}
+if(Active){
+Hight2=225
+holoAng(8,(owner():aimPos()-holoEntity(8):pos()):toAngle()+ang(90,0,0))    
+    ###LEG-RIGHT###
+    if(W)
+    {
+    Vel_x=owner():eye():x()*100    
+    Vel_y=owner():eye():y()*100  
+    Tors:setVel(vec(Vel_x,Vel_y,0))
+    }
+    if(W&StageL==1)
+    {
+        StageR=2
+    }
+    if(W&StageR==2)
+    {
+        Leg_r_n=150
+        Leg_r_v=Leg_r_v+1
+        if(Leg_r_v>=140){StageR=3 Leg_r_v=140}
+    }
+    if(W&StageR==3)
+    {
+        Leg_r_n=Leg_r_n+1
+     #   Leg_r_v=Leg_r_v-0.5
+        if(Leg_r_n>=250){StageR=4 owner():soundPlay(Sound_index,1,"npc/strider/strider_step4.wav") Sound_index=(Sound_index+1)%6}
+    }
+    if(W&StageR==4)
+    {
+    #    Leg_r_n=Leg_r_n-0.5
+        Leg_r_v=Leg_r_v-1
+        if(Leg_r_v<=50){StageR=1 Leg_r_v=50}
+    }
+    ###LEG-LEFT###
+    if(W&StageL==1)
+    {
+    #    Leg_l_n=Leg_l_n-1
+        Leg_l_v=Leg_l_v-1
+        if(Leg_l_v<=50){StageL=2 Leg_l_v=50}
+    }
+    if(W&StageR==4)
+    {
+        StageL=3
+    }
+    if(W&StageL==3)
+    {
+        Leg_l_n=150
+        Leg_l_v=Leg_l_v+1
+        if(Leg_l_v>=140){StageL=4 Leg_l_v=140}
+    }
+    if(W&StageL==4)
+    {
+        Leg_l_n=Leg_l_n+1
+    #    Leg_l_v=Leg_l_v-1
+        if(Leg_l_n>=250){StageL=1 Tors:soundPlay(Sound_index,1,"npc/strider/strider_step4.wav") Sound_index=(Sound_index+1)%6}
+    }
+    if(!W)
+    {
+        Leg_l_n=200
+        Leg_r_n=200
+        Leg_r_v=100
+        Leg_l_v=100
+    }
+    
+    if(D)
+    {    
+        Prop:setAng(ang(Prop:angles():pitch(),Prop:angles():yaw()-0.5,Prop:angles():roll()))
+    }
+    if(A)
+    {    
+        Prop:setAng(ang(Prop:angles():pitch(),Prop:angles():yaw()+0.5,Prop:angles():roll()))
+    }
+    if(changed(At1)&At1)
+    {
+Gr=propSpawn("models/props_junk/glassjug01.mdl",holoEntity(9):pos(),1)
+#E=propSpawn("models/props_junk/glassjug01.mdl",O:shootPos(),1)
+Gr:setKeyValue("explodeDamage","200")
+Gr:setKeyValue("explodeRadius","100")
+Gr:setKeyValue("health","20")
+Gr:setModel("models/Items/combine_rifle_ammo01.mdl")
+Gr:setTrails(30,0,0.5,"trails/laser",vec(180,180,255),255)
+Gr:setMass(10)
+holoEntity(9):soundPlay(Sound_index,1,"npc/strider/strider_minigun.wav")
+soundPitch(Sound_index,120)
+Sound_index=(Sound_index+1)%6
+
+
+#E:setTrails(10,0,0.5,"trails/plasma",vec(255,255,255),255)
+#Gr:setFire("SetTimer",random(0.8,0.8):toString(),0)
+Gr:propFreeze(0)
+Gr:setVel(owner():eye() * (4000)  )
+    }
+}else{
+        Leg_l_n=50
+        Leg_r_n=50
+        Leg_r_v=40
+        Leg_l_v=40
+        Hight2=70
+}
+
+
+
+
+

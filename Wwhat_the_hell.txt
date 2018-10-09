@@ -1,0 +1,44 @@
+@name Wwhat the hell
+@inputs 
+@outputs 
+@persist [Arr]:array
+@persist [E Prop]:entity
+@persist While_counter XCounter YCounter ZCounter
+@trigger 
+
+interval(50)
+if(first()){
+    E=entity()
+    
+    Size = 15
+    
+    XAmount = 3
+    YAmount = 3
+    ZAmount = 3
+    
+    ZCounter = 1
+    YCounter = 1
+    XCounter = 1
+       
+}
+
+
+
+
+while ( perf() && ZCounter <= ZAmount) {
+    local Z = ZCounter    
+    while ( perf() && YCounter <= YAmount) {
+        local Y = YCounter
+        while ( perf() && XCounter <= XAmount) {
+            local X = XCounter
+            
+            Prop=propSpawn("models/hunter/blocks/cube025x025x025.mdl",E:pos() + vec(X * Size, Y * Size, Z * Size),ang(0),1)
+            Arr[Arr:count(), entity]:removeOnDelete(Prop)
+            Arr:pushEntity(Prop)
+            
+            XCounter++
+        }
+        YCounter++
+    }    
+    ZCounter++    
+}

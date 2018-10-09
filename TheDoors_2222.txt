@@ -1,0 +1,143 @@
+@name TheDoors 
+@persist T W Model:string [Vec1 Vec2 Center Normal]:vector C X Y I J Len Hight [Data Props]:array Yaw Tick Dist
+
+if(first()){
+    
+    Dist=255
+    W=106
+    Model="models/hunter/blocks/cube2x2x1.mdl"  
+    
+    Dist=75
+    W=13
+    Model="models/hunter/blocks/cube025x025x025.mdl"
+    
+    for(I=1,4){holoCreate(I,vec(),vec(1)/10)}
+    timer("t",1)    
+}
+
+if(clk("t")){
+    T=owner():keyPressed("t")
+    if(T&$T){
+        Vec1=owner():aimPos()
+        Vec2=rangerOffset(10^5,Vec1,owner():eyeTrace():hitNormal()):position()
+        Vec3=rangerOffset(10^5,(Vec1+Vec2)/2,vec(0,0,1)):position()
+        Vec4=rangerOffset(10^5,(Vec1+Vec2)/2,-vec(0,0,1)):position()
+        A=Vec1-Vec3
+        B=Vec2-Vec3
+        Normal=vec(A:y()*B:z()-B:y()*A:z(),A:z()*B:x()-A:x()*B:z(),A:x()*B:y()-A:y()*B:x())
+        Normal=Normal/Normal:length()
+        holoPos(1,Vec1)
+        holoPos(2,Vec2)
+        holoPos(3,Vec3)
+        holoPos(4,Vec4)
+        Center=Vec1+Vec2+Vec3+Vec4
+        Center=Center/4
+        Vec1=vec(Vec1:x(),Vec1:y(),Vec3:z())
+        Vec2=vec(Vec2:x(),Vec2:y(),Vec4:z())
+        timer("c",1)
+        Vec3=Vec1-Vec2
+        Vec3=vec(Vec3:x(),Vec3:y(),0)
+        Yaw=Vec3:toAngle():yaw()
+        Vec3=Vec1-Vec2
+        Vec3=vec(abs(Vec3:x()),abs(Vec3:y()),0)
+        Len=Vec3:length()
+        Hight=abs((Vec1-Vec2):z())
+        X=round(Len/W)
+        Y=round(Hight/W)
+        timer("xy",1)
+        I=-1
+        J=0
+        
+        
+        holoCreate(5,Center+Normal*3,vec(1,1,5),ang(),vec(0,255,0),"cone")
+        holoAlpha(5,0)
+        holoAng(5,(Center-holoEntity(5):pos()):toAngle())
+        holoAng(5,holoEntity(5):angles():rotateAroundAxis(holoEntity(5):right(),90))
+    }
+    else{
+        timer("t",1)    
+    }
+}
+
+if(clk("xy")){
+    Flag=1
+    while(perf()){
+        if(Len-X*W>0){Flag=0,X++}
+        if(Hight-Y*W>0){Flag=0,Y++}    
+    }
+    if(!Flag){timer("xy",1)}
+    else{
+        timer("c",1)
+        print(X,":",Y)    
+    }
+}
+
+if(clk("c")){ 
+    while(perf()&holoCanCreate()){
+        I++
+        if(I>X){I=0,J++}
+        if(J<=Y){
+            C++
+            Vec3=Vec1-Vec2
+            Vec3=vec(Vec3:x()/X*I,Vec3:y()/X*I,Vec3:z()/Y*J)
+            Vec3=Vec1-Vec3
+            #holoCreate(C,Vec3,vec(1/10),ang(0,Yaw,0))
+            P=propSpawn(Model,Vec3,ang(0,Yaw,90),1)
+            P:propGravity(0)
+            Props:pushEntity(P)
+            Data:pushVector(Vec3)
+            #P:parentTo(holoEntity(C))
+            #holoParent(C,entity())
+        }
+    }
+    if(J<Y+2){
+        timer("c",1)
+    }
+    else{
+        print(X*(Y+2)+1)
+        timer("g",1)    
+    }
+}
+
+if(clk("g")){
+    timer("g",1)
+    VecO=entity():pos()
+    #VecO=owner():boxCenterW()
+    #find projection
+    VecL=owner():boxCenterW()-Normal
+    Ml=VecL:x()-VecO:x()
+    Nl=VecL:y()-VecO:y()
+    Ll=VecL:z()-VecO:z()
+    Ap=Normal:x()
+    Bp=Normal:y()
+    Cp=Normal:z()
+    
+    T=(  Ap*(Center:x()-VecO:x())+Bp*(Center:y()-VecO:y())+Cp*(Center:z()-VecO:z())  )/(  Ap*Ml+Bp*Nl+Cp*Ll  )
+    Projection=vec(Ml*T+VecO:x(),Nl*T+VecO:y(),Ll*T+VecO:z())
+    holoPos(5,Projection)
+    
+    while(perf()){
+        Tick++
+        if(Tick>X*(Y+2)+1){Tick=1}
+        E=Props:entity(Tick)
+        Vec=Data:vector(Tick)
+        if(!E:isFrozen()){E:propFreeze(1)}
+        if(VecO:distance(Vec)<Dist){
+            VecC=Vec-Projection+(Vec-VecO)/2
+            VecC=VecC/VecC:length()*(Dist*2-VecO:distance(Vec))
+            VecC=VecC+Projection
+            E:setPos(E:pos()+(VecC-E:pos())/5)
+            #E:setColor(vec(150))
+            E:setAng((VecC-Projection):toAngle()+ang(90,0,0))
+        }
+        else{
+            if(E:pos():distance(Vec)>1){
+                E:setPos(E:pos()+(Vec-E:pos())/5)    
+                #E:setColor(vec(125))
+                E:setAng(ang(0,Yaw,90))
+            }
+        }
+    }    
+}
+
+

@@ -1,0 +1,386 @@
+@model models/props_c17/playgroundTick-tack-toe_block01a.mdl
+@persist [ENT Prop Seat Driver BODY Test Camera]:entity
+@persist [LEGS]:table
+@persist [HIndex BodyOffset BodyAngleOffset MaxLegLength FirstPartLength SecondPartLength ThirdPartLength LegCycle StepFreq SideOrder LegsAmount LegCounter KeyAlpha MainAlpha Zoom CameraTick]
+@persist [BodyNormalHeight BodyCurrentHeight BodyCrouchHeight WalkSpeed SprintSpeed CurrentSpeed CameraX Jumping]
+@persist [MainColor]:vector
+
+@outputs [Seat BODY Camera]:entity
+@outputs [FaceRight FaceLeft]:entity
+
+interval(50)
+if (first()) {
+    #runOnTick(1)
+    #include "libs/HoloCreate"
+    
+    ENT = entity()
+    ENT:propFreeze(1)
+    ENT:setPos(ENT:pos() + vec(0,0,30))    
+    ENT:setAng(ang(0))
+    ENT:setAlpha(180)
+    ENT:propNotSolid(1)
+
+    BODY = propSpawn("models/maxofs2d/cube_tool.mdl", ENT:pos() + vec(0,0,30), ang(0), 1)
+    BODY:setMass(500)
+    
+    Seat = ENT:isWeldedTo()
+    #Seat:constraintBreak()
+    Seat:setMass(0)
+    Seat:propFreeze(1)
+    Seat:setPos(BODY:pos()+vec(0,0,5))
+    Seat:setAng(ang(0,-90,0))
+
+    #cameraCreate(1, BODY:pos() + BODY:up() * 200 + BODY:forward() * -400, BODY:angles()) Camera = cameraEntity(1)
+    #cameraParent(1, BODY)
+    Camera = noentity()
+    
+    timer("prepare", 200)
+    
+    LegsAmount = 8
+    BodyOffset = 40
+    BodyAngleOffset = 50
+    FirstPartLength = 60
+    SecondPartLength = 80
+    ThirdPartLength = 60
+    MaxLegLength = FirstPartLength + SecondPartLength + ThirdPartLength
+    StepFreq = 30
+    
+    BodyNormalHeight = 80
+    BodyCrouchHeight = 30
+    BodyCurrentHeight = BodyNormalHeight
+    SprintSpeed = 100
+    WalkSpeed = 20
+    CurrentSpeed = WalkSpeed
+    
+    SideOrder = 0
+    LegCycle = 1
+    LegCounter = 1
+    Jumping = 0
+    CameraX = 0
+    Zoom = 100
+    CameraTick = 0
+    
+    HIndex = 0
+    KeyAlpha = 0
+    MainAlpha = 255
+    MainColor = vec(150,255,255)
+    
+    LEGS = table()
+    
+    do_holocreate(HIndex, BODY, "models/props_combine/tprotato1.mdl", vec(0,0,0), ang(110,0,0), vec(1,0.7,0.35), vec(100), MainAlpha) HIndex++
+    do_holocreate(HIndex, BODY, "models/props_combine/masterinterface.mdl", vec(0,0,-90), ang(20,0,0), vec(0.8,1,0.8), vec(255), MainAlpha)
+    do_holoclip(HIndex, 1, vec(0,0,90), vec(0,0,1))
+    #do_holoclip(HIndex, 2, vec(0,0,20), vec(0,0,1))
+    HIndex++
+    do_holocreate(HIndex, BODY, "models/props_combine/tprotato2.mdl", vec(-65,0,40), ang(45,180,0), vec(1), vec(150), MainAlpha) HIndex++
+    do_holocreate(HIndex, BODY, "models/props_combine/tprotato1.mdl", vec(-45,0,75), ang(-95,180,0), vec(1,0.7,0.5), vec(150), MainAlpha) HIndex++
+    do_holocreate(HIndex, BODY, "models/combine_helicopter/helicopter_bomb01.mdl", vec(40,-15,-5), ang(0,0,0), vec(0.35), vec(255), MainAlpha)
+    holoMaterial(HIndex, "Models/props_combine/combine_door01") HIndex++
+    FaceRight = do_holocreate_key(HIndex, holoEntity(HIndex - 1), vec(0,0,0), ang(0,0,0), KeyAlpha) HIndex++
+    do_holocreate(HIndex, BODY, "models/combine_helicopter/helicopter_bomb01.mdl", vec(40,15,-5), ang(0,0,0), vec(0.35), vec(255), MainAlpha)
+    holoMaterial(HIndex, "Models/props_combine/combine_door01") HIndex++
+    FaceLeft = do_holocreate_key(HIndex, holoEntity(HIndex - 1), vec(0,0,0), ang(0,0,0), KeyAlpha) HIndex++
+    
+    
+    
+    
+    function number cosine( [One Two Three]:number ) {
+        return acos( (One^2 + Two^2 - Three^2) / (2*One*Two) )
+    }
+    
+    function table do_createLeg(Offset:vector, I:number) {
+        local ButtHolo = do_holocreate_key(HIndex, BODY, Offset, ang(0), KeyAlpha)
+        holoAng(HIndex, (holoEntity(HIndex):pos() - BODY:pos()):normalized():toAngle() + ang(-45,0,0)) HIndex++
+        do_holocreate(HIndex, ButtHolo, "models/props_combine/combine_train02a.mdl", vec(FirstPartLength/1.8,0,5), ang(0,90,0), vec(0.06,0.0018*FirstPartLength,0.05), vec(255), MainAlpha) HIndex++
+        
+        local FirstKnee = do_holocreate_key(HIndex, ButtHolo, vec(FirstPartLength,0,0), ang(0,0,0), KeyAlpha) HIndex++
+        do_holocreate(HIndex, FirstKnee, "models/props_combine/combine_train02b.mdl", vec(SecondPartLength/1.8,0,5), ang(0,90,0), vec(0.05,0.0018*SecondPartLength,0.04), vec(255), MainAlpha) HIndex++
+        do_holocreate(HIndex, FirstKnee, "models/holograms/cylinder.mdl", vec(SecondPartLength/1.8,0,5), ang(90,0,0), vec(0.3,0.3,6), MainColor, MainAlpha)
+        holoAlpha(HIndex,0)
+        holoRenderFX(HIndex,24)
+        holoDisableShading(HIndex, 1) HIndex++
+        
+        do_holocreate(HIndex, FirstKnee, "models/holograms/cylinder.mdl", vec(SecondPartLength/1.8,0,5), ang(90,0,0), vec(0.05,0.05,6), MainColor, MainAlpha)
+        holoDisableShading(HIndex, 1) HIndex++
+        
+        do_holocreate(HIndex, FirstKnee, "models/items/combine_rifle_cartridge01.mdl", vec(-5,0,5), ang(-110,0,0), vec(2,4,2), vec(255), MainAlpha) HIndex++
+        do_holocreate(HIndex, FirstKnee, "models/holograms/cylinder.mdl", vec(SecondPartLength/1.8,0,7), ang(90,0,0), vec(0.2,0.5,6), vec(255), MainAlpha)
+        holoMaterial(HIndex, "Models/props_combine/combine_door01") HIndex++
+        
+        
+        local SecondKnee = do_holocreate_key(HIndex, FirstKnee, vec(SecondPartLength,0,0), ang(110,0,0), KeyAlpha) HIndex++
+        do_holocreate(HIndex, SecondKnee, "models/props_combine/combine_train02a.mdl", vec(ThirdPartLength/1.8,0,5), ang(0,90,0), vec(0.04,0.0018*ThirdPartLength,0.03), vec(255), MainAlpha) HIndex++
+        do_holocreate(HIndex, SecondKnee, "models/props_combine/masterinterface.mdl", vec(20,0,-10), ang(-50,0,0), vec(0.2,0.2,0.2), vec(255), MainAlpha)
+        do_holoclip(HIndex, 1, vec(0,0,0), vec(-1,0,0))
+        do_holoclip(HIndex, 2, vec(0,0,20), vec(0,0,1))
+        HIndex++
+        do_holocreate(HIndex, SecondKnee, "models/props_combine/combine_teleportplatform.mdl", vec(-10,0,7), ang(90,0,0), vec(0.15,0.15,0.4), vec(255), MainAlpha) HIndex++
+        
+        local Foot = do_holocreate_key(HIndex, SecondKnee, vec(ThirdPartLength,0,0), ang(0,0,0), KeyAlpha) HIndex++
+        do_holocreate(HIndex, SecondKnee, "models/props_combine/combine_mine01.mdl", vec(ThirdPartLength,0,5), ang(90,0,0), vec(0.35,0.35,0.8), vec(255), MainAlpha) HIndex++
+        
+        
+        #local Test = holoCreate(HIndex)
+        #holoPos(HIndex, Foot:pos())
+        #holoAlpha(HIndex, I*30)
+        #HIndex++
+        
+        local Leg = table(
+            "butt" = ButtHolo,
+            "first_knee" = FirstKnee,
+            "second_knee" = SecondKnee,
+            "foot" = Foot,
+            "foot_pos" = Foot:pos(),
+            "test" = Test,
+            "state" = "ready",
+            "steps" = table(),
+            "step_progress" = 0,
+            "waiting_timer" = 0
+        )
+        LEGS:pushTable(Leg)        
+    }
+    
+    function void table:do_kinemize(I) {
+
+        local FootPos = This["steps", table]["last", vector]
+        #local FootPos = This["foot_pos", vector]
+
+        local ButtEnt = This["butt", entity]
+        local Bearing = -bearing(ButtEnt:pos(), BODY:angles(), FootPos)
+        local Angle = BODY:toLocalAxis(FootPos - ButtEnt:pos()):toAngle():setYaw(Bearing)
+        local Offset = MaxLegLength - min(ButtEnt:pos():distance(FootPos), MaxLegLength - 40)
+        local Quat = quat(Angle) * qRotation(vec(0, -Offset + 15, 0)) # + 65-15
+        holoAng(holoIndex(ButtEnt), BODY:toWorld(slerp(quat(ButtEnt), Quat, 1):toAngle()))
+        
+        local FirstKneeEnt = This["first_knee", entity]
+        #local Distance = min(ButtEnt:pos():distance(FootPos), MaxLegLength)
+        local FirstKneeDistance = min(FirstKneeEnt:pos():distance(FootPos), SecondPartLength + ThirdPartLength)
+        local Axis = ButtEnt:toLocalAxis(FirstKneeEnt:pos() - FootPos)
+        local Cos1 = cosine(SecondPartLength, FirstKneeDistance, ThirdPartLength)
+        #local Cos2 = cosine(SecondPartLength, FirstKneeDistance, ThirdPartLength)
+        local Atan = max(atan(-Axis:z(), Axis:x()) + Cos1 + 110, 0)
+        if(I==1){
+            #print(cosine(ThirdPartLength , SecondPartLength, FirstKneeDistance))    
+        }
+        holoAng(holoIndex(FirstKneeEnt), ButtEnt:toWorld(ang(Atan, 0, 0)))
+        
+        local SecondKneeEnt = This["second_knee", entity]
+        local SecondKneeDistance = min(SecondKneeEnt:pos():distance(ButtEnt:pos()), FirstPartLength + SecondPartLength)
+        #FirstKneeDistance = min(FirstKneeEnt:pos():distance(FootPos), SecondPartLength + ThirdPartLength)
+        holoAng(holoIndex(SecondKneeEnt), holoEntity(holoIndex(FirstKneeEnt)+1):toWorld(ang(180 - min(135, cosine(ThirdPartLength , SecondPartLength, FirstKneeDistance)) + 10, -90, 0)))
+    }
+    
+    function void entity:applytorque(Ang:angle) {
+        Ve = This:toLocal(rotationVector(quat(Ang)/quat(This))+This:pos())
+        This:applyTorque((150*Ve - 25*This:angVelVector())*This:inertia())
+    }
+    
+    timer("leg_create", 100)
+
+    Test = holoCreate(HIndex)
+    holoDisableShading(HIndex, 1)
+    holoModel(HIndex, "hq_sphere")
+    holoMaterial(HIndex, "hlmv/debugmrmwireframe")
+    holoColor(HIndex, vec(255,0,0))
+    HIndex++
+    
+}
+Driver = Seat:driver()
+if ( clk("prepare") ) {
+    Seat:parentTo(BODY)
+    #BODY:propNotSolid(1)
+    BODY:propGravity(0)
+    BODY:propFreeze(0)
+    ENT:parentTo(BODY)
+    ENT:setPos(BODY:pos())
+}
+
+if ( clk("leg_create") ) {
+    local J = (LegCounter-1)*360/LegsAmount + 180/LegsAmount
+    J = J + sin(J*2) * BodyAngleOffset + 90
+    local Offset = vec(sin(J) * BodyOffset, cos(J) * BodyOffset, 0)
+    do_createLeg(Offset, LegCounter)
+    if (LegCounter < LegsAmount) {
+        timer("leg_create", 300)
+        LegCounter++
+    }    
+}
+
+for (I=1, LEGS:count()) {
+    LEGS[I, table]:do_kinemize(I)
+}
+
+local Speed = BODY:vel():length()
+LegCycle = LegCycle > 8 ? 1 : LegCycle + min(max(Speed/300, 0.2), 1)
+local LegOrder = round(LegCycle)
+
+rangerFilter(array(BODY, Seat))
+local BodyRanger = rangerOffsetHull(MaxLegLength*0.8, BODY:pos(), BODY:up()*-1, vec(20))
+rangerFilter(array(BODY, Seat))
+local WallRanger = rangerOffsetHull(MaxLegLength*0.8, BODY:pos(), (BODY:up()*-1):normalized(), vec(20))
+#Test:setPos(WallRanger:position())
+
+
+if (changed(LegOrder)) {
+    local LegIndex = SideOrder ? LegsAmount - LegOrder + 1 : LegOrder
+    SideOrder = LegOrder == LegsAmount /2 ? SideOrder : !SideOrder
+    
+    for (I=1, LEGS:count()) {
+        if (I == LegIndex) {
+            local Leg = LEGS[I, table]
+            if (Leg["state", string] == "ready") {              
+                  
+                local EndPos = Leg["butt", entity]:pos() + (Leg["butt", entity]:pos() - BODY:pos()):normalized()*max((150 - BodyRanger:distance()), 100) + BODY:vel():normalized()*min(BODY:vel():length(), MaxLegLength*0.7) + BODY:up()*100
+                local Ranger = rangerOffsetHull(300, EndPos, BODY:up()*-1, vec(4))
+                
+                
+                if (Ranger:distance() == 0 || !Ranger:pos():isInWorld()) {
+                    local StartPos = BODY:pos() + BODY:up() * MaxLegLength - BODY:vel() / 5
+                    local Dir = EndPos - StartPos
+                    Ranger = rangerOffsetHull(300, StartPos, Dir, vec(4))
+                }
+                
+                if (Ranger:distance() > 200) {
+                    local StartPos = BODY:pos() + BODY:up() * MaxLegLength * -1
+                    EndPos = Leg["butt", entity]:pos() + (Leg["butt", entity]:pos() - BODY:pos()):normalized()*max((150 - BodyRanger:distance()), 100) + BODY:vel():normalized()*min(BODY:vel():length(), MaxLegLength*0.5)
+                    local Dir = StartPos - EndPos
+                    Ranger = rangerOffsetHull(300, EndPos, Dir, vec(4))
+                }
+
+                
+                #local StartPosRanger = Leg["butt", entity]:pos() + FirstPartLength
+                #local Direction = (Leg["butt", entity]:pos() - BODY:pos()):normalized()*max((150 - BodyRanger:distance()), 30) + BODY:vel():normalized()*min(BODY:vel():length(), MaxLegLength*0.7) + BODY:up()*-1 * (BodyCurrentHeight + FirstPartLength)
+                #local Ranger = rangerOffsetHull(300, StartPosRanger, Direction, vec(4))
+                Leg["ranger", ranger] = Ranger
+                if (Ranger:hit()) {
+                    local Steps = Leg["steps", table]
+                    Steps["first", vector] = Steps["last", vector]
+                    Steps["third", vector] = Ranger:position()         
+                    Steps["second", vector] = (Steps["first", vector] + Steps["third", vector])*0.5 + vec(0, 0, min(Steps["first", vector]:distance(Steps["third", vector]), 40))
+        
+                    if(Steps["first", vector]:distance(Steps["third", vector]) > 10) {
+                        Leg["state", string] = "execute"
+                    }            
+                } 
+            }
+            
+        }    
+    }
+}
+
+local Normals = array()
+
+for (I=1, LEGS:count()) {
+    local Leg = LEGS[I, table]
+    if (Leg["state", string] == "execute") {  
+        local Steps = Leg["steps", table]
+        
+        Leg["step_progress", number] = min(Leg["step_progress", number] + max(Speed/300, 0.1), 1)
+        Steps["last", vector] = bezier(Steps["first", vector], Steps["second", vector], Steps["third", vector], Leg["step_progress", number])
+    
+        if (Leg["step_progress", number] >= 1) {
+            Leg["step_progress", number] = 0
+            Leg["state", string] = "ready"
+            Leg["waiting_timer", number] = 0
+        }
+       
+    } else {
+        
+    }
+    Normals:pushVector(Leg["ranger", ranger]:hitNormal())
+}
+
+local NormalVector = vec(0)
+for (I=1, Normals:count()) {
+    NormalVector+=Normals[I, vector]
+}
+NormalVector = NormalVector:normalized() * 2
+
+
+W = Driver:keyPressed("W")
+A = Driver:keyPressed("A")
+S = Driver:keyPressed("S")
+D = Driver:keyPressed("D")
+Cr = Driver:keyPressed("V")
+ZoomP = Driver:keyPressed("pad_plus")
+ZoomM = Driver:keyPressed("pad_minus")
+Sprint = Driver:keySprint()
+Jump = Driver:keyJump()
+
+if (Cr) {
+    BodyCurrentHeight = BodyNormalHeight
+} else {
+    BodyCurrentHeight = BodyCrouchHeight
+}
+if (Sprint) {
+    CurrentSpeed = SprintSpeed
+}
+if (!Sprint) {
+    CurrentSpeed = WalkSpeed
+}
+
+if(!Jumping & changed(Jump) & Jump)
+{
+    local Dir = Driver:aimPos() - Driver:pos()
+    local Dis = Driver:aimPos():distance(Driver:pos()) 
+    BODY:applyForce((BODY:up() / 2 + Dir:normalized() ):normalized() * 3000 *  BODY:mass())
+    local Ran = rangerOffset(1000, Driver:shootPos()+ Driver:eye() * 10, Driver:aimPos() - Driver:shootPos())
+    local Normal = Ran:hitNormal()
+    BODY:applyOffsetForce((Normal - BODY:up()) * BODY:inertia():length() * 10000, BODY:massCenter() + BODY:up())
+    BODY:applyOffsetForce(-(Normal - BODY:up()) * BODY:inertia():length() * 10000, BODY:massCenter() - BODY:up())
+}
+
+BODY:applyForce( BODY:up() * (BodyCurrentHeight - BodyRanger:distance()) * BODY:mass() - BODY:vel()*BODY:mass()/5 )
+BODY:applyOffsetForce((NormalVector - BODY:up()) * BODY:inertia():length() * 3000, BODY:massCenter() + BODY:up())
+BODY:applyOffsetForce(-(NormalVector - BODY:up()) * BODY:inertia():length() * 3000, BODY:massCenter() - BODY:up())
+BODY:applyAngForce(-BODY:angVel() * BODY:inertia():length() * 5)
+
+
+#BodyYaw = 0
+if (W) {
+    BODY:applyForce( BODY:forward() * CurrentSpeed * BODY:mass())
+}
+if (A) {
+    BODY:applyForce( -BODY:right() * WalkSpeed * BODY:mass())
+    #BodyYaw += 5
+}
+if (D) {
+    BODY:applyForce( BODY:right() * WalkSpeed * BODY:mass())
+    #BodyYaw -= 5
+}
+if (S) {
+    BODY:applyForce( -BODY:forward() * CurrentSpeed * BODY:mass())
+}
+
+if (changed(Driver) & Driver) {
+    #cameraToggle(1, 1, Seat)
+}
+
+if (changed(ZoomP) & ZoomP) {
+    Zoom-=10
+}
+if (changed(ZoomM) & ZoomM) {
+    Zoom+=10
+}
+if (changed(Zoom)) {
+    #cameraZoom(1, Zoom, 0.2)
+}
+CameraTick = !CameraTick
+if (CameraTick) {
+    local Y = 0
+    local X = 0
+    if (Driver) {
+        local EyeAng = BODY:toLocal(Driver:eyeAngles())
+        Y = EyeAng:yaw()
+        X = EyeAng:pitch()
+        Driver:setEyeAngles( Seat:toLocal( BODY:angles() + (BODY:angles() - Driver:eyeAngles()) / 2 ) )
+    }
+    
+    if (Y) {
+        BODY:applyTorque(vec(0, 0, Y) * BODY:inertia():length() * 200)
+    }
+    if (X) {
+        CameraX += X
+        Camera:setAng(BODY:toWorld(ang(CameraX,0,0)))
+    }    
+}

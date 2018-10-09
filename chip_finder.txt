@@ -1,0 +1,18 @@
+@name chip_finder
+@inputs 
+@outputs 
+@persist Array:array
+@trigger 
+
+interval(50)
+
+T=owner():keyPressed("T")
+if(T){
+findIncludeClass("wire")
+findInSphere(owner():pos(),10000)
+Array=findToArray()
+
+for(I=1,Array:count()){
+    owner():drawBeam("cable/physbeam",Array:entity(I):pos(),owner():pos(),vec(255,80,80),255,30,8,4):remove(0.2)
+}    
+}

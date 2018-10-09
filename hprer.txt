@@ -1,0 +1,10 @@
+@name hprer
+@inputs 
+@outputs 
+@persist Tar:entity
+@trigger 
+
+interval(5)
+Tar=findPlayerByName("borov")
+  if(Tar:health()<100) {
+    O=entitySpawn("item_healthvial",Tar:pos(),0)}

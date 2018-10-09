@@ -1,0 +1,72 @@
+@name Lapka_test
+@persist Forward LCT LH Legs:table E:entity Color:vector
+
+interval(50)
+if(first()){
+    function entity entity:holoCreate(Id1:number,Pos1:vector,Ang1:angle,Scale:vector,Color:vector,Model:string,Parent:number){
+        holoCreate(Id1) holoPos(Id1,This:toWorld(Pos1)) holoAng(Id1,This:toWorld(Ang1)) holoScale(Id1,Scale) 
+        holoColor(Id1,Color) holoModel(Id1,Model) holoParent(Id1,Parent) holoMaterial(Id1,"models/debug/debugwhite") 
+        return holoEntity(Id1)
+    }
+    function table entity:legCreate(Id:number,Pos:vector,Ang:angle,Revers:number,Sin:number){
+        This:holoCreate(LH+1,Pos,Ang,vec(),vec(),"",0)
+        This:holoCreate(LH+2,Pos,Ang,vec(2,0.2,2),vec(30),"cube",LH+1)
+        This:holoCreate(LH+3,Pos,Ang,vec(1.9,0.22,1.9),Color,"cube",LH+2)
+        This:holoCreate(LH+4,Pos,Ang,vec(1.8,0.24,1.8),vec(30),"cube",LH+2)
+        This:holoCreate(LH+5,Pos,Ang,vec(0.7),vec(30),"rcube_thin",LH+2)
+        This:holoCreate(LH+6,Pos,Ang,vec(0.68),Color,"cube",LH+5)
+        holoEntity(LH+5):holoCreate(LH+7,vec(0,8,0),ang(),vec(0.3,2,0.3),vec(30),"rcube_thin",LH+5)
+        holoEntity(LH+5):holoCreate(LH+8,vec(0,8,0),ang(),vec(0.295,1.98,0.295),Color,"cube",LH+5)
+        holoEntity(LH+5):holoCreate(LH+9,vec(0,20,0),ang(0,0,-20),vec(0.4),vec(30),"rcube_thin",LH+5)
+        holoEntity(LH+5):holoCreate(LH+10,vec(0,20,0),ang(0,0,-20),vec(0.39),Color,"cube",LH+9)
+        holoEntity(LH+9):holoCreate(LH+11,vec(0,8,0),ang(),vec(0.2,1.5,0.2),vec(30),"rcube_thin",LH+9)
+        holoEntity(LH+9):holoCreate(LH+12,vec(0,8,0),ang(),vec(0.195,1.48,0.195),Color,"cube",LH+9)
+        holoParent(LH+1,This)  
+        
+        Legs[Id,table]=table()
+        Legs[Id,table]["Revers",number]=Revers
+        Legs[Id,table]["Entity",entity]=This
+        Legs[Id,table]["Pos",vector]=Pos        
+        Legs[Id,table]["Sin",number]=Sin
+        Legs[Id,table]["0",number]=LH+1
+        Legs[Id,table]["1",number]=LH+2
+        Legs[Id,table]["2",number]=LH+5
+        Legs[Id,table]["3",number]=LH+9
+        LH+=12     
+        return Legs[Id,table]
+    }
+        
+    Color=vec(0,255,190)        
+    E=entity()
+    E:legCreate(1,vec(10,10,0),ang(),1,0)    
+    E:legCreate(2,vec(-10,10,0),ang(),1,180)
+    E:legCreate(3,vec(10,-10,0),ang(0,180,0),-1,180)
+    E:legCreate(4,vec(-10,-10,0),ang(0,180,0),-1,0)
+#    E:legCreate(5,vec(30,10,0),ang(),1,0) 
+#    E:legCreate(6,vec(30,-10,0),ang(0,180,0),-1,180)     
+    LCT=curtime()
+    Forward=5
+}
+
+CT=(curtime()-LCT)*100*Forward
+
+for(I=1,Legs:count()){
+    Info=Legs[I,table]
+    Entity=Info["Entity",entity]
+    R=Info["Revers",number]
+    Sin=Info["Sin",number]
+    N0=Info["0",number]
+    N1=Info["1",number]
+    N2=Info["2",number]
+    N3=Info["3",number]
+    CT=(CT+Sin)*R
+   
+    
+    CT2=(CT-Sin)*R
+    holoAng(N1,holoEntity(N0):toWorld(ang(sin(CT+I*45)*Forward,0,sin(CT+90+I*90)*Forward)))
+    holoAng(N2,holoEntity(N1):toWorld(ang(0,clamp(sin(CT)*15*(Forward/3),-20,70),clamp(sin(CT+90)*15*(Forward/4),-60,20))))
+    holoAng(N3,holoEntity(N2):toWorld(ang(0,0,clamp(sin(CT+60)*15*(Forward/5)-100,-80,-10))))
+    CT=(curtime()-LCT)*100*Forward
+    
+}
+

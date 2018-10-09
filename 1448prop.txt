@@ -1,0 +1,7 @@
+@name 1448prop
+@persist Ang
+
+interval(10)
+
+Ang=(Ang+1)%360
+entity():setColor(hsv2rgb(Ang,1,1))

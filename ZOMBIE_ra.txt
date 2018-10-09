@@ -1,0 +1,127 @@
+@name ZOMBIE_prop
+@inputs 
+@outputs [Tar]:entity A N N2 S:string K DMG N3 Dist Arr:array Health
+@persist [E Prop]:entity Ra:ranger Ra2:ranger Ra3:ranger Rage Speed
+@trigger 
+
+if(first()){
+runOnTick(1)
+E=entity()
+findIncludeClass("player")
+findExcludeEntity(owner())
+findInSphere(E:pos(),15000)
+Arr=findToArray()
+Tar=Arr[random(1,Arr:count()),entity]
+#Tar=findPlayerByName("magomedshah")
+
+    holoCreate(1)
+    holoModel(1,"models/Zombie/Poison.mdl")
+    holoPos(1,E:pos())
+    holoAnim(1,5)
+    holoColor(1,vec(100))
+    particleGravity(vec(0,0,-300))
+    
+    Prop=propSpawn("models/props_junk/wood_crate001a_damaged.mdl",1)
+    Prop:setHealth(250)
+    Health=Prop:health()
+    Prop:setAlpha(0)
+    Prop:setPos(entity():pos()+ vec(0,0,50))
+    noCollideAll(Prop,1)
+    DMG=20
+    Rage=0
+    Speed=2
+   
+}
+
+holoAng(1,vec(Tar:pos():x()-holoEntity(1):pos():x(),Tar:pos():y()-holoEntity(1):pos():y(),0):normalized():toAngle())
+Prop:setPos(holoEntity(1):pos()+vec(0,0,40))
+
+Ra=rangerOffsetHull(holoEntity(1):toWorld(vec(50,0,50)),Tar:pos()+vec(0,0,40),vec(-2,-2,0),vec(2,2,0))
+Ra2=rangerOffsetHull(holoEntity(1):pos()+vec(0,0,0),holoEntity(1):pos()+vec(0,0,5),vec(-10,-10,0),vec(10,10,0))
+Ra3=rangerOffsetHull(holoEntity(1):pos()+vec(0,0,5),holoEntity(1):pos()+vec(0,0,-10),vec(-10,-10,0),vec(10,10,0))
+K=Ra2:distance() 
+Dist=holoEntity(1):pos():distance(Tar:pos())
+if(Dist<=80){
+        A=1
+    
+}else{ A=0}
+
+if(!A){
+    if(!Tar:isAlive()){
+        Tar=Arr[random(1,Arr:count()),entity]
+        }
+    if(randint(1,100)==1){
+        Tar=Arr[random(1,Arr:count()),entity]
+        if(!Tar:isAlive()){
+            Tar=Arr[random(1,Arr:count()),entity]
+            }
+        }
+    if(changed(Prop:health())&Prop:health()<=100){Rage=1}
+    if(changed(Rage)&Rage){holoColor(1,vec(255,80,80))
+        
+    }
+    if(!Rage){
+    holoPos(1,vec(holoEntity(1):pos():x() + (Tar:pos()-holoEntity(1):pos()):normalized():x()*Speed,holoEntity(1):pos():y() + (Tar:pos()-holoEntity(1):pos()):normalized():y()*Speed,holoEntity(1):pos():z()))
+    }else{
+    holoPos(1,vec(holoEntity(1):pos():x() + (Tar:pos()-holoEntity(1):pos()):normalized():x()*Speed*2,holoEntity(1):pos():y() + (Tar:pos()-holoEntity(1):pos()):normalized():y()*Speed*2,holoEntity(1):pos():z()))
+}
+if(!(abs(Tar:pos():z()-holoEntity(1):pos():z())<=5)){
+    if(Ra2:distance()<5& Ra3:distance()<15 | ((abs(Tar:pos():x() - holoEntity(1):pos():x())<=4&abs(Tar:pos():y() - holoEntity(1):pos():y())<=4 ) & Dist>80 )){
+      holoPos(1,holoEntity(1):pos()+vec(0,0,10))
+    }
+    if(Ra3:distance()>=15){
+        holoPos(1,holoEntity(1):pos()+vec(0,0,-5))
+    }
+}
+}
+if(Rage)
+{
+    N3=(N3+1)%20
+    if(N3==1){
+                Rand=random(1,6)
+            String="decals/blood"+Rand:toString() 
+            particle(1,5,40,String,vec(255),holoEntity(1):pos(),vec(random(-100,100),random(-100,100),random(100,200)),1)
+        }
+    }
+if(A){
+    if(!Rage){
+    N=(N+1)%60
+}else{N=(N+1)%30}
+
+    if(N==1){
+        if(!Tar:isAlive()){
+            Tar=Arr[random(1,Arr:count()),entity]
+            }
+        holoAnim(1,6,0,3)
+      #  print(DMG)
+        DMG=DMG+DMG*0
+        Tar:takeDamage(DMG,entity(131),entity(131))
+        if(Tar:inVehicle()){Tar:killPod()}
+        for(I=1,random(1,3)){   
+            Rand=random(1,6)
+            String="decals/blood"+Rand:toString() 
+            particle(1,5,80,String,vec(255),Tar:pos(),vec(random(-100,100),random(-100,100),random(100,200)),1)
+        }
+    }
+}
+
+
+if(changed(A)&A){}
+if(changed(A)&!A){holoAnim(1,2)}
+if(changed(Tar:isAlive())){DMG=6}
+if(Prop:getDamage()){ 
+           for(I=1,random(2,5)){   
+            Rand=random(1,6)
+            String="decals/blood"+Rand:toString() 
+            particle(1,5,50,String,vec(255),holoEntity(1):pos(),vec(random(-100,100),random(-100,100),random(50,150)),1)
+        }
+        }
+N2=(N2+1)%100
+if(N2==1){
+    S="npc/zombie_poison/pz_pain"+round(random(1,3)):toString()+".wav"
+    holoEntity(1):soundPlay(1,2,S)
+    soundPitch(1,random(30,80))
+}
+if(Prop==noentity()|Prop:health()<=1){selfDestruct()}
+
+

@@ -1,0 +1,49 @@
+@name magic_door
+@inputs 
+@outputs Mate_s:string D
+@persist [Door Mate]:entity T
+@trigger 
+
+interval(10)
+if(first()){
+    E=entity()
+    O=owner()
+    Door=entity():isWeldedTo()
+}
+
+findInSphere(E:pos(),100)
+findClosest(E:pos())
+#findSortByDistance(E:toWorld(vec(0,0,0)))
+findIncludeClass("player")
+findIncludeClass("NPC")
+#findExcludePlayer("aionics")
+findExcludePlayer("Most")
+findExcludePlayer("Den246")
+findExcludePlayer("Alex67")
+findExcludePlayer("banan")
+findExcludePlayer("cocobo")
+findExcludePlayer("double")
+findExcludePlayer("balala")
+findExcludePlayer("flart")
+findExcludePlayer("forest")
+findExcludePlayer("freekill")
+findExcludePlayer("immortal")
+findExcludePlayer("Mr.Phoenix")
+findExcludePlayer("botosh")
+findExcludePlayer("Bangal")
+
+Mate = find()
+Mate_s=Mate:toString()
+
+
+
+
+if(Mate==noentity())
+{
+    Door:noCollideAll(0)
+    D=0
+}else{
+    Door:noCollideAll(1)
+    D=1
+}
+

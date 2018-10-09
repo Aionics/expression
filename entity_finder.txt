@@ -1,0 +1,23 @@
+@name entity_finder
+@inputs 
+@outputs 
+@persist Ar:array
+@trigger 
+
+if (first()) {
+    runOnTick(1)
+    
+}
+findIncludeClass("acf")
+#findExcludeClass("weapon")
+findInSphere(entity():pos(), 10000)
+Ar = findToArray()
+if (changed(Ar:count())) {
+    for(I=1, Ar:count() ) {
+        local Ent = Ar[I, entity]
+        if (!Ent:isWeapon()) {
+            print(Ent)
+        }
+    }   
+}
+

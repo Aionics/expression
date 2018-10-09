@@ -1,0 +1,12 @@
+@name Colorer_blue
+@inputs P:entity
+@outputs 
+@persist 
+
+runOnTick(50)
+
+
+            if(P){
+                P:setColor(vec(255,0,0))
+            }
+   

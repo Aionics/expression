@@ -1,0 +1,174 @@
+#    ___    _ ______ ______ ___ __  __      _____  _                      _      
+#   |  _|  | |  ____|  ____|_  |  \/  |    |  __ \| |                    (_)     
+#   | |    | | |__  | |__    | | \  / |_ __| |__) | |__   ___   ___ _ __  ___  __
+#   | |_   | |  __| |  __|   | | |\/| | '__|  ___/| '_ \ / _ \ / _ \ '_ \| \ \/ /
+#   | | |__| | |    | |      | | |  | | |_ | |    | | | | (_) |  __/ | | | |>  < 
+#   | |\____/|_|    |_|     _| |_|  |_|_(_)|_|    |_| |_|\___/ \___|_| |_|_/_/\_\
+#   |___|                  |___|                                                 
+#   
+#                           ***DONT FUCK THIS CODE!!!***
+@name Transistor
+@persist [E O H]:entity [Atts]:table Hide Fri:array
+@persist Index PARENT_HOLO_INDEX PARENT_ATT_NAME:string N
+
+if(first())
+{
+    particleGravity(vec(0))
+    runOnTick(1)
+    E=entity()
+    O=owner()
+    #O=findPlayerByName("Aion")
+    rangerFilter(O)
+    #particleGravity(vec(0,0,-100))
+    particleBounce(100)
+    function number index()
+    {
+        Index++
+        return Index
+    }
+    function entity entity:holoCCreate(NUMBER_INDEX,VECTOR_POS:vector,VECTOR_SCALE:vector,ANGLE_ANG:angle,VECTOR_COLOR:vector,STRING_MODEL:string,SHOULD_DISABLE_SHADING)
+    {
+        local H=noentity()
+        while(!H){H=holoCreate(NUMBER_INDEX,E:toWorld(VECTOR_POS),VECTOR_SCALE,E:toWorld(ANGLE_ANG),VECTOR_COLOR,STRING_MODEL?:"cube")}
+        if(Hide)
+        {
+            holoVisible(NUMBER_INDEX,players(),0)
+            holoVisible(NUMBER_INDEX,Fri,1)
+        }
+        holoParent(NUMBER_INDEX,This)
+        holoDisableShading(NUMBER_INDEX,SHOULD_DISABLE_SHADING)
+        return H
+    }
+    function parentAttachment(HOLO_INDEX,ATT_NAME:string,VECTOR_CORRECTION:vector,ANGLES_CORRECTION:angle)
+    {
+        holoPos(HOLO_INDEX,Atts[ATT_NAME,entity]:toWorld(VECTOR_CORRECTION))
+        holoAng(HOLO_INDEX,Atts[ATT_NAME,entity]:toWorld(ANGLES_CORRECTION))
+        PARENT_ATT_NAME=ATT_NAME
+        PARENT_HOLO_INDEX=HOLO_INDEX
+        timer("PARENT_ATTACHMENT",10)
+    }
+    function entity holoCCreate(NUMBER_INDEX,VECTOR_POS:vector,VECTOR_SCALE:vector,ANGLE_ANG:angle,VECTOR_COLOR:vector,STRING_MODEL:string,SHOULD_DISABLE_SHADING)
+    {
+        local H=noentity()
+        while(!H){H=holoCreate(NUMBER_INDEX,E:toWorld(VECTOR_POS),VECTOR_SCALE,E:toWorld(ANGLE_ANG),VECTOR_COLOR,STRING_MODEL?:"cube")}
+        if(Hide)
+        {
+            holoVisible(NUMBER_INDEX,players(),0)
+            holoVisible(NUMBER_INDEX,Fri,1)
+        }
+        holoDisableShading(NUMBER_INDEX,SHOULD_DISABLE_SHADING)
+        return H
+    }
+    Go=vec(96,56,27)
+    Gr=vec(100)
+    Ma=vec(133,244,196)
+    EGo=vec(253,142,44)
+    ##Handle
+    H=E:holoCCreate(1,vec(),vec(0.2,0.2,2.5),ang(),Gr,"hq_cylinder",0)
+    H:holoCCreate(2,vec(0,0,-3),vec(0.27),ang(),Go,"hq_rcylinder_thick",0)
+    H:holoCCreate(3,vec(0,0,-9.6),vec(0.21,0.21,0.9),ang(),Go,"hq_tube",0)
+    H:holoCCreate(4,vec(0,0,-11),vec(0.3,0.3,0.2),ang(),Go,"hq_cone",0)
+    H:holoCCreate(5,vec(0,0,-13.715),vec(0.3,0.3,0.25),ang(),Go,"hq_cylinder",0)
+    H:holoCCreate(6,vec(0,0,-15.2),vec(0.3,0.3,0.05),ang(0,0,180),Go,"hq_dome",0)
+    H:holoCCreate(7,vec(0,0,-15.3),vec(0.25,0.25,0.05),ang(),Gr,"hq_cylinder",0)
+    H:holoCCreate(8,vec(0,0,-15.6),vec(0.24,0.24,0.02),ang(),vec(57,172,131),"hq_cylinder",1)
+    H:holoCCreate(9,vec(0,0,-15.7),vec(0.24,0.24,0.05),ang(0,0,180),vec(5),"hq_dome",0)
+    H:holoCCreate(10,vec(0,0,-15.8),vec(0.15,0.15,0.05),ang(),vec(25,0,0),"hq_sphere",1)
+    ##Handle end
+    
+    ##Main part
+    H:holoCCreate(11,vec(0,0,14),vec(0.25,0.25,0.2),ang(),Gr,"hq_cylinder",0)
+    H:holoCCreate(12,vec(0,0,18),vec(1.5,0.25,0.5),ang(0,90,0),Gr,"prism",0)
+    H:holoCCreate(13,vec(0,0,41),vec(0.18,1.2,4.2),ang(),Ma,"cube",0)
+    H:holoCCreate(14,vec(0,0,65.9),vec(0.7,1.2,0.18),ang(90,0,0),Ma,"hq_cylinder",0)
+    H:holoCCreate(15,vec(0,0,36),vec(1,1,0.2),ang(90,0,0),vec(230,0,0),"hq_cylinder",0)
+    H:holoCCreate(16,vec(0,0,36),vec(1.05,1.05,5),ang(90,0,0),vec(25,0,0),"hq_torus_thin",1)        holoMaterial(16,"models/shiny")
+    H:holoCCreate(17,vec(0,0,36),vec(0.22,1,1),ang(),vec(25,0,0),"hq_sphere",1)                     holoMaterial(17,"models/shiny")
+    H:holoCCreate(18,vec(0,4,22),vec(0.182,0.3,0.9),ang(),Ma+vec(30),"cube",0)
+    H:holoCCreate(19,vec(0,4,28.5),vec(0.3,0.182,0.2),ang(180,90,180),Ma+vec(30),"right_prism",0)
+    H:holoCCreate(20,vec(0,-4,22),vec(0.182,0.3,0.9),ang(),Ma+vec(30),"cube",0)
+    H:holoCCreate(21,vec(0,-4,28.5),vec(0.3,0.182,0.2),ang(0,90,0),Ma+vec(30),"right_prism",0)
+    H:holoCCreate(22,vec(0,0,36),vec(1.1,1.1,5),ang(90,0,0),Ma-vec(25),"hq_torus_thin",0)
+    H:holoCCreate(23,vec(0,0,34),vec(0.182,0.2,2.8),ang(),Ma+vec(50),"cube",1)
+    H:holoCCreate(24,vec(0,0,53),vec(0.4,0.4,0.182),ang(90,0,0),Ma+vec(50),"hq_tube",1)
+    H:holoCCreate(25,vec(0,3,45),vec(0.182,0.1,0.7),ang(),Ma+vec(50),"",1)
+    H:holoCCreate(26,vec(0,4.5,50.5),vec(0.182,0.07,0.4),ang(0,0,-45),Ma+vec(50),"",1)
+    H:holoCCreate(27,vec(0,6,54),vec(0.182,0.07,0.4),ang(0,0,0),Ma+vec(50),"",1)
+    H:holoCCreate(28,vec(0,5,57),vec(0.182,0.07,0.2),ang(0,0,45),Ma+vec(50),"",1)
+    H:holoCCreate(29,vec(0,3,59),vec(0.3,0.3,0.182),ang(90,0,0),Ma+vec(50),"hq_tube",1)
+    H:holoCCreate(30,vec(0,-3,45),vec(0.182,0.1,0.7),ang(),Ma+vec(50),"",1)
+    H:holoCCreate(31,vec(0,-4.5,50.5),vec(0.182,0.07,0.4),ang(0,0,45),Ma+vec(50),"",1)
+    H:holoCCreate(32,vec(0,-6,55),vec(0.182,0.07,0.5),ang(0,0,0),Ma+vec(50),"",1)
+    H:holoCCreate(33,vec(0,-4.5,59),vec(0.182,0.07,0.3),ang(0,0,-45),Ma+vec(50),"",1)
+    H:holoCCreate(34,vec(0,-1.8,61),vec(0.35,0.35,0.182),ang(90,0,0),Ma+vec(50),"hq_tube",1)
+    ##Main end
+    
+    ##Enlde part
+    H:holoCCreate(35,vec(0,0,68),vec(0.21,0.2,0.5),ang(),EGo,"hq_rcube_thick",1)
+    H:holoCCreate(36,vec(0,4,67.5),vec(0.21,0.2,0.5),ang(),EGo,"hq_rcube_thick",1)
+    H:holoCCreate(37,vec(0,-4,67.5),vec(0.21,0.2,0.5),ang(),EGo,"hq_rcube_thick",1)
+    ##THOSE THINGS
+    H:holoCCreate(38,vec(0,7.7,53),vec(0.18,0.05,2),ang(),EGo,"",0)
+    H:holoCCreate(39,vec(0,7.7,65.3),vec(0.05,0.18,0.05),ang(0,90,0),EGo,"right_prism",0)
+    H:holoCCreate(40,vec(0,7.7,40.72),vec(0.05,0.18,0.05),ang(0,90,180),EGo,"right_prism",0)
+    H:holoCCreate(41,vec(0,8.4,53),vec(0.1,0.02,1.5),ang(),EGo,"",0)
+    H:holoCCreate(42,vec(0,8.4,62.16),vec(0.02,0.1,0.03),ang(0,90,0),EGo,"right_prism",0)
+    H:holoCCreate(43,vec(0,8.4,43.85),vec(0.02,0.1,0.03),ang(0,90,180),EGo,"right_prism",0)
+    H:holoCCreate(44,vec(0,9,53),vec(0.05,0.02,1),ang(),EGo,"",0)
+    H:holoCCreate(45,vec(0,9,59.3),vec(0.02,0.05,0.05),ang(0,90,0),EGo,"right_prism",0)
+    H:holoCCreate(46,vec(0,9,46.8),vec(0.02,0.05,0.05),ang(0,90,180),EGo,"right_prism",0)
+    H:holoCCreate(47,vec(0,-7.7,53),vec(0.18,0.05,2),ang(),EGo,"",0)
+    H:holoCCreate(48,vec(0,-7.7,65.3),vec(0.05,0.18,0.05),ang(0,-90,0),EGo,"right_prism",0)
+    H:holoCCreate(49,vec(0,-7.7,40.72),vec(0.05,0.18,0.05),ang(0,-90,180),EGo,"right_prism",0)
+    H:holoCCreate(50,vec(0,-8.4,53),vec(0.1,0.02,1.5),ang(),EGo,"",0)
+    H:holoCCreate(51,vec(0,-8.4,62.16),vec(0.02,0.1,0.03),ang(0,-90,0),EGo,"right_prism",0)
+    H:holoCCreate(52,vec(0,-8.4,43.85),vec(0.02,0.1,0.03),ang(0,-90,180),EGo,"right_prism",0)
+    H:holoCCreate(53,vec(0,-9,53),vec(0.05,0.02,1),ang(),EGo,"",0)
+    H:holoCCreate(54,vec(0,-9,59.3),vec(0.02,0.05,0.05),ang(0,-90,0),EGo,"right_prism",0)
+    H:holoCCreate(55,vec(0,-9,46.8),vec(0.02,0.05,0.05),ang(0,-90,180),EGo,"right_prism",0)
+    ##FINAL!!!
+    soundURLload("1","https://copy.com/EbhmMZDekMBSEyFR",1,0,E)
+    Index=56
+    foreach(K,V:string=O:attachments())
+    {
+        local H=holoCreate(index(),O:attachmentPos(V),vec(),O:attachmentAng(V))
+        holoParentAttachment(Index,O,V)
+        Atts[V,entity]=H
+    }
+    holoCreate(200)
+    holoScale(200,vec(0.5))
+}
+Wea=O:weapon()
+if(changed(Wea))
+{
+    if(Wea:type()=="weapon_crowbar")
+    {
+        rangerFilter(Wea)
+        Wea:setAlpha(0)
+        parentAttachment(1,"anim_attachment_RH",vec(0,0,5),ang(180,-15,0))
+        O:playerSetBoneAng(15,ang(-45,0,0))
+    }
+    else
+    {
+        parentAttachment(1,"chest",vec(-8,0,15),ang(180,0,0))
+        O:playerSetBoneAng(15,ang())
+    }
+}
+Rang=rangerOffsetHull(35,holoEntity(17):pos(),(holoEntity(17):pos()-holoEntity(35):pos()):normalized()*-1,vec(1))
+#holoPos(200,Rang:pos())
+if(Rang:hit()&Wea:type()=="weapon_crowbar")
+{
+    N=(N+1)%2
+    if(N==1){
+        G=vec(random(-30,30),random(-30,30),0)
+       particle(2,5,2,"effects/yellowflare",vec(253,142,44),Rang:pos()+vec(0,0,random(0,2)),G)
+    particle(2,5,2,"effects/yellowflare",vec(180,180,255),Rang:pos()+vec(0,0,random(0,2)),G)
+    }
+    if(N==1){
+       particle(2,5,2,"effects/yellowflare",vec(180,180,255),Rang:pos()+vec(0,0,random(0,5)),vec(random(-30,30),random(-30,30),0))
+    }
+}
+if(clk("PARENT_ATTACHMENT"))
+{
+    holoParentAttachment(PARENT_HOLO_INDEX,O,PARENT_ATT_NAME)
+}

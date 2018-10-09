@@ -1,0 +1,24 @@
+@name Shingeki no kyojin
+@inputs 
+@outputs Ang:angle Ang_s:string N:vector
+@persist O:entity Ra:ranger
+@trigger 
+runOnTick(1)
+if(first()){
+    holoCreate(1)
+    O=owner()
+    holoScale(1,vec(0.25))
+    holoParent(1,entity())
+    O:elasticTo(entity(),vec(0,0,40),vec(0,0,0),2500,3,2,"models/Rope",3,1)
+}
+Ra=rangerOffsetHull(O:toWorld(vec(20,0,40)),holoEntity(1):pos(),vec(-5,-5,0),vec(5,5,0))
+
+Ang= ((Ra:position()  -   O:pos()  ):normalized()    - O:vel():normalized()):toAngle()
+Ang_s="Angle between vector OwnerToChip and Owner's vel
+"+Ang:toString()
+T=O:keyPressed("T")
+if(T){
+N=O:vel()*sin(  ((   Ra:position()  -   O:pos()  ):normalized()    - O:vel():normalized()):toAngle():pitch())
+O:setVel(N)
+}
+

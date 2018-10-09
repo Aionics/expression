@@ -1,0 +1,14 @@
+@name Wireman
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+E=entity()
+
+
+interval(500)
+entity():isWeldedTo():applyForce(vec(0,0,-25000))
+
+
+

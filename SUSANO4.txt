@@ -1,0 +1,109 @@
+@name SUSANO4
+@inputs 
+@outputs Index
+@persist N N2
+@trigger 
+
+
+if(first()){
+runOnTick(1)
+E=entity()
+function entity do_holoCreate(Ent:entity, Pos:vector, Ang:angle, Mdl:string, Scale:vector, Mat:string, Color:vector, Alpha, Shading, Shadow){
+    Index++
+    holoCreate(Index)
+    holoParent(Index,Ent)
+    holoPos(Index,Pos)
+    holoAng(Index,Ang)
+    holoModel(Index,Mdl)
+    holoScale(Index,Scale)
+    holoMaterial(Index,Mat)
+    holoColor(Index,Color)
+    holoAlpha(Index,Alpha)
+    holoDisableShading(Index,Shading)
+    holoShadow(Index,Shadow)
+    
+    return holoEntity(Index)
+}
+
+do_holoCreate(noentity(), E:toWorld(vec(0)),ang(0), "models/Humans/Group03m/male_09.mdl", vec(1), "", vec(255), 255, 0, 0)
+do_holoCreate(noentity(), E:toWorld(vec(0,0,40)),ang(0), "", vec(1), "", vec(255), 100, 0, 0)
+
+do_holoCreate(holoEntity(2), E:toWorld(vec(-10,100,140)),ang(0), "", vec(0.5), "", vec(255), 100, 1, 0)
+do_holoCreate(noentity(), E:toWorld(vec(-10,218,140)),ang(0), "", vec(0.5), "", vec(255), 100, 1, 0)
+do_holoCreate(noentity(), E:toWorld(vec(-10,332,140)),ang(0), "", vec(0.5), "", vec(255), 100, 1, 0)
+
+
+do_holoCreate(holoEntity(2), E:toWorld(vec(-10,-100,140)),ang(0), "", vec(0.5), "", vec(255), 100, 1, 0)
+do_holoCreate(noentity(), E:toWorld(vec(-10,-218,140)),ang(0), "", vec(0.5), "", vec(255), 100, 1, 0)
+do_holoCreate(noentity(), E:toWorld(vec(-10,-332,140)),ang(0), "", vec(0.5), "", vec(255), 100, 1, 0)
+for(I=1,7){
+    do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(abs((I-3))^2.1-60,0,((I-1)*25)-30)),ang((I-3)*5,0,0), "models/holograms/hq_rcylinder.mdl", vec(1.6,1.6,2), "models/props_wasteland/dirtwall001a", vec(255,50,50), 100, 1, 0)
+}
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(-20,0,180)),ang(30,0,0), "models/Gibs/HGIBS.mdl", vec(10,10,13), "", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(-28,0,135)),ang(0,90,140), "models/sprops/geometry/hring_42.mdl", vec(1.3,4,2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 120, 1, 0)
+
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(-5,-45,0)),ang(0,-15,90), "models/sprops/geometry/hring_18.mdl", vec(8,6,8), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(-5,-40,30)),ang(0,-12.5,90), "models/sprops/geometry/hring_18.mdl", vec(7,5,7), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(-5,-35,60)),ang(0,-10,90), "models/sprops/geometry/hring_18.mdl", vec(6,5,6), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(-5,45,0)),ang(0,15,-90), "models/sprops/geometry/hring_18.mdl", vec(8,6,8), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(-5,40,30)),ang(0,12.5,-90), "models/sprops/geometry/hring_18.mdl", vec(7,5,7), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(-5,35,60)),ang(0,10,-90), "models/sprops/geometry/hring_18.mdl", vec(6,5,6), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(0,-50,90)),ang(-150,80,0), "models/sprops/geometry/qring_48.mdl",vec(4,3,1), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(-60,-40,50)),ang(0,-90,0), "models/Gibs/HGIBS_scapula.mdl", vec(13,8,10), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(-30,-80,90)),ang(0,40,65), "models/sprops/cylinders/size_4/cylinder_9x42.mdl", vec(1,1,1.5), "models/props_wasteland/dirtwall001a", vec(255,0,0), 200, 1, 0)
+
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(0,50,90)),ang(-150,-80,0), "models/sprops/geometry/qring_48.mdl", vec(4,3,1), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(-60,40,50)),ang(0,20,0), "models/Gibs/HGIBS_scapula.mdl", vec(13,8,10), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(2),holoEntity(2):toWorld(vec(-30,80,90)),ang(0,-40,115), "models/sprops/cylinders/size_4/cylinder_9x42.mdl", vec(1,1,1.5), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+
+###Lh###
+
+local HR_1=do_holoCreate(holoEntity(3),holoEntity(3):toWorld(vec(0,60,0)),ang(0,0,90), "models/sprops/cylinders/size_5/cylinder_12x96.mdl", vec(1,1,1.2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+holoUnparent(4)
+holoParent(4,holoEntity(holoIndex(HR_1)))
+local HR_1=do_holoCreate(holoEntity(4),holoEntity(4):toWorld(vec(0,58,0)),ang(0,0,90), "models/sprops/cylinders/size_4/cylinder_9x96.mdl", vec(1,1,1.2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+holoUnparent(5)
+holoParent(5,holoEntity(holoIndex(HR_1)))
+do_holoCreate(holoEntity(5),holoEntity(5):toWorld(vec(0,5,0)),ang(0,0,0), "models/holograms/hq_rcube_thick.mdl", vec(0.7,1.8,1.4), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(5),holoEntity(5):toWorld(vec(5,10,6)),ang(0,90,0), "models/Gibs/HGIBS_rib.mdl", vec(2,1,2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(5),holoEntity(5):toWorld(vec(5,10,2)),ang(0,90,0), "models/Gibs/HGIBS_rib.mdl", vec(2,1,2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(5),holoEntity(5):toWorld(vec(5,10,-2)),ang(0,90,0), "models/Gibs/HGIBS_rib.mdl", vec(2,1,2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(5),holoEntity(5):toWorld(vec(5,10,-6)),ang(0,90,0), "models/Gibs/HGIBS_rib.mdl", vec(2,1,2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(5),holoEntity(5):toWorld(vec(5,0,4)),ang(0,0,-90), "models/Gibs/HGIBS_rib.mdl", vec(1,0.8,2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(5),holoEntity(5):toWorld(vec(-10,10,0)),ang(0,90,90), "models/hunter/tubes/circle2x2.mdl", vec(2,2,2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(5),holoEntity(5):toWorld(vec(0,10,0)),ang(90,0,0), "models/sprops/misc/tubes/size_3/h_tube_36x6.mdl", vec(1,1,1), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+
+###Rh###
+
+local HR_1=do_holoCreate(holoEntity(6),holoEntity(6):toWorld(vec(0,-60,0)),ang(0,0,90), "models/sprops/cylinders/size_5/cylinder_12x96.mdl", vec(1,1,1.2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+holoUnparent(7)
+holoParent(7,holoEntity(holoIndex(HR_1)))
+local HR_1=do_holoCreate(holoEntity(7),holoEntity(7):toWorld(vec(0,-58,0)),ang(0,0,90), "models/sprops/cylinders/size_4/cylinder_9x96.mdl", vec(1,1,1.2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+holoUnparent(8)
+holoParent(8,holoEntity(holoIndex(HR_1)))
+do_holoCreate(holoEntity(8),holoEntity(8):toWorld(vec(0,-5,0)),ang(0,0,0), "models/holograms/hq_rcube_thick.mdl", vec(0.7,1.8,1.4), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(8),holoEntity(8):toWorld(vec(7,-10,6)),ang(0,-20,0), "models/Gibs/HGIBS_rib.mdl", vec(1.2,1.2,2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(8),holoEntity(8):toWorld(vec(7,-10,2)),ang(0,-20,0), "models/Gibs/HGIBS_rib.mdl", vec(1.2,1.2,2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(8),holoEntity(8):toWorld(vec(7,-10,-2)),ang(0,-20,0), "models/Gibs/HGIBS_rib.mdl", vec(1.2,1.2,2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(8),holoEntity(8):toWorld(vec(7,-10,-6)),ang(0,-20,0), "models/Gibs/HGIBS_rib.mdl", vec(1.2,1.2,2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+do_holoCreate(holoEntity(8),holoEntity(8):toWorld(vec(5,0,4)),ang(0,0,-90), "models/Gibs/HGIBS_rib.mdl", vec(1,0.8,2), "models/props_wasteland/dirtwall001a", vec(255,0,0), 100, 1, 0)
+
+holoAng(3,ang(0,-30,-20))
+holoAng(4,ang(0,-150,0))
+holoAng(6,ang(0,60,60))
+holoAng(7,ang(0,60,-50))
+holoAng(8,ang(0,0,-30))
+holoParent(2,owner())
+}
+N=(N+1)%360
+#holoAng(3,ang(0,0,N))
+#holoAng(4,ang(0,N,0))
+#holoAng(6,ang(0,0,N))
+#holoAng(7,ang(0,N,0))
+#holoAng(8,ang(N,0,0))
+    S="sprites/flamelet"+random(1,5):toString()
+    #particle(0.5,20,30,S,vec(255,50,50),holoEntity(8):toWorld(vec(random(-10,10),random(-10,10),random(-40,250))),vec(0,0,20),0,1,100,10)   
+    #particle(0.5,20,30,S,vec(255,50,50),holoEntity(8):toWorld(vec(random(-10,10),random(-10,10),random(-40,250))),vec(0,0,20),0,1,100,10) 
+

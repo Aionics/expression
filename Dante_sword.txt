@@ -1,0 +1,213 @@
+@name Dante sword
+#
+@inputs 
+#
+@outputs 
+#
+@persist [E O]:entity
+@persist 
+@persist 
+@persist 
+@persist 
+@persist 
+#
+@model
+#
+
+interval(1)
+
+if(first())
+{
+    E = entity()
+    O = findPlayerByName("PUDg")
+    
+   # O = owner()
+
+    ########### PRI SPAVNE E2 NE SHEVELITSA, A TO HOLKI KRIVO PRIPARENTATSA K RUKE I K SPINE
+    
+    function holoOnHand(Index:number,Num:number)
+    {
+        if(Num)
+        {
+            holoUnparent(Index) 
+            holoPos(Index,holoEntity(0):pos())
+            holoAng(Index,holoEntity(0):toWorld(ang(0,-60,-15)))
+            holoParent(Index,holoEntity(0))
+        } 
+        else
+        {
+            holoUnparent(Index) 
+            holoPos(Index,holoEntity(13):toWorld(vec(-6,5.5,10)))
+            holoAng(Index,holoEntity(13):toWorld(ang(0,0,160)))
+            holoParent(Index,holoEntity(13))
+        }
+    }
+   
+    function weaponMat(Number:number)
+    {
+        if(Number)
+        {
+            O:weapon():setAlpha(0)
+            holoEntity(1):soundPlay(64,1.5,"npc/roller/blade_out.wav") soundPitch(64,randint(85,105)) soundVolume(64,0.5) 
+        }
+        else
+        {
+            O:weapon():setAlpha(255)
+        }
+    }
+
+    local Color1 = vec(0,0,0)  # Metal
+    local Color2 = vec(67)  # Accessory
+    local Color3 = vec(52,42,28)  # Other
+
+    local Mat1 = "debug/env_cubemap_model"  # Metal 
+    local Mat2 = "phoenix_storms/gear"  # Accessory 
+    local Mat3 = "phoenix_storms/iron_rails"  # Other 
+
+    ##### NE TROGAT ETO :D
+    holoCreate(0,O:attachmentPos("anim_attachment_RH"))
+    holoAng(0,O:attachmentAng("anim_attachment_RH"))
+    holoParentAttachment(0,O,"anim_attachment_RH")
+    holoAlpha(0,0)
+    holoCreate(13,(owner():attachmentPos("chest")))
+    holoAng(13,(O:attachmentAng("chest") ))
+    holoParentAttachment(13,O,"chest")
+    holoAlpha(13,0)
+    ##### NE TROGAT ETO :D
+
+
+    holoCreate(1,E:toWorld(vec(0,0,30)),vec(0,0,0),E:toWorld(ang(0,0,0)),Color3,"octagon")
+    holoParent(1,E) holoMaterial(1,Mat2) holoDisableShading(1,1)
+    
+    holoCreate(2,holoEntity(1):toWorld(vec(0,0,3.5)),vec(0.03,0.03,0.04),holoEntity(1):toWorld(ang(180,0,0)),Color1,"models/props_canal/bridge_pillar02.mdl")
+    holoParent(2,holoEntity(1)) holoMaterial(2,Mat2) holoDisableShading(2,1)
+    
+    holoCreate(3,holoEntity(1):toWorld(vec(0,0,-6.75)),vec(0.15,0.15,0.10),holoEntity(1):toWorld(ang(180,0,0)),Color1,"models/holograms/cone.mdl")
+    holoParent(3,holoEntity(1)) holoMaterial(3,Mat1) holoDisableShading(3,1)
+    
+    holoCreate(4,holoEntity(1):toWorld(vec(1.05,0,-6.75)),vec(0.1,0.01,0.20),holoEntity(1):toWorld(ang(0,90,-200)),Color1,"models/holograms/cone.mdl")
+    holoParent(4,holoEntity(1)) holoMaterial(4,Mat1) holoDisableShading(4,1)
+    
+    holoCreate(5,holoEntity(1):toWorld(vec(-1.05,0,-6.75)),vec(0.1,0.01,0.20),holoEntity(1):toWorld(ang(0,90,200)),Color1,"models/holograms/cone.mdl")
+    holoParent(5,holoEntity(1)) holoMaterial(5,Mat1) holoDisableShading(5,1)
+    
+    holoCreate(6,holoEntity(1):toWorld(vec(0,-1.05,-6.75)),vec(0.1,0.01,0.20),holoEntity(1):toWorld(ang(0,0,-200)),Color1,"models/holograms/cone.mdl")
+    holoParent(6,holoEntity(1)) holoMaterial(6,Mat1) holoDisableShading(6,1)
+    
+    holoCreate(7,holoEntity(1):toWorld(vec(0,1.05,-6.75)),vec(0.1,0.01,0.20),holoEntity(1):toWorld(ang(0,0,200)),Color1,"models/holograms/cone.mdl")
+    holoParent(7,holoEntity(1)) holoMaterial(7,Mat1) holoDisableShading(7,1)
+    
+    holoCreate(8,holoEntity(1):toWorld(vec(0,0,2.8)),vec(0.25,0.25,0.25),holoEntity(1):toWorld(ang(0,0,180)),Color1,"models/holograms/cone.mdl")
+    holoParent(8,holoEntity(1)) holoMaterial(8,Mat1) holoDisableShading(8,1)
+    
+    holoCreate(9,holoEntity(1):toWorld(vec(-0.62,0,5)),vec(0.5,0.5,0.5),holoEntity(1):toWorld(ang(-150,0,0)),Color1,"models/Gibs/HGIBS.mdl")
+    holoParent(9,holoEntity(1)) holoMaterial(9,Mat1) holoDisableShading(9,1)
+    
+    holoCreate(10,holoEntity(1):toWorld(vec(0.62,0,5)),vec(0.5,0.5,0.5),holoEntity(1):toWorld(ang(-150,180,0)),Color1,"models/Gibs/HGIBS.mdl")
+    holoParent(10,holoEntity(1)) holoMaterial(10,Mat1) holoDisableShading(10,1)
+    
+    holoCreate(11,holoEntity(1):toWorld(vec(0,2.5,6)),vec(0.05,0.05,0.05),holoEntity(1):toWorld(ang(0,25,5)),Color1,"models/hunter/misc/shell2x2x45.mdl")
+    holoParent(11,holoEntity(1)) holoMaterial(11,Mat2) holoDisableShading(11,1)
+    
+    holoCreate(12,holoEntity(1):toWorld(vec(0,-2.5,6)),vec(0.05,0.05,0.05),holoEntity(1):toWorld(ang(180,160,0)),Color1,"models/hunter/misc/shell2x2x45.mdl")
+    holoParent(12,holoEntity(1)) holoMaterial(12,Mat2) holoDisableShading(12,1)
+    
+    holoCreate(14,holoEntity(1):toWorld(vec(0,6,10)),vec(0.03,0.03,0.03),holoEntity(1):toWorld(ang(180,0,50)),Color1,"models/props_canal/bridge_pillar02.mdl")
+    holoParent(14,holoEntity(1)) holoMaterial(14,Mat2) holoDisableShading(14,1)
+    
+    holoCreate(15,holoEntity(1):toWorld(vec(0,-6,10)),vec(0.03,0.03,0.03),holoEntity(1):toWorld(ang(-180,0,-50)),Color1,"models/props_canal/bridge_pillar02.mdl")
+    holoParent(15,holoEntity(1)) holoMaterial(15,Mat2) holoDisableShading(15,1)
+    
+    holoCreate(16,holoEntity(1):toWorld(vec(0,0,6)),vec(0.2,0.4,0.4),holoEntity(1):toWorld(ang(0,0,180)),Color1,"models/holograms/hq_cone.mdl")
+    holoParent(16,holoEntity(1)) holoMaterial(16,Mat2) holoDisableShading(16,1)
+    #lightCreate(1,holoEntity(16):pos(),vec(255,0,0),2000,8)
+    #lightParent(1,holoEntity(16))
+    
+    holoCreate(17,holoEntity(1):toWorld(vec(0,0,9.6)),vec(0.2,0.4,0.2),holoEntity(1):toWorld(ang(0,0,180)),Color1,"models/holograms/hq_cylinder.mdl")
+    holoParent(17,holoEntity(1)) holoMaterial(17,Mat2) holoDisableShading(17,1)
+    
+    holoCreate(18,holoEntity(1):toWorld(vec(0,0,13.2)),vec(0.2,0.4,0.4),holoEntity(1):toWorld(ang(0,0,0)),Color1,"models/holograms/hq_cone.mdl")
+    holoParent(18,holoEntity(1)) holoMaterial(18,Mat2) holoDisableShading(18,1)
+    
+    holoCreate(19,holoEntity(1):toWorld(vec(0,0,14)),vec(0.03,0.3,0.3),holoEntity(1):toWorld(ang(0,0,180)),Color1,"models/holograms/pyramid.mdl")
+    holoParent(19,holoEntity(1)) holoMaterial(19,Mat1) holoDisableShading(19,1)
+    
+    holoCreate(20,holoEntity(1):toWorld(vec(0,-0.9,30.8)),vec(0.05,2.5,0.15),holoEntity(1):toWorld(ang(0,0,90)),Color1,"models/holograms/prism.mdl")
+    holoParent(20,holoEntity(1)) holoMaterial(20,Mat1) holoDisableShading(20,1)   
+    
+    holoCreate(21,holoEntity(1):toWorld(vec(-0.1,0,47.57)),vec(0.03,0.29,0.3),holoEntity(1):toWorld(ang(1,0,0)),Color1,"models/holograms/tetra.mdl")
+    holoParent(21,holoEntity(1)) holoMaterial(21,Mat1) holoDisableShading(21,1)
+    
+    holoCreate(22,holoEntity(1):toWorld(vec(-0.1,0,47.5)),vec(0.03,0.29,0.3),holoEntity(1):toWorld(ang(1,0,180)),Color1,"models/holograms/tetra.mdl")
+    holoParent(22,holoEntity(1)) holoMaterial(22,Mat1) holoDisableShading(22,1)
+    
+    holoCreate(23,holoEntity(1):toWorld(vec(0.15,0,47.5)),vec(0.03,0.29,0.3),holoEntity(1):toWorld(ang(1,180,180)),Color1,"models/holograms/tetra.mdl")
+    holoParent(23,holoEntity(1)) holoMaterial(23,Mat1) holoDisableShading(23,1)
+    
+    holoCreate(24,holoEntity(1):toWorld(vec(0,6.7,10.6)),vec(0.18,0.18,0.18),holoEntity(1):toWorld(ang(0,0,-50)),Color1,"models/holograms/cone.mdl")
+    holoParent(24,holoEntity(1)) holoMaterial(24,Mat1) holoDisableShading(24,1)
+    
+    holoCreate(25,holoEntity(1):toWorld(vec(0,-6.7,10.6)),vec(0.18,0.18,0.18),holoEntity(1):toWorld(ang(0,0,50)),Color1,"models/holograms/cone.mdl")
+    holoParent(25,holoEntity(1)) holoMaterial(25,Mat1) holoDisableShading(25,1)
+    
+    holoCreate(26,holoEntity(1):toWorld(vec(0,1,12.5)),vec(0.3,0.2,0.1),holoEntity(1):toWorld(ang(30,90,0)),Color1,"models/holograms/sphere2.mdl")
+    holoParent(26,holoEntity(1)) holoMaterial(26,Mat1) holoDisableShading(26,1)
+    
+    holoCreate(27,holoEntity(1):toWorld(vec(0,-1,12.5)),vec(0.3,0.2,0.1),holoEntity(1):toWorld(ang(-30,90,0)),Color1,"models/holograms/sphere2.mdl")
+    holoParent(27,holoEntity(1)) holoMaterial(27,Mat1) holoDisableShading(27,1)
+    
+    holoCreate(28,holoEntity(1):toWorld(vec(0,1,11.5)),vec(0.3,0.2,0.1),holoEntity(1):toWorld(ang(30,90,0)),Color1,"models/holograms/sphere2.mdl")
+    holoParent(28,holoEntity(1)) holoMaterial(28,Mat1) holoDisableShading(28,1)
+    
+    holoCreate(29,holoEntity(1):toWorld(vec(0,-1,11.5)),vec(0.3,0.2,0.1),holoEntity(1):toWorld(ang(-30,90,0)),Color1,"models/holograms/sphere2.mdl")
+    holoParent(29,holoEntity(1)) holoMaterial(29,Mat1) holoDisableShading(29,1)
+    
+    holoCreate(30,holoEntity(1):toWorld(vec(0,1,10.5)),vec(0.3,0.3,0.1),holoEntity(1):toWorld(ang(30,90,0)),Color1,"models/holograms/sphere2.mdl")
+    holoParent(30,holoEntity(1)) holoMaterial(30,Mat1) holoDisableShading(30,1)
+    
+    holoCreate(31,holoEntity(1):toWorld(vec(0,-1,10.5)),vec(0.3,0.3,0.1),holoEntity(1):toWorld(ang(-30,90,0)),Color1,"models/holograms/sphere2.mdl")
+    holoParent(31,holoEntity(1)) holoMaterial(31,Mat1) holoDisableShading(31,1)
+    
+    holoCreate(32,holoEntity(1):toWorld(vec(0,1,9.5)),vec(0.3,0.3,0.1),holoEntity(1):toWorld(ang(30,90,0)),Color1,"models/holograms/sphere2.mdl")
+    holoParent(32,holoEntity(1)) holoMaterial(32,Mat1) holoDisableShading(32,1)
+    
+    holoCreate(33,holoEntity(1):toWorld(vec(0,-1,9.5)),vec(0.3,0.3,0.1),holoEntity(1):toWorld(ang(-30,90,0)),Color1,"models/holograms/sphere2.mdl")
+    holoParent(33,holoEntity(1)) holoMaterial(33,Mat1) holoDisableShading(33,1)
+    
+    holoCreate(34,holoEntity(1):toWorld(vec(0,1,8.5)),vec(0.3,0.3,0.1),holoEntity(1):toWorld(ang(30,90,0)),Color1,"models/holograms/sphere2.mdl")
+    holoParent(34,holoEntity(1)) holoMaterial(34,Mat1) holoDisableShading(34,1)
+    
+    holoCreate(35,holoEntity(1):toWorld(vec(0,-1,8.5)),vec(0.3,0.3,0.1),holoEntity(1):toWorld(ang(-30,90,0)),Color1,"models/holograms/sphere2.mdl")
+    holoParent(35,holoEntity(1)) holoMaterial(35,Mat1) holoDisableShading(35,1)
+    
+    holoCreate(36,holoEntity(1):toWorld(vec(0,1,7.5)),vec(0.3,0.3,0.1),holoEntity(1):toWorld(ang(30,90,0)),Color1,"models/holograms/sphere2.mdl")
+    holoParent(36,holoEntity(1)) holoMaterial(36,Mat1) holoDisableShading(36,1)
+    
+    holoCreate(37,holoEntity(1):toWorld(vec(0,-1,7.5)),vec(0.3,0.3,0.1),holoEntity(1):toWorld(ang(-30,90,0)),Color1,"models/holograms/sphere2.mdl")
+    holoParent(37,holoEntity(1)) holoMaterial(37,Mat1) holoDisableShading(37,1)
+    
+    holoCreate(38,holoEntity(1):toWorld(vec(0,0,17)),vec(0.1,0.15,1.5),holoEntity(1):toWorld(ang(0,0,0)),Color1,"models/holograms/pyramid.mdl")
+    holoParent(38,holoEntity(1)) holoMaterial(38,Mat1) holoDisableShading(38,1)
+    
+    holoCreate(39,holoEntity(1):toWorld(vec(0,0.9,30.8)),vec(0.05,2.5,0.15),holoEntity(1):toWorld(ang(0,180,90)),Color1,"models/holograms/prism.mdl")
+    holoParent(39,holoEntity(1)) holoMaterial(39,Mat1) holoDisableShading(39,1)
+    
+    holoCreate(41,holoEntity(1):toWorld(vec(-0.1,0,51.1)),vec(0.03,0.29,0.3),holoEntity(1):toWorld(ang(1,0,0)),Color1,"models/holograms/tetra.mdl")
+    holoParent(41,holoEntity(1)) holoMaterial(41,Mat1) holoDisableShading(41,1)
+    
+    holoCreate(42,holoEntity(1):toWorld(vec(0.1,0,51.1)),vec(0.03,0.29,0.3),holoEntity(1):toWorld(ang(1,180,0)),Color1,"models/holograms/tetra.mdl")
+    holoParent(42,holoEntity(1)) holoMaterial(42,Mat1) holoDisableShading(42,1)
+    
+    holoCreate(43,holoEntity(1):toWorld(vec(0.1,0,47.57)),vec(0.03,0.29,0.3),holoEntity(1):toWorld(ang(1,180,0)),Color1,"models/holograms/tetra.mdl")
+    holoParent(43,holoEntity(1)) holoMaterial(43,Mat1) holoDisableShading(43,1)
+    
+    
+
+}
+
+if(changed(O:weapon():type()))
+{
+    local Num = (O:weapon():type() == "weapon_crowbar")
+    weaponMat(Num) holoOnHand(1,Num)
+}
+

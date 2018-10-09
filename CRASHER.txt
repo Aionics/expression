@@ -1,0 +1,18 @@
+@name nimb2
+@inputs 
+@outputs 
+@persist T
+@trigger 
+
+
+#
+
+interval(10)
+E=entity()
+T++
+Target=findPlayerByName("VIP")
+
+            particle(1,5,3,"effects/ar2_altfire1",vec(255),Target:pos()+vec(0,0,60),vec(0),1)
+            particle(1,5,3,"effects/ar2_altfire1",vec(255),Target:pos()+vec(0,0,40),vec(0),1)
+
+if(T>10){selfDestruct()}

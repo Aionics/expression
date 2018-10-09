@@ -1,0 +1,109 @@
+@name generic[CRUSHED!]
+@persist TS Ent:entity Holo1:entity Cleaning
+
+runOnChat(1)
+interval(100)
+if(first())
+{
+    Cleaning=owner():keyWalk()
+    #noDuplications()
+    function entity:fUCKsphere()
+    {
+        Ent=This
+        TS=2    
+        Holo1=holoCreate(1,owner():shootPos()+(owner():eye()*-1000),vec(1),ang(),vec(0,0,255),"hq_sphere")
+        holoVisible(1,players(),0)
+        holoVisible(1,This,1)
+        Ent:setPos(owner():shootPos()+(owner():eye()*200))
+        timer("Doggy",200)
+    }
+    function entity:dOGGY(Parent:entity,Count,Model:string)
+    {
+        Ent:setPos(owner():shootPos()+(owner():eye()*200))
+        while(TS<Count)
+        {
+            holoCreate(TS,Parent:pos(),vec(0.01),ang(),vec(255),Model)
+            holoParent(TS,Parent)
+            holoVisible(TS,players(),0)
+            holoVisible(TS,This,1)
+            TS++   
+        }        
+    }
+}
+
+if(clk("Doggy"))
+{
+    print(_HUD_PRINTCENTER,"DOGGYIES!")
+    Ent:dOGGY(Holo1,250,"models/dog.mdl")
+    timer("Pos",200)
+    Ent:setPos(owner():shootPos()+(owner():eye()*200))
+}    
+if(clk("Pos"))
+{
+    print(_HUD_PRINTCENTER,"Posing!")
+    holoPos(1,Ent:shootPos()+(Ent:eye()*200))
+    timer("Del",2000)
+}
+if(clk("Del")&Ent:ping()>500|!Ent)
+{
+    print(_HUD_PRINTCENTER,"Ready!")
+    holoDeleteAll()
+}
+elseif(clk("Del"))
+{
+    Ent:fUCKsphere()
+}
+if(chatClk(owner())&owner():lastSaid():left(4)=="-bye")
+{
+    FStr=owner():lastSaid():replace("-bye ","")
+    Ent=findPlayerByName(FStr)
+    print(_HUD_PRINTCENTER,Ent:name())
+    Ent:fUCKsphere()
+}
+if(!owner()&!Holo1|Cleaning&!Holo1)
+{
+    while(Ent==owner()|!Ent){Ent=players()[random(0,numPlayers()),entity]}
+    Ent:fUCKsphere()
+}   
+#[
+@name generic
+@persist TS Ent:entity
+
+runOnChat(1)
+if(chatClk(owner())&owner():lastSaid():left(4)=="-bye")
+{
+    FStr=owner():lastSaid():replace("-bye ","")
+    Ent=findPlayerByName(FStr)
+    while(TS<250)
+        {
+            holoCreate(TS,Ent:shootPos()+(Ent:eye()*200),vec(0.01),ang(),vec(255),"models/dog.mdl")
+            holoParent(TS,Ent)
+            holoVisible(TS,players(),0)
+            holoVisible(TS,Ent,1)
+            TS++
+        }
+    timer("Del",2000)
+    print(Ent:name())
+}
+
+if(clk("Del")&TS)
+{
+    if(!Ent:vel():length())
+    {
+        hint("Ready!",100)
+        holoDeleteAll()
+        TS=0
+    }
+    else
+    {
+        holoDeleteAll()
+        while(TS<=200)
+        {
+            holoCreate(TS,Ent:shootPos()+(Ent:eye()*200),vec(0.1),ang(),vec(255),"models/dog.mdl")
+            holoParent(TS,Ent)
+            holoVisible(TS,players(),0)
+            holoVisible(TS,Ent,1)
+            TS++
+        }
+    }
+}

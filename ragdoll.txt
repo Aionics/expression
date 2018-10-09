@@ -1,0 +1,30 @@
+@name 
+@inputs 
+@outputs Ar:array
+@persist [Player Sacred]:entity 
+@trigger 
+interval(50)
+K=owner():keyPressed("K")
+if(changed(K)&K){
+
+E=entity()
+Tar="Crazzy"
+#Tar=owner():lastSaid()
+Player=entity()
+
+#Player:playerRagdoll()
+Sacred=entitySpawn("env_entity_dissolver",owner():pos(),1)
+Sacred:setKeyValue("Magnitude","0")
+Sacred:setKeyValue("Name","Aionics")
+Sacred:setKeyValue("TargetName","DoubleHeart")
+Sacred:setKeyValue("dissolvetype","2")  
+entity():removeOnDelete(Sacred)
+findIncludePlayer(Tar)
+findInSphere(Player:pos(),200)
+Ar=findToArray()
+        for(I=1,Ar:count()){
+        Ar:entity(I):setKeyValue("TargetName","Rectal")    
+        }
+        Sacred:setFire("Dissolve","Rectal",0)
+
+}

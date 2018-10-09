@@ -1,0 +1,268 @@
+@name shureken
+@inputs 
+@outputs N Health
+@persist T S N Vec:vector Health B:vector K
+@trigger 
+interval(10)
+if(first()){
+    N=0
+    K=0
+    
+    #lightCreate(1,owner():pos()+vec(0,0,40),vec(150,0,0),1000,4)
+    #lightParent(1,owner())
+    #owner():noCollideAll(1)
+              holoCreate(1)
+
+    holoModel(1,"models/Zombie/Classic.mdl")
+    holoScaleUnits(1,vec(100,100,240)) 
+    holoColor(1,vec(255,0,100))
+    holoAlpha(1,0)
+    holoPos(1,owner():pos())
+    particleGravity(vec(0,0,200))
+    holoAng(1,owner():eyeAngles()+ang(0,0,0))
+    holoParentAttachment(1,owner(),"chest")
+    holoParent(1,owner())
+    holoAng(1,owner():eyeAngles()+ang(0,0,0))
+    holoPos(1,owner():pos())
+    
+    }
+    
+
+
+O=owner()
+L=O:keyPressed("L")
+if(changed(L)&L){
+K=!K
+holoAlpha(1,K*100)       
+        
+        }
+    E=entity()
+
+
+
+
+#holoPos(1,owner():pos())
+#qholoAng(1,owner():eyeAngles()+ang(0,0,0))
+#holoAnim(1,5,1,1)
+
+T=owner():keyPressed("T")
+    if(T){
+    Aim=owner():aimPos()
+    Pos2=Aim+vec(random(-50,50),random(-50,50),random(-50,150))
+particle(2,100,10,"decals/splash1",vec(0),Aim,(Pos2-Aim),1)
+Pl=owner():aimEntity()
+Pl:ignite(1)
+owner():shootTo(owner():pos()+vec(0,0,50),owner():aimPos()-(owner():pos()+vec(0,0,50)),1,0,2,"")
+holoAnim(1,6,1,1)
+}
+
+
+
+
+if (changed(owner():isAlive())) {
+if (changed(owner():isAlive())) {B = owner():pos()
+    
+    
+owner():setPos(B)
+N=300
+N
+}
+}
+
+
+R=owner():keyPressed("G")
+if(changed(R)&R){N=1}
+if(O:getDamage()&N==0){N=1 
+    
+    
+    Health=O:health()
+    
+    }
+if(N==1)
+
+    {N++
+        Vec=O:pos()
+        }
+elseif(N>1&N<300){
+    
+N++
+    
+}
+elseif(N==300){
+    N++
+        holoCreate(2)
+        holoCreate(3)
+        holoCreate(4)
+        holoCreate(5)
+        holoCreate(6)
+        holoCreate(7)
+        holoCreate(8)
+        holoCreate(9)
+        holoCreate(10)
+        holoCreate(11)
+        holoCreate(12)
+        holoCreate(13)
+        
+    holoModel(2,"models/crow.mdl")
+    holoModel(3,"models/crow.mdl")
+    holoModel(4,"models/crow.mdl")
+    holoModel(5,"models/crow.mdl")
+    holoModel(6,"models/crow.mdl")
+    holoModel(7,"models/crow.mdl")
+    holoModel(8,"models/crow.mdl")
+    holoModel(9,"models/crow.mdl")
+    holoModel(10,"models/crow.mdl")
+    holoModel(11,"models/crow.mdl")
+    holoModel(12,"models/crow.mdl")
+    holoModel(13,"models/crow.mdl")
+    
+holoPos(2,O:pos()+vec(0,0,50)+vec(0,0,random(-50,20)))
+holoPos(3,O:pos()+vec(0,0,50)+vec(0,0,random(-50,20)))
+holoPos(4,O:pos()+vec(0,0,50)+vec(0,0,random(-50,20)))
+holoPos(5,O:pos()+vec(0,0,50)+vec(0,0,random(-50,20)))
+holoPos(6,O:pos()+vec(0,0,50)+vec(0,0,random(-50,20)))
+holoPos(7,O:pos()+vec(0,0,50)+vec(0,0,random(-50,20)))
+holoPos(8,O:pos()+vec(0,0,50)+vec(0,0,random(-50,20)))
+holoPos(9,O:pos()+vec(0,0,50)+vec(0,0,random(-50,20)))
+holoPos(10,O:pos()+vec(0,0,50)+vec(0,0,random(-50,20)))
+holoPos(12,O:pos()+vec(0,0,50)+vec(0,0,random(-50,20)))
+holoPos(13,O:pos()+vec(0,0,50)+vec(0,0,random(-50,20)))
+
+
+holoAng(2,ang(0,60,0))
+holoAng(3,ang(0,30,0))
+holoAng(4,ang(0,0,0))
+holoAng(5,ang(0,-30,0))
+holoAng(6,ang(0,-60,0))
+holoAng(7,ang(0,-90,0))
+holoAng(8,ang(0,-120,0))
+holoAng(9,ang(0,-150,0))
+holoAng(10,ang(0,-180,0))
+holoAng(11,ang(0,-210,0))
+holoAng(12,ang(0,-240,0))
+holoAng(13,ang(0,-270,0))
+
+
+holoAnim(2,8)
+holoAnim(3,8)
+holoAnim(4,8)
+holoAnim(5,8)
+holoAnim(6,8)
+holoAnim(7,8)
+holoAnim(8,8)
+holoAnim(9,8)
+holoAnim(10,8)
+holoAnim(11,8)
+holoAnim(12,8)
+holoAnim(13,8)
+
+
+#O:setKeyValue("health",220)
+if(B==vec(0)){
+O:setPos(Vec)
+}
+    }
+elseif(N==400){
+    N++
+    holoAnim(2,8)
+holoAnim(3,8)
+holoAnim(4,8)
+holoAnim(5,8)
+holoAnim(6,8)
+holoAnim(7,8)
+holoAnim(8,8)
+holoAnim(9,8)
+holoAnim(10,8)
+holoAnim(11,8)
+holoAnim(12,8)
+holoAnim(13,8)
+
+}
+
+
+
+elseif(N>300&N<500){
+    N++
+    for(I=2,11){
+    holoPos(2,holoEntity(2):pos()+vec(sin(30)/20,cos(30)/20,0.05))
+    holoPos(3,holoEntity(3):pos()+vec(sin(60)/20,cos(60)/20,0.03))
+    holoPos(4,holoEntity(4):pos()+vec(sin(90)/20,cos(90)/20,0.05))
+    holoPos(5,holoEntity(5):pos()+vec(sin(120)/20,cos(120)/20,0.02))
+    holoPos(6,holoEntity(6):pos()+vec(sin(150)/20,cos(150)/20,0.05))
+    holoPos(7,holoEntity(7):pos()+vec(sin(180)/20,cos(180)/20,0.03))
+    holoPos(8,holoEntity(8):pos()+vec(sin(210)/20,cos(210)/20,0.05))
+    holoPos(9,holoEntity(9):pos()+vec(sin(240)/20,cos(2400)/20,0.02))
+    holoPos(10,holoEntity(10):pos()+vec(sin(270)/20,cos(270)/20,0.05))
+    holoPos(11,holoEntity(11):pos()+vec(sin(300)/20,cos(300)/20,0.03))
+    holoPos(12,holoEntity(11):pos()+vec(sin(330)/20,cos(330)/20,0.05))
+    holoPos(13,holoEntity(11):pos()+vec(sin(0)/20,cos(0)/20,0.02))
+#     holoPos(11,holoEntity(11):pos()+vec(random(-10,10)/10*N/50,random(-10,10)/10*N/50,random(-10,100)/100*N/400))
+    
+}    
+}elseif(N>=100){N=0
+holoDelete(2)
+holoDelete(3)
+holoDelete(4)
+holoDelete(5)
+holoDelete(6)
+holoDelete(7)
+holoDelete(8)
+holoDelete(9)
+holoDelete(10)
+holoDelete(11)
+holoDelete(12)
+holoDelete(13)
+B=vec(0)
+}
+
+
+
+#[
+At1=O:keyPressed("E")
+
+
+
+
+
+
+
+if(changed(At1)&At1){
+    Aim=O:aimPos()
+    A=1
+#   O_mem=O
+    }
+    
+if(!A){
+
+
+}else{
+
+    T++
+    if(T==1){holoEntity(9):soundPlay(1,1.5,"weapons/cguard/charging.wav")
+        holoCreate(2)
+        holoModel(2,"models/Combine_Helicopter/helicopter_bomb01.mdl")
+         holoAlpha(2,100)}
+    if(T<100&T>1){
+       
+    
+    #holoPos(1,E:toWorld(vec(6,0,48.5)))
+  # holoAng(1,E:toWorld(ang(0,0,90)))
+    
+    holoScale(2,vec(T/10)) 
+   
+   
+   
+        
+        }elseif(T==100){
+       
+    
+      
+        
+        }elseif(T>100&T<500){        
+       
+        
+        
+        
+        }
+}
+    

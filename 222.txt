@@ -1,0 +1,27 @@
+@name Snegovik
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+EE = entity()
+
+    function entity do_holoCreate(Ent:entity, Pos:vector, Ang:angle, Mdl:string, Scale:vector, Mat:string, Color:vector, Alpha, Shading, Shadow){
+        Index++
+        holoCreate(Index)
+        holoParent(Index,Ent)
+        holoPos(Index,Pos)
+        holoAng(Index,Ang)
+        holoModel(Index,Mdl)
+        holoScale(Index,Scale)
+        holoMaterial(Index,Mat)
+        holoColor(Index,Color)
+        holoAlpha(Index,Alpha)
+        holoDisableShading(Index,Shading)
+        holoShadow(Index,Shadow)
+        
+        return holoEntity(Index)
+    }
+  
+do_holoCreate(Board, Board:toWorld(vec(0)), Board:angles(), "models/hunter/plates/plate1x3.mdl", vec(0.4,0.5,1), "models/debug/debugwhite", Color, 255, 1, 1)
+do_holoCreate(Board, Board:toWorld(vec(0,-30,0)), Board:toWorld(ang(0,90,0)), "models/hunter/tubes/circle2x2c.mdl", vec(0.4,0.2,1), "models/debug/debugwhite", Color, 255, 1, 0)

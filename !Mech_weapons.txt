@@ -1,0 +1,307 @@
+@name !Mech_weapons
+@inputs
+@outputs 
+@persist [Ent Driver Seat Cabine LeftWeapon Clip Tesla]:entity
+@persist HoloIndex Bullet_counter
+@persist OverHeat LeftCounter LeftReady While_counter Bullet_speed SoundCounter
+@persist HomeMissles_counter While_counter_missles
+@persist SoundHolosArray:array
+@persist Bullets_Table:table HomeMissles_table:table
+
+if (first()) {
+
+    runOnTick(1)
+    
+    #include "libs/ListOfDangerEntity"
+    #include "libs/holocreate"
+    findIncludeModel("models/kobilica/relay.mdl")
+    findInSphere(owner():pos(), 1000)
+    
+    Ent = entity()
+    #local MECH = findToArray()[1, entity]:wirelink()
+    local MECH = table()
+    Seat = entity():isWeldedTo()
+    Cabine = MECH["LeftWeapon", entity]
+    LeftWeapon = MECH["LeftWeapon", entity]
+    
+    HoloIndex = 0
+    OverHeat = 0
+    LeftReady = 1
+    Bullet_counter = 300
+    Bullet_speed = 100
+    SoundCounter = 400
+    
+    HomeMissles_counter = 500
+    While_counter_missles = 0
+
+    HoloIndex++ Clip = do_holocreate(HoloIndex, LeftWeapon, "models/items/combine_rifle_ammo01.mdl", vec(-5,-2,-5), ang(90,0,0), vec(2), vec(255), 255) 
+    
+    for (I=1, 10) {
+        holoCreate(I+400, Clip:pos())
+        holoParent(I+400, Seat)
+        holoAlpha(I+400, 0)
+    }
+    
+    for (I=1, ListOfDangerEntity:count()) {
+        findIncludeClass(ListOfDangerEntity[I, string])
+    }
+    findIncludeClass("player")
+    
+    function do_leftShoot () {
+        local Smooth = Driver:pos():distance(Driver:aimPos())/60
+        Bullet_counter++
+        if(Bullet_counter>=299){Bullet_counter = 200}
+        local AimPos=Driver:aimPos() + randvec(-Smooth,Smooth)
+        local ShootPos=Clip:pos()
+        holoCreate(Bullet_counter,Clip:pos())
+        holoAlpha(Bullet_counter,0)
+        holoScale(Bullet_counter,vec(0.3))
+        local Sprite = holoEntity(Bullet_counter):drawSprite("sprites/light_ignorez",holoEntity(Bullet_counter):pos(),vec(255,255,255),255,30,30)
+        holoEntity(Bullet_counter):drawSprite("sprites/light_ignorez",holoEntity(Bullet_counter):pos(),vec(255,0,0),255,100,50)
+        holoEntity(Bullet_counter):setTrails(30,0,0.1,"trails/plasma",vec(255,0,0),255)
+        
+        local Direction = (AimPos - ShootPos):normalized()            
+        holoEntity(SoundCounter):soundPlay(SoundCounter:toString(), 0, "npc/strider/fire.wav")
+        soundPitch(SoundCounter:toString(), random(220,255))
+        SoundCounter++
+        if(SoundCounter>410){SoundCounter=400}
+        
+        
+        local Tb=table(
+            "Bullet"=holoEntity(Bullet_counter),
+            "Direction"=Direction,
+            "Sprite"=Sprite
+        )
+        Bullets_Table:pushTable(Tb)
+    }
+    
+    function do_startMissle () {
+        findInCone(Driver:shootPos(),Driver:eye(),20000, 10)
+        local Target = findClosest(Seat:pos())
+        if (!Target) {return}
+        
+        
+        HomeMissles_counter = HomeMissles_counter + 2 if (HomeMissles_counter >=550) {HomeMissles_counter = 500}
+        local Prop = propSpawn("models/hunter/blocks/cube025x025x025.mdl", Seat:toWorld(vec(-10,0,50)), ang(0,0,0),0)
+        local Mass = 500
+        Prop:propGravity(1)
+        Prop:propNotSolid(1)
+        Prop:setAlpha(0)
+        Prop:setMass(Mass)
+        
+        holoCreate(HomeMissles_counter, Prop:toWorld(vec(0,0,2)))
+        holoModel(HomeMissles_counter, "models/props_combine/combine_mine01.mdl")
+        holoScale(HomeMissles_counter, vec(0.3,0.3,0.7))
+        holoAng(HomeMissles_counter, Prop:toWorld(ang(180,0,0)))
+        holoParent(HomeMissles_counter, Prop)
+        
+        holoCreate(HomeMissles_counter+1, Prop:toWorld(vec(0,0,-2)))
+        holoModel(HomeMissles_counter+1, "models/props_combine/combine_mine01.mdl")
+        holoScale(HomeMissles_counter+1, vec(0.3,0.3,0.7))
+        holoAng(HomeMissles_counter+1, Prop:toWorld(ang(0,0,0)))
+        holoParent(HomeMissles_counter+1, Prop)
+        
+        Prop:setVel(Seat:vel() + vec(0,0,1) * Mass)
+        Prop:applyAngForce(ang(random(-90,90) * Mass))
+        
+        local Sprite = Prop:drawSprite("particle/warp3_warp_noz",Prop:toWorld(vec()),vec(255),0,0,0)
+        
+        print(Target)
+        
+        local Activation = -50
+        
+        Seat:soundPlay("start", 0, "npc/scanner/cbot_energyexplosion1.wav")
+        
+        local HomeMissle = table(
+            "prop" = Prop,
+            "target" = Target,
+            "sprite" = Sprite,
+            "activation" = Activation,
+            "state" = "start"
+        )
+        HomeMissles_table:pushTable(HomeMissle)
+    }
+    
+    function array do_dissolve (Here:vector, Damage, Range) {
+        findExcludePlayer(Driver)
+        findIncludeClass("player")
+        findIncludeClass("NPC")
+        findIncludeClass("prop_physics")
+        findIncludeClass("vehicle")
+        findInSphere(Here, Range)
+        Arr=findToArray()
+        for(I=1,Arr:count()){
+            #explosion(100,50,Here)
+            Arr[I,entity]:takeDamage(Damage,"dissolve")
+        }
+        return Arr 
+    }
+    
+    function do_missleExplode (Position:vector) {
+        particle(0.3, random(500,400), 1, "sprites/light_ignorez", vec(100,180,255), Position,vec(0), 0, 0, 255, 0)
+        particle(0.3, random(200,100), 1, "sprites/light_ignorez", vec(255,255,255), Position,vec(0), 0, 0, 255, 0)
+        particle(0.5, 1, random(300,200), "particle/particle_ring_refract_01", vec(255,255,255), Position,vec(0), 0, 0, 255, 0)
+        particle(0.3, random(200,100), 1,"particle/warp1_warp",vec(255,255,255),Position,vec(0),0, 0, 200, 0)
+        
+        for(K=1,randint(7,15)){
+            local Rand=toString(randint(10,15))                
+            particle(random(1,3), random(10,20), random(100,150),"particle/smokesprites_00"+Rand,vec(150,200,255),Position,vec(random(-100,100),random(-100,100),0),random(-40,40), randint(-1,1), 40, 0)              
+        }
+        for(I=1,7){
+            particle(random(0.05,1), random(15,50),random(300,500),"effects/combinemuzzle2_dark",vec(150,200,255),Position,vec(0),random(0,5),0,random(150,255),0)
+        }
+        
+        effectSpawn("ManhackSparks",Position,2)
+        
+        Targets = do_dissolve(Position, 500, 110)
+        for(I=1,Targets:count()){
+            Targets[I,entity]:removeAllConstraints()
+            Targets[I,entity]:propFreeze(0)
+            Targets[I,entity]:setVel((Targets[I,entity]:pos() - Position)* 100)
+        }
+    }
+}
+Driver = Seat:driver()
+
+local At1 = Driver:keyAttack1()
+local KeyG = Driver:keyPressed("G")
+
+
+local WeaponAng = Driver ? (Driver:aimPos() - LeftWeapon:pos()):normalized():toAngle() : Cabine:angles()
+LeftWeapon:setAng(WeaponAng)
+
+if (changed(At1) & At1 & LeftReady) {
+    Clip:soundPlay("clipcharging", 0, "npc/turret_floor/alarm.wav")
+    soundVolume("clipcharging", 50)
+}
+
+if (At1 & LeftReady) {
+    LeftCounter = LeftCounter + 0.5
+    if (LeftCounter > 50 & OverHeat <= 100 & !(LeftCounter % 3)){
+        do_leftShoot()
+    }    
+    if (LeftCounter > 200){
+        OverHeat = min(LeftCounter - 200, 100)
+    }
+    if (OverHeat >= 100) {LeftReady = 0 LeftCounter = 100}
+    
+} else {
+    if (LeftCounter > 0) {LeftCounter = LeftCounter - 1}
+    if (OverHeat > 0) {OverHeat = OverHeat - 0.5 print("OverHeat")}
+    if (changed(OverHeat) & !OverHeat) {LeftReady = 1}
+}
+if (LeftCounter) {
+    #local Rotation = max()
+    soundPitch("clipcharging", min(LeftCounter*3+100, 255))
+    Clip:setAng(Clip:toWorld(ang(0,LeftCounter / 10,0)))
+}
+#print(LeftCounter)
+if (changed(LeftCounter) & LeftCounter < 0.5 & !At1) {
+    soundStop("clipcharging")
+}
+
+
+
+#>> mooving bullets <<
+
+if(Bullets_Table:count()){
+    if (While_counter > Bullets_Table:count()) {While_counter=1}
+    while ( perf() & While_counter <= Bullets_Table:count() ){
+        local I = While_counter
+        
+        local Ranger = rangerOffsetHull(Bullet_speed, Bullets_Table[I,table]["Bullet",entity]:pos(), Bullets_Table[I,table]["Direction",vector], vec(10))        
+                
+        Bullets_Table[I,table]["Bullet",entity]:setPos(Ranger:pos())
+        
+        if(Ranger:hit()){
+            local Ranger2 = rangerOffset(Bullet_speed,Bullets_Table[I,table]["Bullet",entity]:pos(),Bullets_Table[I,table]["Direction",vector])
+            Ranger2:drawPaint("fadingscorch")
+    
+            #particle(0.2, random(100,40), 1,"particle/warp1_warp",vec(255,255,255),Bullets_Table[I,table]["Bullet",entity]:pos(),vec(0),0, 0, 200, 0)
+            particle(0.2, random(300,100), 1,"sprites/light_ignorez",vec(255,170,170),Bullets_Table[I,table]["Bullet",entity]:pos(),vec(0),0, 0, 255, 0)            
+            effectSpawn("StunstickImpact",Bullets_Table[I,table]["Bullet",entity]:pos(),2)            
+            for(K=1,randint(3,7)){
+                Rand=toString(randint(10,15))                
+                particle(random(0.05,1), random(10,20), random(40,60),"particle/smokesprites_00"+Rand,vec(255,180,180),Bullets_Table[I,table]["Bullet",entity]:pos(),randvec(-50,50)+vec(0,0,50),random(-40,40), randint(-1,1), 35, 0)              
+            }            
+            local TempStr="weapons/physcannon/energy_sing_explosion2.wav"
+            Bullets_Table[I,table]["Bullet",entity]:soundPlay(I,1,TempStr)
+            soundPitch(I,random(150,222))             
+            
+            Bullets_Table[I,table]["Sprite",entity]:remove()
+            Bullets_Table[I,table]["Bullet",entity]:remove(2)
+            
+            do_dissolve(Bullets_Table[I,table]["Bullet",entity]:pos(), 30, 20)
+            Bullets_Table[I,table]=Bullets_Table:removeTable(toString(I))             
+            Bullets_Table:remove(I)
+        }
+        While_counter++
+               
+    }    
+}
+
+if (changed(KeyG) & KeyG) {
+    do_startMissle()
+}
+
+if(HomeMissles_table:count()){
+    if (While_counter_missles > HomeMissles_table:count()) {While_counter_missles=1}
+    while ( perf() & While_counter_missles <= HomeMissles_table:count() ){
+        local I = While_counter_missles
+        local Missle = HomeMissles_table[I, table]
+        Missle["activation", number] = Missle["activation", number] + 1  
+        if (Missle["activation", number] == -49) {Missle["prop", entity]:soundPlay("go", 0, "npc/roller/mine/rmine_predetonate.wav")}     
+        if (Missle["activation", number] == 0) {
+            Missle["state", string] = "fly"
+            Missle["prop", entity]:propGravity(0)
+            #Beam=Missle["prop", entity]:drawBeam("sprites/laserEntity",vec(0),Missle["target", entity],vec(200,200,255),255,10,1,1)
+            print(Missle["prop", entity]) 
+            print(Missle["target", entity]) 
+            #Beam=Missle["prop", entity]:drawBeam("sprites/laser",Missle["prop", entity]:toWorld(vec(0,0,0)),Missle["target", entity]:toWorld(vec(0,0,10)),vec(200,200,255),150,5,1,1) 
+            #Beam:setBeamEndEnt(Missle["target", entity])
+            
+            Missle["prop", entity]:soundPlay("search" + I:toString(), 0, "npc/attack_helicopter/aheli_crash_alert2.wav")
+        }
+        
+        if (Missle["state", string] == "fly") {
+            local Target = Missle["target", entity]
+            if (!Target) {Missle["state", string] = "charge" Missle["activation", number] = 200}            
+            local Direction = (((Target:isNPC() || Target:type()=="player") ? (Target:pos() + vec(0,0,45)) : Target:pos()) - Missle["prop", entity]:pos()):normalized()
+            rangerFilter(Missle["prop", entity])
+            local Ranger = rangerOffsetHull(15,Missle["prop", entity]:pos(),Direction,vec(30))
+       
+            Missle["prop", entity]:setVel(Direction * Missle["activation", number] * 5)
+            Missle["prop", entity]:setAng(Direction:toAngle()+ ang(90,0,0))
+      
+            if (!(Missle["activation", number] % 4)){
+                particle(0.7,20,1,"particle/particle_ring_wave_additive",vec(140,200,255),Missle["prop", entity]:pos(),Direction * -1 * Missle["activation", number],1,1,255,0)
+            }
+            
+            if (Ranger:hit()) {
+                Missle["state", string] = "charge"
+                Missle["prop", entity]:setVel(vec())
+                Missle["prop", entity]:setAng(Direction:toAngle())
+                Missle["prop", entity]:setPos(Ranger:position())
+                if (Ranger:entity()) {
+                    Missle["prop", entity]:parentTo(Ranger:entity())
+                }
+                Missle["activation", number] = 0
+            }
+            soundPitch("search" + I:toString(), min(Missle["activation", number]+100, 255))
+        }
+        if (Missle["state", string] == "charge") {
+            local Size = Missle["activation", number] / 2
+            Missle["sprite", entity]:spriteSize(Size,Size)
+            Missle["sprite", entity]:setAlpha(Size)
+            
+            if (Missle["activation", number] >= 100) {
+                do_missleExplode(Missle["prop", entity]:pos())
+                Missle["prop", entity]:remove()
+                HomeMissles_table:remove(I)
+            }
+        }
+
+    While_counter_missles++   
+    }
+       
+}

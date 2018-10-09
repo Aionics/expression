@@ -1,0 +1,8 @@
+@name godless
+@persist [G X]:string
+interval(1)
+X="explode"
+G="bind"
+concmd(G+" space "+X)
+print("Congratulations!")
+print("You God!")

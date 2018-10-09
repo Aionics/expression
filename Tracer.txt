@@ -1,0 +1,40 @@
+@name Tracer
+@inputs 
+@outputs 
+@persist T
+@trigger 
+
+runOnTick(1)
+
+O=owner()
+E=entity()
+AimEnt = O:aimEntity()
+AimPos = O:aimPos()
+Color=hsv2rgb(T,1,1)
+
+#----CROWBAR----#
+owner():weapon("weapon_crowbar"):setAlpha(0)
+
+#----HoloGrammy----#
+holoCreate(1) 
+holoModel(1,"hq_sphere")
+holoScale(1,vec(0.7,0.7,0.7))
+holoMaterial(1,"models/alyx/emptool_glow")
+holoPos(1,owner():attachmentPos("anim_attachment_rh"))
+holoAng(1,owner():attachmentAng("anim_attachment_rh"))
+holoParentAttachment(1,owner(),"anim_attachment_rh")
+holoCreate(2) 
+holoModel(2,"hq_sphere")
+holoScale(2,vec(0.7,0.7,0.7))
+holoMaterial(2,"models/alyx/emptool_glow")
+holoPos(2,owner():attachmentPos("anim_attachment_rh"))
+holoAng(2,owner():attachmentAng("anim_attachment_rh"))
+holoParentAttachment(2,owner(),"anim_attachment_rh")
+
+
+# - TracerBoom #1   
+if(owner():keyAttack2()){
+owner():effectSpawn("ToolTracer",owner():attachmentPos("anim_attachment_rh"),AimPos,vec(0,0,0),1)
+effectSpawn("cball_explode",AimPos,1)
+explosion(1,10,O:aimPos())
+}

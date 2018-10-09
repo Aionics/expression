@@ -1,0 +1,34 @@
+@name 
+@inputs ON
+@outputs Fire V
+@model models/Combine_Helicopter/helicopter_bomb01.mdl
+
+runOnTick(1)
+
+E=entity()
+E:setMass(10000)
+E:setMaterial("models/alyx/emptool_glow")
+
+
+
+
+owner():setColor(20,180,250)
+
+if(ON==1& !owner():keyAttack2()) {
+    E:setPos(owner():shootPos()+vec(0,0,40))
+    E:setAng(owner():eyeAngles())
+}
+
+if(ON==1& owner():keyAttack2()) {
+   #E=propSpawn("models/props_junk/harpoon002a.mdlaq",(owner():shootPos()+vec(0,0,40)),owner():eyeAngles(),1)
+   E:setPos(owner():aimPos()+vec(0,0,20))
+    
+   
+    }
+if(ON==1& !owner():keyAttack2()& !owner():keyReload()) {
+    E:explosion(20,300,owner():aimPos())
+}
+
+
+
+

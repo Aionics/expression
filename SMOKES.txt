@@ -1,0 +1,15 @@
+@name SMOKES
+@inputs 
+@outputs 
+@persist Ent:entity
+@trigger 
+interval(20)
+if(first()){
+
+Ent=entitySpawn("env_smokestack",entity():pos()+vec(0,0,50),1)																	
+
+Ent:setFire("Initial State", "1", 1)
+Ent:setFire("Rate", "30", 0)
+Ent:setFire("TurnOn", "1", 0)
+}
+

@@ -1,0 +1,134 @@
+@name The_gun
+@inputs 
+@outputs 
+@persist A T Aim:vector O:entity 
+@trigger 
+
+runOnTick(10)
+E=entity(3)
+
+O=owner()
+#findIncludeClass("Player")
+#O=findInSphere(E:toWorld(vec(0,0,0)),25)
+
+
+ 
+
+
+
+
+if(first()){
+
+A=0   
+#noga
+    holoCreate(1)
+    holoPos(1,E:pos()+vec(0,0,10))
+    holoModel(1,"models/props_junk/PopCan01a.mdl")
+    holoMaterial(1,"phoenix_storms/mat/mat_phx_carbonfiber")
+    holoScale(1,vec(1,1,10))
+#zopa    
+    holoCreate(2)
+    holoPos(2,E:pos()+vec(-10,0,50))
+    holoModel(2,"models/props_phx/construct/metal_dome360.mdl") 
+    holoMaterial(2,"phoenix_storms/mat/mat_phx_carbonfiber")
+    holoScale(2,vec(0.2,0.2,0.3))
+    holoAng(2,ang(-90,0,0))
+#tors
+    holoCreate(3)
+    holoPos(3,E:pos()+vec(0,0,50))
+    holoModel(3,"models/props_junk/PopCan01a.mdl")
+    holoMaterial(3,"phoenix_storms/mat/mat_phx_carbonfiber")
+    holoScale(3,vec(5,5,5))
+    holoAng(3,ang(-90,0,0))
+#sheya
+    holoCreate(4)
+    holoPos(4,E:pos()+vec(25,0,50))
+    holoModel(4,"models/Combine_Helicopter/helicopter_bomb01.mdl")
+    holoMaterial(4,"phoenix_storms/mat/mat_phx_carbonfiber")
+    holoScale(4,vec(0.7,0.7,0.7))
+    holoAng(4,ang(-90,0,0))
+#golova
+    holoCreate(5)
+    holoPos(5,E:pos()+vec(47,0,50))
+    holoModel(5,"models/props_junk/TrafficCone001a.mdl")
+    holoMaterial(5,"phoenix_storms/mat/mat_phx_carbonfiber")
+    holoScale(5,vec(1,1,1))
+    holoAng(5,ang(90,0,0))
+#kolco1
+    holoCreate(6)
+    holoPos(6,E:pos()+vec(38,0,50))
+    holoModel(6,"hq_torus_thin")
+    holoMaterial(6,"phoenix_storms/mat/mat_phx_carbonfiber")
+    holoScale(6,vec(2))
+    holoAng(6,ang(90,0,0))
+#kolco2
+    holoCreate(7)
+    holoPos(7,E:pos()+vec(48,0,50))
+    holoModel(7,"hq_torus_thin")
+    holoMaterial(7,"phoenix_storms/mat/mat_phx_carbonfiber")
+    holoScale(7,vec(1.5))
+    holoAng(7,ang(90,0,0))
+#kolco3
+    holoCreate(8)
+    holoPos(8,E:pos()+vec(58,0,50))
+    holoModel(8,"hq_torus_thin")
+    holoMaterial(8,"phoenix_storms/mat/mat_phx_carbonfiber")
+    holoScale(8,vec(1))
+    holoAng(8,ang(90,0,0))
+#pricel
+    holoCreate(9)
+    holoPos(9,E:pos()+vec(62,0,50))
+    holoMaterial(9,"phoenix_storms/mat/mat_phx_carbonfiber")
+    holoScale(9,vec(0.1))
+    holoAng(9,ang(90,0,0))
+
+    
+
+    holoParent(2,3)
+    holoParent(4,3)
+    holoParent(5,3)
+    holoParent(6,3)
+    holoParent(7,3)
+    holoParent(8,3)
+    holoParent(9,3)
+}
+holoPos(3,E:pos()+vec(0,0,100))
+At1=O:keyPressed("T")
+
+if(changed(At1)&At1){
+    Aim=O:aimPos()
+    A=1
+    }
+    
+if(!A){
+    
+holoAng(3,O:eyeAngles()-ang(90,0,0))
+
+}else{
+
+    T++
+    if(T<100){
+        
+        particleGravity(vec(0))
+        Pos1=holoEntity(9):pos()+vec(random(-50,70),random(-50,70),random(-50,50))
+        particle(1,1,40,"effects/blueflare1",vec(100,180,255),Pos1,holoEntity(9):pos()-Pos1,1)
+        
+        }elseif(T==100){
+        
+        T++        
+        O=holoEntity(9):drawBeam("cable/blue_elec",Aim,holoEntity(9):pos(),vec(255),255,100)
+    
+        lightCreate(1,Aim,vec(80,180,255),15000,12)
+        
+        
+        }elseif(T>100&T<500){        
+        
+        T++
+        Pos2=Aim+vec(random(-150,170),random(-150,170),random(-150,150))
+        explosion(100,150,Aim)
+        particle(2,100,10,"effects/blueflare1",vec(100,180,255),Aim,(Pos2-Aim)*2,1)
+        
+        }elseif(T>150){T=0 A=0  lightRemove(1)}
+}
+
+

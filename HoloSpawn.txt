@@ -1,0 +1,23 @@
+@name HoloSpawn
+@outputs T
+@persist T
+interval(50)
+
+if(first()){timer("t",50)}
+if(T<=500&clk("t")){
+    T++
+    timer("t",100)
+        holoCreate(T)
+        holoPos(T,entity():toWorld(vec(2*T,0,10)))
+        holoScale(T,vec(0.1))
+        holoColor(T,randvec(0,255))
+        holoParent(T,entity())
+         #1ZADERJKA 1 SEC 
+        
+    }    
+
+T
+
+
+
+

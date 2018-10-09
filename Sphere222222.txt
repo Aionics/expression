@@ -1,0 +1,39 @@
+@name Sphere
+@inputs 
+@outputs 
+@persist A:array P:entity
+@trigger 
+
+runOnTick(1)
+
+
+if(first()){
+holoCreate(1)
+holoModel(1,"hq_sphere")
+holoMaterial(1,"Models/shadertest/shader3")
+holoParent(1,entity())
+holoColor(1,vec(127,255,159))
+holoScale(1,vec(120,120,120))
+
+holoCreate(3)
+holoModel(3,"hq_sphere")
+holoMaterial(3,"Models/effects/vol_light001")
+holoParent(3,entity())
+holoColor(3,vec(255,93,0))
+holoScale(3,vec(-120,-120,-120))
+
+findInSphere(entity():pos(),300)
+findExcludePlayer(owner())
+A = findToArray()
+}
+
+
+for(I=1,A:count()){
+    P = A:entity(I)
+    if(P:isPlayer() & P:isPlayer()){
+    explosion(500,1,P:pos())
+
+}    
+}
+
+

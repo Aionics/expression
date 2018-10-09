@@ -1,0 +1,26 @@
+@name rider
+@inputs 
+@outputs [Seat NPC]:entity Ar:array
+@persist 
+@trigger 
+
+interval(10)
+if(first()){
+    Seat=entity():isWeldedTo()
+    findIncludeClass("player")
+    findInSphere(owner():pos(),99999)
+    Ar=findToArray()
+}
+J=owner():keyPressed("J")
+if(changed(J)&J){
+    NPC=owner()
+        for(I=1,Ar:count()){
+        NPC:npcRelationship(Ar[I,entity],"neutral",1)
+    }
+}
+P=owner():keyPressed("P")
+if(changed(P)&P){
+Seat:parentTo(NPC)
+}
+if(owner():keyAttack1()){NPC:npcGoRun(owner():aimPos())}
+Seat:driver():setPos(vec())

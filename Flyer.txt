@@ -1,0 +1,41 @@
+@name Flyer
+@inputs 
+@outputs 
+@persist OW:entity Prop:entity
+@trigger 
+
+if (first()) {
+    entity():propNotSolid(1)
+    runOnTick(1)
+    OW = owner()
+    #OW = findPlayerByName("Cass")
+    
+    Prop = propSpawn("models/props_phx/construct/metal_angle360.mdl", OW:pos(), ang(0), 1)
+    #Prop = entity():isWeldedTo()
+    #Prop:setTrails(800,0,1.5,"trails/plasma",vec(255),100)
+}
+
+local TargetPos = vec(0,0,-4)
+
+Shift = OW:keySprint()
+Space = OW:keyJump()
+Ctrl = OW:keyDuck()
+
+if (Space && !Shift) {
+    TargetPos = vec(0,0,-12)
+    if (OW == owner()) {
+        #OW:plyApplyForce(vec(0,0,50))    
+    }
+    
+}
+
+if (Space && Shift) {
+    TargetPos = vec(0,0,-12)
+}
+
+
+if (!Ctrl) {
+    Prop:setPos(OW:pos() + TargetPos)
+    Prop:applyOffsetForce(vec(0,0,1)*1000, Prop:pos())
+}
+

@@ -1,0 +1,324 @@
+@name 
+@inputs IsLight
+@outputs 
+@persist [EE Car]:entity
+@persist [Props]:table
+@persist HoloIndex CarPath
+
+if (first() || duped()) {
+    #include "libs/HoloCreate"
+    runOnTick(1)
+    CarPath = -100
+    
+    EE = entity()    
+    timer("holos", 10)
+    
+    timer("smog", 50)
+    timer("mainAmb", 200000)
+    timer("randAmb", 5000)
+    
+    function void do_playMainAmb() {
+        findClearBlackList()
+        findClearWhiteEntityList()
+        findClearWhitePlayerPropList()
+        findIncludeClass("player")
+        findInSphere(EE:pos(), 1300)
+        local Players = findToArray()
+        #print("main")
+        #print(Players)
+        for(I=1, Players:count()) {
+            #Players[I, entity]:soundPlay("amb1", 200, "ambient/atmosphere/trainstation_ambient_loop1.wav")
+            Players[I, entity]:soundPlay("amb1" + I, 200, "ambient/atmosphere/trainstation_ambient_loop1.wav")
+            soundVolume("amb1" + I,0.3)
+            #owner():soundPlay("amb1", 20, "ambient/atmosphere/trainstation_ambient_loop1.wav")
+        }
+    }
+    function void do_playRandAmb() {
+        findClearBlackList()
+        findClearWhiteEntityList()
+        findClearWhitePlayerPropList()
+        findIncludeClass("player")
+        findInSphere(EE:pos(), 1500)
+        local Players = findToArray()
+        
+        #print("rnd")
+        #print(Players)
+        #local Sound = "ambient/atmosphere/cave_hit" + randint(1,6) + ".wav"
+        local Sound = "ambient/atmosphere/cave_hit" + randint(1,6) + ".wav"
+        EE:soundPlay("Ramb", 10, Sound)
+        for(I=1, Players:count()) {
+            Players[I, entity]:soundPlay("Ramb", 10, Sound)
+        }
+    }
+    do_playMainAmb()
+    findIncludeModel("models/props_vehicles/car004a_physics.mdl")
+    findExcludeClass("player")
+    findInSphere(EE:pos(), 10500)
+    Car = find()
+    print(Car)
+    Car:propFreeze(1)
+    timer("car", 60000)
+    timer("noclip", 50)
+    
+
+    
+}
+
+
+if (clk("holos")) {
+    
+    HoloIndex = 1
+    holoCreate(HoloIndex)
+    holoModel(HoloIndex, "models/props_buildings/row_res_1_fullscale.mdl")
+    #holoAlpha(HoloIndex, 150)
+    holoAng(HoloIndex, ang(0,-90,0))
+    holoColor(HoloIndex, vec(80))
+    holoPos(HoloIndex, EE:pos() + vec(-155,200,-10))
+    do_holoclip(HoloIndex, 1, vec(-90,0,0), vec(1,0,0)) 
+    do_holoclip(HoloIndex, 2, vec(580,0,0), vec(-1,0,0)) 
+    HoloIndex++
+    
+    holoCreate(HoloIndex)
+    holoModel(HoloIndex, "models/props_buildings/row_res_1_fullscale.mdl")
+    #holoAlpha(HoloIndex, 150)
+    holoAng(HoloIndex, ang(0,-90,0))
+    holoColor(HoloIndex, vec(80))
+    holoPos(HoloIndex, EE:pos() + vec(-50,-300,-10))
+    do_holoclip(HoloIndex, 1, vec(-90,0,0), vec(1,0,0)) 
+    do_holoclip(HoloIndex, 2, vec(580,0,0), vec(-1,0,0)) 
+    HoloIndex++
+    
+    holoCreate(HoloIndex)
+    holoModel(HoloIndex, "models/props_buildings/row_res_1_fullscale.mdl")
+    #holoAlpha(HoloIndex, 150)
+    holoAng(HoloIndex, ang(0,-90,0))
+    holoColor(HoloIndex, vec(80))
+    holoPos(HoloIndex, EE:pos() + vec(-115,-380,-10))
+    do_holoclip(HoloIndex, 1, vec(-750,0,0), vec(-1,0,0)) 
+    #do_holoclip(HoloIndex, 2, vec(580,0,0), vec(-1,0,0)) 
+    HoloIndex++
+    
+    holoCreate(HoloIndex)
+    holoModel(HoloIndex, "models/props_buildings/row_res_1_fullscale.mdl")
+    #holoAlpha(HoloIndex, 150)
+    #holoAng(HoloIndex, ang(0,-90,0))
+    holoColor(HoloIndex, vec(80))
+    holoPos(HoloIndex, EE:pos() + vec(-1200,-0,-10))
+    do_holoclip(HoloIndex, 1, vec(1234,0,0), vec(1,0,0)) 
+    #do_holoclip(HoloIndex, 2, vec(580,0,0), vec(-1,0,0)) 
+    HoloIndex++
+    
+    holoCreate(HoloIndex)
+    holoModel(HoloIndex, "models/props_buildings/row_res_1_fullscale.mdl")
+    #holoAlpha(HoloIndex, 150)
+    #holoAng(HoloIndex, ang(0,-90,0))
+    holoColor(HoloIndex, vec(80))
+    holoPos(HoloIndex, EE:pos() + vec(-1250,-200,-10))
+    do_holoclip(HoloIndex, 1, vec(1234,0,0), vec(1,0,0)) 
+    #do_holoclip(HoloIndex, 2, vec(580,0,0), vec(-1,0,0)) 
+    HoloIndex++
+    
+    holoCreate(HoloIndex)
+    holoModel(HoloIndex, "models/props_buildings/row_res_1_fullscale.mdl")
+    #holoAlpha(HoloIndex, 150)
+    holoAng(HoloIndex, ang(0,-180,0))
+    holoColor(HoloIndex, vec(80))
+    holoPos(HoloIndex, EE:pos() + vec(1900,240,-10))
+    do_holoclip(HoloIndex, 1, vec(1234,0,0), vec(1,0,0)) 
+    #do_holoclip(HoloIndex, 2, vec(580,0,0), vec(-1,0,0)) 
+    HoloIndex++
+    
+    holoCreate(HoloIndex)
+    holoModel(HoloIndex, "models/props_buildings/row_res_1_fullscale.mdl")
+    #holoAlpha(HoloIndex, 150)
+    holoAng(HoloIndex, ang(0,-90,0))
+    holoColor(HoloIndex, vec(80))
+    holoPos(HoloIndex, EE:pos() + vec(1000,420,-10))
+    do_holoclip(HoloIndex, 1, vec(-90,0,0), vec(1,0,0)) 
+    do_holoclip(HoloIndex, 2, vec(580,0,0), vec(-1,0,0)) 
+    HoloIndex++
+    
+    for (I=-5, 5) {
+        holoCreate(HoloIndex)
+        holoScale(HoloIndex, vec(5,15,50))
+        holoColor(HoloIndex, vec(0))
+        holoDisableShading(HoloIndex, 1)
+        holoPos(HoloIndex, EE:pos() + vec(-630,340,300) + vec(I*23,0,0))
+        holoAlpha(HoloIndex, 255 - (I+5)*15)
+        
+        HoloIndex++
+    }
+    
+    for (I=-5, 5) {
+        holoCreate(HoloIndex)
+        holoScale(HoloIndex, vec(5,15,50))
+        holoColor(HoloIndex, vec(0))
+        holoDisableShading(HoloIndex, 1)
+        holoPos(HoloIndex, EE:pos() + vec(590,-200,300) + vec(I*23,0,0))
+        holoAlpha(HoloIndex, 100 + (I+5)*15)
+        HoloIndex++
+    }
+    
+    for (I=-5, 5) {
+        holoCreate(HoloIndex)
+        holoScale(HoloIndex, vec(5,35,50))
+        holoColor(HoloIndex, vec(0))
+        holoDisableShading(HoloIndex, 1)
+        holoPos(HoloIndex, EE:pos() + vec(470,1020,300) + vec(I*23,0,0))
+        holoAlpha(HoloIndex, 100 + (I+5)*15)
+        HoloIndex++
+    }
+    
+    for (I=-5, 5) {
+        holoCreate(HoloIndex)
+        holoScale(HoloIndex, vec(35,5,50))
+        holoColor(HoloIndex, vec(0))
+        holoDisableShading(HoloIndex, 1)
+        holoPos(HoloIndex, EE:pos() + vec(-180,-665,300) + vec(0,I*23,0))
+        holoAlpha(HoloIndex, 255 - (I+5)*15)
+        HoloIndex++
+    }
+    
+    holoCreate(HoloIndex)
+    holoPos(HoloIndex, EE:pos())
+    holoModel(HoloIndex, "models/hunter/misc/shell2x2a.mdl")
+    holoColor(HoloIndex, vec(0))
+    holoAng(HoloIndex, ang(0,0,180))
+    holoScale(HoloIndex, vec(-50))
+    HoloIndex++
+    
+    holoCreate(852)
+    holoPos(852, EE:pos())
+    holoModel(852, "hq_sphere")
+
+
+    
+    holoCreate(853)
+    holoPos(853, EE:pos())
+    holoModel(853, "")
+
+
+}
+
+local Tp1to2 = rangerOffsetHull(70,EE:pos() + vec(650,-220,30),vec(0,1,0),vec(20))
+local Tp2to1 = rangerOffsetHull(70,EE:pos() + vec(-700,360,30),vec(0,-1,0),vec(20))
+
+local Tp3to4 = rangerOffsetHull(70,EE:pos() + vec(540,1135,30),vec(0,1,0),vec(20))
+local Tp4to3 = rangerOffsetHull(70,EE:pos() + vec(-10,-765,30),vec(-1,0,0),vec(20))
+
+holoPos(852, EE:pos() + vec(540,1130,30))
+holoPos(853, Tp3to4:pos())
+
+
+if (Tp1to2:entity() & Tp1to2:entity():isPlayer()) {
+    local Offset = Tp1to2:distance()
+    local Player = Tp1to2:entity()
+    local NewPos = EE:pos() + vec(-640,340,0)
+    Player:setPos(Player:pos():setX(NewPos:x()):setY(NewPos:y()))
+}
+
+if (Tp2to1:entity() & Tp2to1:entity():isPlayer()) {
+    local Player = Tp2to1:entity()
+    local NewPos = EE:pos() + vec(610,-200,0)
+    Player:setPos(Player:pos():setX(NewPos:x()):setY(NewPos:y()))
+}
+
+if (Tp3to4:entity() & Tp3to4:entity():isPlayer()) {
+    local Offset = Tp3to4:distance()
+    local Player = Tp3to4:entity()
+    local NewPos = EE:pos() + vec(-70 - Offset/1.2,-725,30)
+    Player:setPos(Player:pos():setX(NewPos:x()):setY(NewPos:y()))
+    
+    
+    local Ang = Player:eyeAngles()
+    Player:setEyeAngles(Ang + ang(0,90,0))
+    Player:setAng(Player:angles():setYaw(Player:angles():yaw() + 90))
+    
+    local Vel = Player:vel()
+    Player:setVel(Vel*-1 + Vel:rotate(ang(0,90,0)))
+}
+
+if (Tp4to3:entity() & Tp4to3:entity():isPlayer()) {
+    local Offset = Tp4to3:distance()
+    local Player = Tp4to3:entity()
+    local NewPos = EE:pos() + vec(480,865 + Offset/1.2,30)
+    Player:setPos(Player:pos():setX(NewPos:x()):setY(NewPos:y()))
+    
+    
+    local Ang = Player:eyeAngles()
+    Player:setEyeAngles(Ang + ang(0,-90,0))
+    Player:setAng(Player:angles():setYaw(Player:angles():yaw() + 90))
+    
+    local Vel = Player:vel()
+    Player:setVel(Vel*-1 + Vel:rotate(ang(0,-90,0)))
+}
+
+#holoPos(HoloIndex-1, Tp1to2:pos())
+
+if (clk("smog")) {
+    local Rand=toString(randint(10,15))
+    particle(random(80,120), random(100,200), random(400,1000),"particle/smokesprites_00"+Rand,vec(50,50,50),entity():pos()+vec(random(-1000,100),random(-1000,1000),random(0,40)),vec(random(-100,100),random(-100,100),0),random(-40,40), randint(-1,1), 40, 0)                 
+    timer("smog", 250)
+}
+if (clk("mainAmb")) {
+    do_playMainAmb()
+    timer("mainAmb", 100000)
+}
+if (clk("randAmb")) {
+    do_playRandAmb()
+    #timer("randAmb", randint(1000))
+    timer("randAmb", randint(5000, 40000))
+}
+
+if (clk("car")) {
+   
+    Car:propFreeze(1)
+    Car:setAng(ang(0,180,0))
+    Car:setPos(EE:pos()+ vec(800,1025,20))
+    CarPath = -50
+    Car:soundPlay("carengine", 100, "vehicles/junker/jnk_idle_loop1.wav")
+}
+
+if (CarPath>=-50 && CarPath <= 3650) {
+
+    CarPath = CarPath + 1
+    if (CarPath >=0){
+        Car:setPos(Car:pos() + vec(-0.5,0,0))
+
+    }    
+}
+
+if (CarPath>3650 && CarPath <= 4400) {
+
+    CarPath = CarPath + 1
+    Car:setPos(Car:pos() + vec(-0.2,-0.25,0))
+    Car:setAng(Car:angles() + ang(0,0.25,0))
+
+}
+
+if (CarPath>4400 && CarPath <= 12000) {
+    CarPath = CarPath + 1
+    Car:setPos(Car:pos() + vec(0,-0.5,0))
+}
+
+if (CarPath > 12000)  {
+    timer("car", randint(60000,300000))
+    soundStop("carengine")
+    CarPath = -100
+}
+
+if (clk("noclip")) {
+    findIncludeClass("player")
+    findInSphere(EE:pos(), 1500)
+    local Players = findToArray()
+    for(I=1, Players:count()) {
+        local Pl = Players[I, entity]
+        if (Pl:inNoclip() && Pl:name() != "Aionics") {
+            Pl:playerNoclip(0)
+        }
+    }
+    timer("noclip", 10)
+}
+
+
+

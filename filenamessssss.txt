@@ -1,0 +1,13 @@
+@name 
+@inputs 
+@outputs 
+@persist P:entity
+@trigger 
+interval(10)
+if(first()){
+P = entity():isWeldedTo()
+}
+E=owner():keyPressed("e")
+if(changed(E)&E){
+    P:setVel(owner():eye()*500)
+}

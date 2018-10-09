@@ -1,0 +1,271 @@
+@name The_gun
+@inputs 
+@outputs 
+@persist A T Aim:vector O:entity [O_mem E Sacred]:entity S Ar:array While_counter
+@trigger 
+
+runOnTick(1)
+
+
+
+
+O=players():entity(1)
+Vv=entity():pos()
+for(I=2,players():count()){
+if(players():entity(I):pos():distance(Vv)<O:pos():distance(Vv)){O=players():entity(I)}
+}
+if(O:pos():distance(Vv)>75){O=owner()}
+
+
+
+
+
+if(changed(O)&O){
+holoEntity(4):soundPlay(10,3,"hl1/fvox/targetting_system.wav")
+holoEntity(3):soundPlay(11,3,"hl1/fvox/targetting_system.wav")
+holoEntity(5):soundPlay(12,3,"hl1/fvox/targetting_system.wav")
+}
+
+if(first()){
+    E=entity()
+
+Sacred=entitySpawn("env_entity_dissolver",owner():pos(),1)
+Sacred:setKeyValue("Magnitude",0)
+Sacred:setKeyValue("Name","DoubleHeart")
+Sacred:setKeyValue("TargetName","DoubleHeart")
+Sacred:setKeyValue("dissolvetype","1")  
+entity():removeOnDelete(Sacred)
+
+A=0   
+#noga
+    holoCreate(1)
+    holoPos(1,E:pos()+vec(0,0,10))
+    holoModel(1,"models/props_junk/PopCan01a.mdl")
+    holoMaterial(1,"phoenix_storms/officewindow_1-1")
+    holoScale(1,vec(1,1,10))
+#zopa    
+    holoCreate(2)
+    holoPos(2,E:pos()+vec(-10,0,50))
+    holoModel(2,"models/props_phx/construct/metal_dome360.mdl") 
+    holoMaterial(2,"phoenix_storms/officewindow_1-1")
+    holoScale(2,vec(0.2,0.2,0.3))
+    holoAng(2,ang(-90,0,0))
+#tors
+    holoCreate(3)
+    holoPos(3,E:pos()+vec(0,0,50))
+    holoModel(3,"models/props_junk/PopCan01a.mdl")
+    holoMaterial(3,"phoenix_storms/officewindow_1-1")
+    holoScale(3,vec(5,5,5))
+    holoAng(3,ang(-90,0,0))
+#sheya
+    holoCreate(4)
+    holoPos(4,E:pos()+vec(25,0,50))
+    holoModel(4,"models/Combine_Helicopter/helicopter_bomb01.mdl")
+    holoMaterial(4,"phoenix_storms/futuristicTrackramp_1-2")
+    holoScale(4,vec(0.7,0.7,0.7))
+    holoAng(4,ang(-90,0,0))
+#golova
+    holoCreate(5)
+    holoPos(5,E:pos()+vec(47,0,50))
+    holoModel(5,"models/props_junk/TrafficCone001a.mdl")
+    holoMaterial(5,"phoenix_storms/futuristicTrackramp_1-2")
+    holoScale(5,vec(1,1,1))
+    holoAng(5,ang(90,0,0))
+#kolco1
+    holoCreate(6)
+    holoPos(6,E:pos()+vec(38,0,50))
+    holoModel(6,"hq_torus_thin")
+    holoMaterial(6,"models/alyx/emptool_glow")
+    holoScale(6,vec(2))
+    holoAng(6,ang(90,0,0))
+    holoAlpha(6,254)
+#kolco2
+    holoCreate(7)
+    holoPos(7,E:pos()+vec(48,0,50))
+    holoModel(7,"hq_torus_thin")
+    holoMaterial(7,"models/alyx/emptool_glow")
+    holoScale(7,vec(1.5))
+    holoAng(7,ang(90,0,0))
+    holoAlpha(7,254)
+#kolco3
+    holoCreate(8)
+    holoPos(8,E:pos()+vec(58,0,50))
+    holoModel(8,"hq_torus_thin")
+    holoMaterial(8,"models/alyx/emptool_glow")
+    holoScale(8,vec(1))
+    holoAng(8,ang(90,0,0))
+    holoAlpha(8,254)
+#pricel
+    holoCreate(9)
+    holoPos(9,E:pos()+vec(62,0,50))
+    holoModel(9,"hq_sphere")
+    holoMaterial(9,"models/props_combine/combine_interface_disp")    
+    holoScale(9,vec(0.25))
+    holoAng(9,ang(90,0,0))
+#radius
+    holoCreate(10)
+    holoPos(10,E:pos()+vec(0,0,-2.8))
+    holoModel(10,"hq_torus_thin")
+    holoAlpha(10,70)
+    holoColor(10,vec(80,180,255))
+    holoScale(10,vec(10))
+    holoAng(10,ang(0,0,0))
+    
+#sheya-svet
+    holoCreate(41)
+    holoPos(41,E:pos()+vec(25,0,50))
+    holoModel(41,"hq_sphere")
+    holoMaterial(41,"models/alyx/emptool_glow")
+    holoScale(41,vec(1.78,1.78,1.78))
+    holoAng(41,ang(-90,0,0))
+#kolco4
+    holoCreate(11)
+    holoPos(11,E:pos()+vec(-20,0,50))
+    holoModel(11,"hq_torus_thin")
+    holoMaterial(11,"models/props_combine/combine_interface_disp")
+    holoScale(11,vec(1.15))
+    holoAng(11,ang(90,0,0))
+#indicator1 
+    holoCreate(12)
+    holoPos(12,E:pos()+vec(-7,0,59))
+    holoModel(12,"models/props_phx/construct/metal_wire1x1x2b.mdl")
+    holoScale(12,vec(0.3,0.1,0.1))
+    holoAng(12,ang(0,0,0))
+#indicator2  
+    holoCreate(13)
+    holoPos(13,E:pos()+vec(-0,2,59.6))
+    holoModel(13,"models/hunter/blocks/cube025x2x025.mdl")
+    holoMaterial(13,"models/props_combine/combine_interface_disp")
+    holoColor(13,vec(80,180,255))
+    holoScale(13,vec(0.3,0,0.3))
+    holoAlpha(13,0)
+    holoAng(13,ang(0,90,0))  
+    
+    #lightCreate(5,holoEntity(13):pos()+vec(0,0,5),vec(0,180,255),200,6)
+    
+#rope
+#rope(1,holoEntity(5),vec(-10,0,-5),holoEntity(3),vec(20,0,-10),200,10,"cable/rope")
+
+    holoParent(2,3)
+    holoParent(4,3)
+    holoParent(5,3)
+    holoParent(6,3)
+    holoParent(7,3)
+    holoParent(8,3)
+    holoParent(9,3)
+    holoParent(10,1)
+    holoParent(41,4)
+    holoParent(11,3)
+    holoParent(12,3)
+    holoParent(13,12)
+    
+    
+#[Tesla=entitySpawn("point_tesla",Aim+vec(0,0,10),1)
+Tesla:setKeyValue("beamcount_min",1:toString())
+Tesla:setKeyValue("beamcount_max",10:toString())
+Tesla:setKeyValue("texture","effects/laser1.vmt")
+Tesla:setKeyValue("m_flRadius",200:toString())
+Tesla:setKeyValue("thick_max",50:toString())
+Tesla:setKeyValue("thick_min",1:toString())
+Tesla:setKeyValue("m_Color","180 180 255")
+Tesla:setKeyValue("scale","1 1 20")
+]#
+
+
+}
+if(E){
+holoPos(1,E:pos()+vec(0,0,10))
+holoPos(3,E:pos()+vec(0,0,50))
+
+
+
+
+#P:setPos(E:pos()+vec(0,0,15))
+At1=O:keyPressed("E")
+
+if(changed(At1)&At1){
+    Aim=O:aimPos()
+    A=1
+    O_mem=O
+#    Tesla:setPos(Aim)
+    }
+    
+if(!A){
+Ang=(O:aimPos()-holoEntity(3):pos()):toAngle()
+holoAng(3,O:eyeAngles()-ang(90,0,0))
+
+}else{
+
+    T++
+    if(T==1){holoEntity(9):soundPlay(1,1.5,"weapons/cguard/charging.wav") Ar:clear()}
+    if(T<100&T>1){
+        S=T*0.3/100
+        holoAlpha(13,255)
+        holoScale(13,vec(0.3,S,0.3))
+        #lightBrightness(5,6)
+        
+        particleGravity(vec(0))
+        Pos1=holoEntity(9):pos()+vec(random(-50,70),random(-50,70),random(-50,50))
+        Pos2=holoEntity(11):pos()+vec(random(-30,50),random(-30,50),random(-30,30))
+        particle(1,1,40,"effects/blueflare1",vec(80,150,255),Pos1,holoEntity(9):pos()-Pos1,1)
+        particle(1,1,10,"effects/blueflare1",vec(80,150,255),Pos2,holoEntity(11):pos()-Pos2,1)
+        
+        }elseif(T==100){
+        holoEntity(9):soundPlay(2,3,"ambient/energy/force_field_loop1.wav")
+        for(I=1,5){
+        particle(3,100,20,"effects/blueflare1",vec(80,150,255),holoEntity(9):pos(),vec(0),1)
+        }
+        T++       
+
+#Tesla:setKeyValue("m_SoundName","ambient/voices/f_scream1.wav") 
+#Tesla:remove(3)
+        holoEntity(9):drawBeam("cable/physbeam",Aim,holoEntity(9):pos(),vec(255,80,80),255,30,8,4):remove(3)
+        
+    
+        #lightCreate(1,Aim,vec(80,80,255),10000,12)
+        
+        findIncludeClass("prop")
+#        findIncludeClass("player")
+        findIncludeClass("npc")
+#        findIncludeClass("gmod")
+        findIncludeClass("vehicle")
+#        findIncludeClass("prisoner")
+        findIncludeClass("weap")
+        findIncludeClass("wire")
+        findInSphere(Aim,250)
+        Ar=findToArray()
+        
+        if (While_counter>Ar:count()) {While_counter=1}
+        while ( perf() & While_counter <= Ar:count() ){
+            local I = While_counter
+            Ar:entity(I):setKeyValue("TargetName","Rectal")
+            While_counter++    
+            }
+            Sacred:setFire("Dissolve","Rectal",0)
+            
+            }elseif(T>100&T<500){        
+            S=S-0.15/100
+            T++
+            Pos2=Aim+vec(random(-150,170),random(-150,170),random(-150,150))
+            
+            holoScale(13,vec(0.3,S,0.3))
+            explosion(100,250,Aim,Sacred,Sacred)
+            E:shootTo(holoEntity(9):pos(),Aim-holoEntity(9):pos(),1,15000,99999,"")
+            particle(2,100,10,"effects/blueflare1",vec(80,150,255),Aim,(Pos2-Aim)*2,1)
+   
+#Tesla:setFire("doSpark","",0)
+
+
+        
+        
+        }elseif(T>150){T=0 A=0  #lightRemove(1) holoEntity(9):soundPlay(3,3,"ambient/energy/weld2.wav")
+        holoAlpha(13,0)
+        holoScale(13,vec(0.3,0,0.3))
+        O_mem=noentity()
+        S=0
+        Ar=array()
+        
+        }
+}
+}
+

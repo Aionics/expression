@@ -1,0 +1,32 @@
+@name 
+@inputs 
+@outputs 
+@persist N
+@trigger 
+
+interval(10)
+
+if (first()) {
+    O = owner()
+}
+
+V = O:keyPressed("E")
+
+if (changed(V) & V) {
+#[    if (N == 0) {
+        N = 1
+    }
+    else {
+        N = 0
+    }]#
+    N = !N
+}
+
+if (N) {
+    O:playerNoclip(1)
+}
+else {
+    O:playerNoclip(0)
+}
+
+# O:owner

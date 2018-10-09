@@ -1,0 +1,39 @@
+@name grenatez
+@inputs 
+@outputs 
+@persist N O:entity
+@trigger 
+
+if(first()){
+    O=owner()
+ #  O=findPlayerByName("blood")
+}
+
+
+At2=O:keyAttack2()
+
+
+interval(10)
+
+if(owner():weapon():type()=="weapon_crowbar"){
+if(changed(At2)&At2){N=1}
+
+
+if(N>=1){
+N++
+
+E=entitySpawn("npc_grenade_frag",O:shootPos()+O:eye()*30,1)
+#E=propSpawn("models/props_junk/glassjug01.mdl",O:shootPos(),1)
+E:setKeyValue("colide","0")
+E:setModel("models/headcrabclassic.mdl")
+E:setKeyValue("trail","trailS/laser")
+E:setMass(10)
+
+#E:setTrails(10,0,0.5,"trails/plasma",vec(255,255,255),255)
+E:setFire("SetTimer",random(1,1):toString(),0)
+E:propFreeze(0)
+E:setVel((O:eye()+vec(random(-0.1,0.1),random(-0.1,0.1),random(-0.1,0.1))) * (2000) + O:vel()*2 )
+
+if(N==11){N=0}
+}
+}

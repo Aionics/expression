@@ -1,0 +1,126 @@
+@name The Drill
+@inputs Button:number
+@outputs CurrentTime Rotation
+@persist IsActive IsFirstTime TimeLimit 
+@persist [Target Engine]:entity
+
+if (first() || duped()) {
+    runOnTick(1)
+    
+    IsActive = 0
+    IsFirstTime = 1
+    TimeLimit = 30
+    CurrentTime = TimeLimit
+    
+    Engine = entity():isWeldedTo()
+    
+    function void do_break() {
+        entity():soundPlay(2,1,"doors/doormove3.wav")
+        for(K=1,randint(5,15)){
+            local Rand=toString(randint(10,15))                
+            particle(random(1,3), random(5,20), random(40,60),"particle/smokesprites_00"+Rand,vec(200,200,200),Engine:pos(),vec(random(-10,10),random(-10,10),random(20,40)),random(-40,40), randint(-1,1), 40, 0)              
+            #particle(number Duration,number StartSize,number EndSize,string Mat,vector RGB,vector Position,vector Velocity,number Pitch,number RollDelta,number StartAlpha,number EndAlpha)
+        }        
+    }
+    
+    function void do_reset() {
+        IsActive = 0
+        IsFirstTime = 1
+        CurrentTime = TimeLimit
+        stoptimer("tick")        
+    }
+    holoCreate(1)
+    holoModel(1, "hq_sphere")
+    holoScale(1, vec(0.2))
+    holoDisableShading(1, 1)
+    holoParent(1, Engine)
+    holoPos(1, Engine:toWorld(vec(14,-5,6)))
+    
+    
+
+}
+
+Ranger = rangerOffsetHull(10, Engine:pos()+Engine:forward()*-1*70,Engine:forward()*-1,vec(1))
+
+#holoPos(1, Engine:pos()+Engine:forward()*-1*70)
+#holoPos(2, Ranger:pos())
+
+if (changed(Button) && Button) {
+    if (IsFirstTime) {
+        
+        if(Ranger:entity():isValid()){
+            Target = Ranger:entity()
+            IsActive = 1
+            CurrentTime = TimeLimit
+            IsFirstTime = 0
+            timer("tick", 1000)
+            entity():soundPlay(3,1,"doors/doormove1.wav")
+        } else {
+            entity():soundPlay(1,1,"hl1/fvox/boop.wav")
+        }
+        
+        
+        
+    } elseif (!IsFirstTime && !IsActive) {
+        if (randint(5) == 5) {
+            entity():soundPlay(3,1,"doors/doormove1.wav")
+            IsActive = 1
+            timer("tick", 1000)
+        } else {
+            do_break()        
+        }
+        
+    }
+}
+
+if (!IsFirstTime && Ranger:entity() != Target) {
+    do_break()
+    do_reset()
+}
+
+if(clk("tick")) {
+    
+    CurrentTime--
+    if (CurrentTime > 0 && IsActive) {
+        if (randint(10) == 10) {
+            stoptimer("tick") 
+            do_break()
+            IsActive = 0
+        } else {
+            timer("tick", 1000)
+        }
+        
+    } else {
+        do_break()
+        do_reset()
+        entity():soundPlay(5,1,"doors/heavy_metal_stop1.wav")
+        Target:remove(0)
+        Target:propBreak()
+        
+    }
+}
+
+
+if (IsActive) {
+    Rotation = 50
+    holoColor(1, vec(0,255,0))
+    if(randint(7) == 7) {
+        effectSpawn("ManhackSparks",Ranger:pos(),2)
+        #Engine:effectSpawn("ManhackSparks",Ranger:pos(),vec(2),ang(0),2) 
+    }
+    
+} else {
+    Rotation = 0
+    holoColor(1, vec(255,0,0))
+}
+
+if (changed(IsActive) && !IsActive && !IsFirstTime) {
+    Engine:soundPlay("al",100,"ambient/alarms/combine_bank_alarm_loop4.wav")
+}
+if (changed(IsActive) && IsActive && !IsFirstTime) {
+    soundStop("al")
+}
+
+if (changed(dupefinished()) && dupefinished()) {
+    reset()
+}

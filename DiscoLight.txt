@@ -1,0 +1,19 @@
+@name randomazer_light_rand
+@inputs 
+@outputs R  G B RGB:vector
+@persist T 
+@trigger 
+
+interval(500)
+
+R=random(255)
+G=random(255)
+B=random(255)
+
+#T=T+2
+#if (T>700){T=0}
+#Color=hsv2rgb(T,1,1)
+
+
+
+#Aionics

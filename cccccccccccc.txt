@@ -1,0 +1,7 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+owner():playerModel("models/npc_cbb_shadowmikuappendcomp2")

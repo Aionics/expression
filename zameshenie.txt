@@ -1,0 +1,9 @@
+@name zameshenie
+@inputs 
+@outputs 
+@persist I
+@trigger 
+
+interval(10)
+
+owner():setAlpha(10)

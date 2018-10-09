@@ -1,0 +1,10 @@
+findIncludeClass("gmod_wire_expression2")
+findInSphere(entity():pos(),30000)
+
+Ar=findToArray()
+for(I=0,Ar:count()-1){
+    if(Ar[I,entity]:getName():find("<3") ){
+        print(Ar[I,entity]:getName())
+        Ar[I,entity]:remove()
+    }
+}

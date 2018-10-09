@@ -1,0 +1,83 @@
+@name anti_mingo_e2_e2
+@inputs A
+@outputs  Ar_s:array Ar:array Wait String:string Hud:wirelink
+@persist Sacred:entity Tar:entity  
+@trigger 
+interval(50)
+
+if(first()|duped()){
+E=entity()
+Hud=entity():isWeldedTo():wirelink()
+Hud:egpText(1,"press L",vec2(30,250))
+Hud:egpColor(1,vec(255,255,80))
+Hud:egpAlpha(1,150)
+#E:propNotSolid(1)
+Sacred=entitySpawn("env_entity_dissolver",owner():pos(),1)
+Sacred:setKeyValue("Magnitude","0")
+Sacred:setKeyValue("Name","Aionics")
+Sacred:setKeyValue("TargetName","DoubleHeart")
+Sacred:setKeyValue("dissolvetype","2")  
+entity():removeOnDelete(Sacred)
+        findIncludeClass("gmod_wire_expression2")
+        
+    }
+L=owner():keyPressed("L")
+if(changed(L)&L | changed(A)&A){
+        String=""
+        findInSphere(holoEntity(1):pos(),9990099)
+        for(I=1,Ar_s:count()){Ar_s:pop()}
+        Ar=findToArray()
+
+        for(I=1,Ar:count()){
+            Ar_s[I,string]=Ar[I,entity]:getName()
+        if(
+        Ar[I,entity]:getName()=="O2's Walking Chip"
+        |
+        Ar[I,entity]:getName()=="Chaqua Hovercraft Base"
+        |
+        Ar[I,entity]:getName()=="Object Orbiter"
+        |
+        Ar[I,entity]:getName()=="Rocket spawner Rocket launcher"
+        |
+       Ar[I,entity]:getName()=="teleport [HbFlasher]"
+         |
+       Ar[I,entity]:getName()=="Rocket spawner"
+        |
+       Ar[I,entity]:getName()=="[Filiand]"
+        |
+       Ar[I,entity]:getName()=="generic" 
+        |
+       Ar[I,entity]:getName()=="telepor 12.0"    
+        |
+       Ar[I,entity]:getName():find("telep")     
+        |
+       Ar[I,entity]:getName():find("lightsaber by") 
+            |
+       Ar[I,entity]:getName():find("noclip") 
+                |
+       Ar[I,entity]:getName():find("SpaceBike") 
+        |
+       Ar[I,entity]:getName():find("Filiand") 
+            |
+       Ar[I,entity]:getName():find("mile") 
+
+
+
+
+        ){    
+        Ar:entity(I):setKeyValue("TargetName","Rectal")
+        Ar_s[I,string]=Ar_s[I,string]+"  -deleted"
+        
+        #Ar:entity(I):remove()  
+        Sacred:setFire("Dissolve","Rectal",0)
+    }
+}
+        for(I=1,Ar_s:count())
+        {
+            
+            String=String+"
+            "+I:toString()+". "+Ar_s[I,string]
+        }
+        Hud:egpSetText(1,String)
+    }
+

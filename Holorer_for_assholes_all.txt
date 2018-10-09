@@ -1,0 +1,46 @@
+@name generic
+@inputs 
+@outputs 
+@persist Target:entity Players:array Holo:entity
+
+if (first()) {
+    runOnTick(1)
+    Target = findPlayerByName("Alex")
+    findIncludeClass("player")
+    findExcludeEntity(owner())
+    #findExcludeEntity(findPlayerByName("Aionics"))
+    findInSphere(entity():pos(), 20000)
+    Players = findToArray()
+    print(Players)
+    
+    Holo = holoCreate(1)
+    for (I=1, Players:count()) {
+        holoVisible(1, Players[I, entity], 0)    
+    }
+    holoVisible(1, Target, 1)
+    holoDisableShading(1 ,1)
+    holoColor(1, vec(0))
+    holoAlpha(1, 252)
+    holoScale(1, vec(-4))
+    holoModel(1, "hq_sphere")
+    #holoMaterial(1, "models/spawn_effect")
+    timer("rdy", 100)
+    entity():propNotSolid(1)
+    entity():setPos(entity():pos()+ vec(0,0,-30))
+    
+}
+
+if(clk("rdy")) {
+    holoPos(1, Target:pos()+vec(0,0,55))
+    #holoPos(1, Target:attachmentPos("chest"))
+    holoParentAttachment(1, Target, "chest")
+    if (Target:vehicle()) {
+        holoScale(1, vec(-60))
+        holoAlpha(1, 255)
+    } else {
+        holoScale(1, vec(-4))
+        holoAlpha(1, 255)
+        
+    }
+    #timer("rdy", 500)
+}

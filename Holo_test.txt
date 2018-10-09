@@ -1,0 +1,14 @@
+@name Holo_test
+@persist X Y Z 
+
+runOnTick(1)
+
+if (first()) {
+    O=owner()
+    
+}
+
+holoCreate(1)
+holoModel(1,"models/props_c17/SuitCase_Passenger_Physics.mdl")  
+holoPos(1,(owner():shootPos()+vec(0,0,0)))
+holoAng(1, owner():eyeAngles()+vec2(90,90))

@@ -1,0 +1,49 @@
+@name !digger
+@inputs 
+@outputs 
+@persist [EE Door MainHolo DoorHolo]:entity
+@persist I
+@trigger 
+
+if (first()) {
+    runOnTick(1)
+    
+    EE = entity()
+
+    findIncludeModel("models/hunter/tubes/tube4x4x3b.mdl")
+    findInSphere(EE:pos(), 3000)
+    local Body = find()
+    
+    findClearBlackList()
+    findClearWhiteList()
+    
+    findIncludeModel("models/hunter/tubes/tube4x4x3d.mdl")
+    findInSphere(EE:pos(), 3000)
+    Door = find()
+    
+    findClearBlackList()
+    findClearWhiteList()
+    
+    findIncludeModel("models/hunter/tubes/tube4x4x2.mdl")
+    findIncludeModel("models/hunter/tubes/circle4x4.mdl")
+    findIncludeModel("models/hunter/tubes/tube4x4x1to2x2.mdl")
+    findInSphere(EE:pos(), 3000)
+    OtherParts = findToArray()
+    
+    MainHolo = holoCreate(1)
+    holoPos(1, Body:pos())
+    Body:parentTo(MainHolo)
+    
+    DoorHolo = holoCreate(2)
+    holoPos(2, MainHolo:pos())
+    Door:parentTo(DoorHolo)
+    holoParent(2, 1)
+    I = 0
+}
+
+#holoAng(2, DoorHolo:angles() + ang(0,0,1))
+
+
+#for(I=1, OtherParts:count()) {
+    #holoCreate(I, OtherParts[I, entity]:pos())
+#}

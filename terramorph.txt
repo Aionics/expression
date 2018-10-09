@@ -1,0 +1,16 @@
+@name 
+@inputs 
+@outputs E:entity
+@persist 
+@trigger 
+
+E=entitySpawn("env_starfield",1)
+E:setKeyValue("Name","[JFF] Aionics")
+
+# <integer>
+#Radius of the effect when morphing begins. Only this value is used
+#Goal Radius <integer>
+#Radius of the effect at the end of morphing. The radius of this effect will change from Start Radius to Goal Radius over the duration of this effect. Ignored if the Instant flag is set.
+#Duration <integer>
+#The morph will take place over this period of time (seconds). Ignored if the Instant flag is set.
+#Displacement Fraction <integer>

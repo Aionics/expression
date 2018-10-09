@@ -1,0 +1,148 @@
+@name Holopad Export
+
+#####
+# Holograms authored by [JFF] Aionics on 09/01/2016
+# Exported from Holopad 09/11/2012 (BETA 6.7) by Bubbus
+# Thanks to Vercas for the original E2 export template!
+#
+# FOR AN EXPLANATION OF THE CODE BELOW, VISIT http://code.google.com/p/holopad/wiki/NewE2ExportFormatHOWTO
+##### 
+
+#####
+# Hologram spawning data
+@persist [Holos Clips]:table HolosSpawned HolosStep LastHolo TotalHolos
+@persist E:entity
+#####
+
+
+if (first() | duped())
+{
+    E = entity()
+
+    function number addHolo(Pos:vector, Scale:vector, Colour:vector4, Angles:angle, Model:string, Material:string, Parent:number)
+    {
+        if (holoRemainingSpawns() < 1) {error("This model has too many holos to spawn! (" + TotalHolos + " holos!)"), return 0}
+        
+        holoCreate(LastHolo, E:toWorld(Pos), Scale, E:toWorld(Angles))
+        holoModel(LastHolo, Model)
+        holoMaterial(LastHolo, Material)
+        holoColor(LastHolo, vec(Colour), Colour:w())
+
+        if (Parent > 0) {holoParent(LastHolo, Parent)}
+        else {holoParent(LastHolo, E)}
+
+        local Key = LastHolo + "_"
+        local I=1
+        while (Clips:exists(Key + I))
+        {
+            holoClipEnabled(LastHolo, 1)
+            local ClipArr = Clips[Key+I, array]
+            holoClip(LastHolo, I, holoEntity(LastHolo):toLocal(E:toWorld(ClipArr[1, vector])), holoEntity(LastHolo):toLocalAxis(E:toWorldAxis(ClipArr[2, vector])), 0)
+            I++
+        }
+        
+        return LastHolo
+    }
+
+    ##########
+    # HOLOGRAMS
+    
+
+    #[   ]#    Holos[1, array] = array(vec(-11.7846, 0.0000, 9.2779), vec(0.1000, 0.2000, 0.2020), vec4(220, 220, 255, 255), ang(90.0000, 0.0000, 0.0000), "hq_tube", "sprops/sprops_plastic", 0)
+    #[   ]#    Holos[2, array] = array(vec(-14.9412, 0.0000, 6.8944), vec(0.9650, 0.1500, 0.0410), vec4(127, 40, 0, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[3, array] = array(vec(8.7559, 0.0000, 5.2942), vec(0.1282, 0.1405, 0.4701), vec4(220, 220, 255, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/sprops_plastic", 0)
+    #[   ]#    Holos[4, array] = array(vec(9.6663, 0.0029, 7.1092), vec(0.0829, 0.1426, 0.1526), vec4(220, 220, 255, 255), ang(-24.8601, 180.0000, 180.0000), "prism", "sprops/sprops_plastic", 0)
+    #[   ]#    Holos[5, array] = array(vec(-15.1536, 0.0000, 6.7653), vec(0.9000, 0.1000, 0.1000), vec4(80, 80, 110, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[6, array] = array(vec(-6.1518, 0.0000, 6.9300), vec(0.7393, 0.1872, 0.0430), vec4(127, 40, 0, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[7, array] = array(vec(-4.3230, 0.0000, 6.2641), vec(0.8661, 0.1197, 0.1040), vec4(255, 0, 0, 255), ang(0.0000, 0.0000, 0.0000), "cube", "models/props_combine/com_shield001a", 0)
+    #[   ]#    Holos[8, array] = array(vec(5.0310, 0.0029, 7.8017), vec(0.0659, 0.0797, 0.0745), vec4(220, 220, 255, 255), ang(-66.0821, -180.0000, -180.0000), "prism", "sprops/sprops_plastic", 0)
+    #[   ]#    Holos[9, array] = array(vec(-3.4735, 0.0120, 3.3586), vec(0.0313, 0.0417, 0.0391), vec4(170, 170, 170, 255), ang(-45.0000, 0.0000, 0.0000), "cube", "phoenix_storms/metalset_1-2", 0)
+    #[   ]#    Holos[10, array] = array(vec(6.7222, 0.0000, 3.6448), vec(0.4232, 0.1154, 0.2070), vec4(255, 255, 255, 255), ang(17.2919, 0.0000, 0.0000), "hq_rcube", "phoenix_storms/metalset_1-2", 0)
+    #[   ]#    Holos[11, array] = array(vec(-3.7647, 0.0000, 3.6315), vec(0.0519, 0.0405, 0.1000), vec4(170, 170, 170, 255), ang(0.0000, 0.0000, 0.0000), "hq_rcube_thin", "phoenix_storms/metalset_1-2", 0)
+    #[   ]#    Holos[12, array] = array(vec(4.0611, 0.0000, 6.4601), vec(0.6969, 0.0649, 0.2235), vec4(80, 80, 110, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[13, array] = array(vec(2.3992, 0.0000, 9.0635), vec(0.2214, 0.1614, 0.2122), vec4(127, 40, 0, 255), ang(0.0000, 0.0000, 0.0000), "right_prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[14, array] = array(vec(-6.1518, 0.0000, 5.7695), vec(0.7393, 0.1872, 0.0621), vec4(127, 40, 0, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[15, array] = array(vec(-3.2266, 0.0000, 6.4380), vec(0.1282, 0.1866, 0.1232), vec4(127, 40, 0, 255), ang(-90.0000, 0.0000, 0.0000), "right_prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[16, array] = array(vec(0.3838, 0.0000, 1.2805), vec(0.2296, 0.1079, 0.2032), vec4(170, 170, 170, 255), ang(0.0000, 0.0000, 0.0000), "hq_rcube", "phoenix_storms/metalset_1-2", 0)
+    #[   ]#    Holos[17, array] = array(vec(-5.0304, -1.4331, 8.0306), vec(0.6571, 0.0461, 0.0131), vec4(220, 220, 255, 255), ang(0.0000, 0.0000, 108.2682), "cube", "sprops/sprops_plastic", 0)
+    #[   ]#    Holos[18, array] = array(vec(-12.3189, 0.0000, 9.3858), vec(0.3029, 0.0540, 0.1454), vec4(80, 80, 110, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[19, array] = array(vec(-13.7180, -0.0025, 9.0167), vec(0.0870, 0.1500, 0.0850), vec4(127, 40, 0, 255), ang(180.0000, 0.0000, 0.0000), "right_prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[20, array] = array(vec(-14.9412, 0.0000, 9.6240), vec(0.9650, 0.1500, 0.0410), vec4(127, 40, 0, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[21, array] = array(vec(0.4650, 0.0000, 0.0000), vec(0.1500, 0.2000, 0.1500), vec4(170, 170, 170, 255), ang(-20.3080, 0.0000, 0.0000), "models/props_combine/combine_light002a.mdl", "phoenix_storms/metalset_1-2", 0)
+    #[   ]#    Holos[22, array] = array(vec(-15.1536, 0.0000, 9.7340), vec(0.9000, 0.1002, 0.1000), vec4(80, 80, 110, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[23, array] = array(vec(-0.1691, 0.0000, 10.9750), vec(0.2614, 0.0543, 0.1607), vec4(90, 90, 120, 255), ang(0.0000, 0.0000, 0.0000), "right_prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[24, array] = array(vec(-3.7111, 0.0172, 3.9462), vec(0.0300, 0.0300, 0.0580), vec4(170, 170, 170, 255), ang(64.6090, 179.9999, 90.0000), "models/hunter/misc/platehole1x1d.mdl", "phoenix_storms/metalset_1-2", 0)
+    #[   ]#    Holos[25, array] = array(vec(-19.3209, -0.0025, 7.5376), vec(0.0683, 0.0543, 0.0549), vec4(80, 80, 110, 255), ang(0.0000, 0.0000, 0.0000), "right_prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[26, array] = array(vec(-20.2600, 0.0000, 9.3089), vec(0.0767, 0.1500, 0.0680), vec4(127, 40, 0, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[27, array] = array(vec(-20.2758, 0.0000, 7.1049), vec(0.0767, 0.1500, 0.0680), vec4(127, 40, 0, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[28, array] = array(vec(-9.7863, -0.0025, 11.5855), vec(0.0340, 0.0543, 0.0510), vec4(90, 90, 120, 255), ang(0.0000, 180.0000, 0.0000), "right_prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[29, array] = array(vec(-8.9704, 0.0000, 4.2225), vec(0.2000, 0.2000, 0.5055), vec4(170, 170, 170, 255), ang(90.0000, 0.0000, 0.0000), "cylinder", "phoenix_storms/metalset_1-2", 0)
+    #[   ]#    Holos[30, array] = array(vec(-5.0304, 1.4671, 8.0306), vec(0.6571, 0.0461, 0.0131), vec4(220, 220, 255, 255), ang(0.0000, 0.0000, 56.8682), "cube", "sprops/sprops_plastic", 0)
+    #[   ]#    Holos[31, array] = array(vec(-19.8988, 0.0000, 10.1074), vec(0.1082, 0.0540, 0.1454), vec4(80, 80, 110, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[32, array] = array(vec(-5.6404, 0.0000, 11.5873), vec(0.6571, 0.0544, 0.0491), vec4(90, 90, 120, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[33, array] = array(vec(-11.7846, 0.0000, 7.2794), vec(0.1000, 0.2000, 0.2020), vec4(220, 220, 255, 255), ang(90.0000, 0.0000, 0.0000), "hq_tube", "sprops/sprops_plastic", 0)
+    #[   ]#    Holos[34, array] = array(vec(-9.9165, 0.0000, 7.9837), vec(0.4530, 0.3393, 0.1094), vec4(255, 255, 255, 255), ang(90.0000, 0.0000, 0.0000), "hexagon", "models/props_pipes/GutterMetal01a", 0)
+    #[   ]#    Holos[35, array] = array(vec(-12.3189, 0.0000, 7.1555), vec(0.3029, 0.0540, 0.1454), vec4(80, 80, 110, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[36, array] = array(vec(-14.8163, 0.0000, 10.0582), vec(0.1541, 0.9515, 0.0327), vec4(127, 40, 0, 255), ang(0.0000, 90.0000, 0.0000), "prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[37, array] = array(vec(-1.0995, 0.0000, 8.6628), vec(0.3000, 0.3000, 0.1470), vec4(155, 155, 155, 255), ang(90.0000, 0.0000, 0.0000), "hq_tube", "phoenix_storms/stripes", 0)
+    #[   ]#    Holos[38, array] = array(vec(-14.5220, -0.0025, 7.6718), vec(0.0683, 0.0543, 0.0626), vec4(80, 80, 110, 255), ang(0.0000, 180.0000, 0.0000), "right_prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[39, array] = array(vec(-18.8527, -0.0025, 10.6502), vec(0.0683, 0.0543, 0.0549), vec4(80, 80, 110, 255), ang(0.0000, 0.0000, 0.0000), "right_prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[40, array] = array(vec(-4.8164, 0.0000, 8.6628), vec(0.2500, 0.2500, 0.4928), vec4(169, 169, 255, 255), ang(90.0000, 0.0000, 0.0000), "hq_tube", "", 0)
+    #[   ]#    Holos[41, array] = array(vec(-13.7374, -0.0025, 7.5301), vec(0.0870, 0.1500, 0.0850), vec4(127, 40, 0, 255), ang(0.0000, 180.0000, 0.0000), "right_prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[42, array] = array(vec(-2.5482, 0.0000, 3.1780), vec(0.1508, 0.0401, 0.0214), vec4(170, 170, 170, 255), ang(0.0000, 0.0000, 0.0000), "cube", "phoenix_storms/metalset_1-2", 0)
+    #[   ]#    Holos[43, array] = array(vec(-0.8852, 0.0000, 6.2945), vec(0.2697, 0.1872, 0.1489), vec4(127, 40, 0, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[44, array] = array(vec(-11.8056, 0.0000, 7.3683), vec(0.2390, 0.1500, 0.1120), vec4(127, 40, 0, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[45, array] = array(vec(-20.1395, 0.0000, 7.2740), vec(0.0690, 0.0540, 0.0969), vec4(80, 80, 110, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[46, array] = array(vec(-19.4050, -0.0025, 7.1718), vec(0.0688, 0.1500, 0.0583), vec4(127, 40, 0, 255), ang(0.0000, 0.0000, 0.0000), "right_prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[47, array] = array(vec(-14.5220, -0.0025, 8.8401), vec(0.0683, 0.0543, 0.0549), vec4(80, 80, 110, 255), ang(-180.0000, 0.0000, 0.0000), "right_prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[48, array] = array(vec(-14.8330, 0.0000, 6.4500), vec(0.1518, 0.9515, 0.0327), vec4(127, 40, 0, 255), ang(180.0000, 90.0000, 0.0000), "prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[49, array] = array(vec(-11.6702, 0.0000, 9.1741), vec(0.2570, 0.1500, 0.1120), vec4(127, 40, 0, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[50, array] = array(vec(-5.0304, -0.8263, 10.0278), vec(0.6571, 0.0461, 0.0131), vec4(220, 220, 255, 255), ang(0.0000, 0.0000, 46.2056), "cube", "sprops/sprops_plastic", 0)
+    #[   ]#    Holos[51, array] = array(vec(-19.3061, -0.0025, 9.3919), vec(0.0870, 0.1500, 0.0850), vec4(127, 40, 0, 255), ang(0.0000, 0.0000, 180.0000), "right_prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[52, array] = array(vec(7.8951, 0.0000, 8.0561), vec(0.4401, 0.1393, 0.0510), vec4(220, 220, 255, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/sprops_plastic", 0)
+    #[   ]#    Holos[53, array] = array(vec(1.8215, 0.0000, 7.1201), vec(0.1598, 0.3094, 0.1171), vec4(127, 40, 0, 255), ang(0.0000, 90.0000, 180.0000), "prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[54, array] = array(vec(6.6357, -0.0000, 6.3708), vec(0.2993, 0.1089, 0.0543), vec4(220, 220, 255, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/sprops_plastic", 0)
+    #[   ]#    Holos[55, array] = array(vec(8.7485, 0.0029, 2.3183), vec(0.1107, 0.1426, 0.0803), vec4(220, 220, 255, 255), ang(-24.8601, 180.0000, 180.0000), "prism", "sprops/sprops_plastic", 0)
+    #[   ]#    Holos[56, array] = array(vec(-5.0304, 0.9767, 10.0278), vec(0.6571, 0.0461, 0.0131), vec4(220, 220, 255, 255), ang(0.0000, 0.0000, -37.1437), "cube", "sprops/sprops_plastic", 0)
+    #[   ]#    Holos[57, array] = array(vec(5.6609, 0.0000, 6.4773), vec(0.1846, 0.2169, 0.3504), vec4(127, 40, 0, 255), ang(0.0000, 90.0000, 90.0000), "prism", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[58, array] = array(vec(-9.3660, -0.0066, 10.8362), vec(0.1034, 0.1006, 0.0945), vec4(90, 90, 120, 255), ang(0.0000, 0.0000, 0.0000), "cube", "sprops/textures/sprops_metal2", 0)
+    #[   ]#    Holos[59, array] = array(vec(1.8048, 0.0000, 3.1378), vec(0.0635, 0.1016, 0.3209), vec4(170, 170, 170, 255), ang(32.9480, 0.0000, 0.0000), "hq_rcube", "phoenix_storms/metalset_1-2", 0)
+    #[   ]#    Holos[60, array] = array(vec(-13.4958, 0.0000, 5.6338), vec(0.5000, 0.1500, 0.1500), vec4(255, 255, 255, 255), ang(0.0000, 0.0000, 0.0000), "hq_rcube_thin", "phoenix_storms/metalset_1-2", 0)
+    #[   ]#    Holos[61, array] = array(vec(-8.4670, 0.0000, 8.6628), vec(0.3000, 0.3000, 0.1470), vec4(155, 155, 155, 255), ang(90.0000, 0.0000, 0.0000), "hq_tube", "phoenix_storms/stripes", 0)
+    #[   ]#    Holos[62, array] = array(vec(0.4349, 0.0000, 7.9837), vec(0.4530, 0.3393, 0.1094), vec4(255, 255, 255, 255), ang(90.0000, 0.0000, 0.0000), "hexagon", "models/props_pipes/GutterMetal01a", 0)
+    #[   ]#    Holos[63, array] = array(vec(-3.7438, 0.0000, 4.8700), vec(1.9973, 0.1153, 0.1129), vec4(255, 255, 255, 255), ang(0.0000, 0.0000, 0.0000), "hq_rcube_thin", "phoenix_storms/metalset_1-2", 0)
+    #[   ]#    Holos[64, array] = array(vec(2.0580, 0.0000, 6.1798), vec(0.1195, 0.2877, 0.1171), vec4(127, 40, 0, 255), ang(0.0000, 90.0000, 0.0000), "prism", "sprops/textures/sprops_metal2", 0)
+    
+    ##########
+    
+    TotalHolos = Holos:count()
+    if (0 > holoClipsAvailable()) {error("A holo has too many clips to spawn on this server! (Max is " + holoClipsAvailable() + ")")}
+}
+
+
+#You may place code here if it doesn't require all of the holograms to be spawned.
+
+
+if (HolosSpawned)
+{
+    #Your code goes here if it needs all of the holograms to be spawned!
+}
+else
+{
+    while (LastHolo <= Holos:count() & holoCanCreate() & perf())
+    {
+        local Ar = Holos[LastHolo, array]
+        addHolo(Ar[1, vector], Ar[2, vector], Ar[3, vector4], Ar[4, angle], Ar[5, string], Ar[6, string], Ar[7, number])
+        LastHolo++
+    }
+    
+    if (LastHolo > Holos:count())
+    {
+        Holos:clear()
+        Clips:clear()
+        HolosSpawned = 1
+        E:setAlpha(0)
+    }
+
+    interval(1000)
+}

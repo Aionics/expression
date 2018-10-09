@@ -1,0 +1,48 @@
+@name FSAF
+
+interval(50)
+if(first()){
+    Smooth=10
+    Radius=50
+    holoCreate(1)
+    holoModel(1,"models/holograms/hq_icosphere.mdl")
+    holoScale(1,vec(0.5,0.5,0.5))
+    holoParent(1,entity())
+    holoPos(1,entity():toWorld(vec(0,0,10)))
+    holoColor(1,vec(255,255,255))
+    holoAng(1,owner():toWorld(ang(1,1,1)))
+    holoMaterial(1,"models/cs_italy/light_orange")
+    
+    holoCreate(2)
+    holoModel(2,"cube")
+    holoScale(2,vec(0.5,0.1,0.1))
+    holoParent(2,entity())
+    holoPos(2,entity():toWorld(vec(0,0,15)))
+    holoColor(2,vec(0,0,0))
+#    holoAng(2,owner():toWorld(ang(1,1,1)))
+    
+    holoCreate(3)
+    holoModel(3,"cube")
+    holoScale(3,vec(0.1,0.1,0.3))
+    holoPos(3,entity():toWorld(vec(0,0,13)))
+    holoColor(3,vec(0,0,0))
+    holoParent(3,entity())
+    
+    holoCreate(4)
+    holoModel(4,"models/holograms/hq_cone.mdl")
+    holoScale(4,vec(0.15,0.15,0.3))
+    holoPos(4,entity():toWorld(vec(4.5,0,15)))
+    holoAng(4,ang(0,90,90))
+    holoColor(4,vec(0,0,0))
+    holoParent(4,2)
+   
+
+}
+
+holoAng(2,owner():eyeAngles())
+
+
+
+
+
+

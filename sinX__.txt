@@ -1,0 +1,42 @@
+@name sinX  
+@inputs 
+@outputs  N
+@persist Y X E:entity Color:vector
+@trigger 
+interval(50)
+if(first()){
+    E=entity()
+    holoCreate(1000)
+    holoColor(1000,vec(255,0,0))
+    holoScale(1000,vec(0.75))
+    holoAlpha(1000,50)
+    holoPos(1000,E:pos()+vec(0,0,50))
+    holoCreate(1001)
+    holoColor(1001,vec(255,0,0))
+    holoScale(1001,vec(0.75))
+    holoAlpha(1001,50)
+    holoPos(1001,E:pos()+vec(890,0,50))
+    N=(N+1)%360
+    for(I=1,46){
+        holoCreate(I)
+        holoScale(I,vec(0.25))
+        X=I-1
+        Y=sin((X+N)*8)
+        Y=Y*50
+        holoPos(I,E:pos()+vec((I-1),0,Y+50))
+        holoDisableShading(I,1)
+    }
+    X=0
+}
+
+    for(I=1,46){       
+        X=I-1
+        Y=sin((X+N)*32)
+        Y=Y*10
+        holoPos(I,E:pos()+vec((I-1)*5,0,Y+50))
+            N=(N+0.25)%360
+
+Color=hsv2rgb(Y*10,1,1)
+        holoColor(I,Color)
+    }
+    X=0

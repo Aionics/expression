@@ -1,0 +1,41 @@
+@name grenatez_on_hit
+@inputs 
+@outputs 
+@persist N
+@trigger 
+
+if(first()){
+}
+O=owner()
+
+At2=O:keyAttack2()
+
+
+interval(10)
+
+if(owner():weapon():type()=="weapon_crowbar"){
+if(changed(At2)&At2){N=1}
+
+
+if(N>=1){
+N++
+
+#E=entitySpawn("npc_grenade_frag",O:shootPos(),1)
+E=propSpawn("models/props_junk/GlassBottle01a.mdl",O:shootPos(),1)
+#E:setKeyValue("colide","0")
+#E:setModel("models/items/grenadeammo.mdl")
+E:setKeyValue("trail","trailS/laser")
+E:setKeyValue("radius","50") 
+E:setKeyValue("damage", "50" )
+E:setKeyValue( "Magnitude", "500" )
+E:setMass(10)
+
+#E:setTrails(10,0,0.5,"trails/plasma",vec(255,255,255),255)
+#E:setFire("SetTimer",random(0.8,0.8):toString(),0.1)
+E:setFire("sethealth","25",0)
+E:propFreeze(0)
+E:setVel((owner():eye()+vec(random(-0.1,0.1),random(-0.1,0.1),random(-0.1,0.1))) * (5000) + owner():vel()*2 )
+
+if(N==15){N=0}
+}
+}

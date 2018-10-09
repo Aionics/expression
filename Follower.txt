@@ -1,0 +1,92 @@
+@name Follower
+@model models/dav0r/hoverball.mdl
+#@model models/balloons/balloon_classicheart.mdl
+@persist On T Radius Smooth I360 O:entity E:entity
+
+interval(10)
+
+
+
+T=T+2
+if (T>700){T=0}
+Color=hsv2rgb(T,1,1)
+O:setColor(Color)
+E:setColor(Color,80)
+#lightColor(1,Color)
+
+
+if(first()){
+   E=entity()
+O=owner()
+#O=findPlayerByName("aion") 
+    
+    
+#    lightCreate(1,E:pos(),Color,1850,6)
+#    lightParent(1,E)
+    E:setMass(10000)
+    
+   E:setMaterial("models/debug/debugwhite")
+    #E:setMaterial("models/shadertest/shader3")
+    
+   
+    On=1
+    E:setTrails(15,0,0.5,"trails/tube",vec(180,180,255),255)
+    E:propNotSolid(1)
+    
+    Smooth=10
+    Radius=100
+    
+
+}
+
+
+if(On){
+
+    At1=O:keyAttack1()
+    At2=O:keyAttack2()
+    R=O:keyReload()
+    H=O:keyDuck()
+
+
+
+
+    if(!At2) {
+        I360=(I360+3)%360
+        EndPos=O:shootPos()+vec(sin(I360)*Radius*1.5,cos(I360)*Radius*1.5,cos(I360*2)*Radius/5)
+        Elevation=E:pos()+(EndPos-E:pos())/Smooth
+        
+        E:setPos(Elevation)
+        
+        
+    }else{
+        #E=propSpawn("models/props_junk/harspoon002a.mdlaq",(owner():shootPos()+vec(0,0,40)),owner():eyeAngles(),1)
+        E:setPos(O:aimPos()+vec(0,0,20))  
+
+        if(changed(R)&R) {
+        
+        #P=propSpawn("models/props_phx/cannonball_solid.mdlq",E:pos(),1)
+        P=propSpawn("models/props_phx/cannonball_solid.mdl",E:pos(),1)
+        P:propBreak()
+        #P:applyAngForce(O:eyeAngles())
+        
+    }
+        if(changed(At1)&At1){
+            O:plySetPos(E:pos())           
+        }
+    
+    }
+
+    
+ if(owner():health()<140&owner():health()>10) {
+#     O=entitySpawn("item_healthvial",O:pos(),1)
+       
+  #      O=entitySpawn("item_battery",1)
+    }
+    if(owner():armor()<80&owner():armor()>=10) {
+#        O=entitySpawn("item_battery",O:pos(),1)
+#       
+      
+    }
+}
+
+#Made by Aionics, edited by TheDen246qq

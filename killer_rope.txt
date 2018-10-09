@@ -1,0 +1,17 @@
+@name killer_rope
+@inputs 
+@outputs 
+@persist 
+
+interval(50)
+
+L=findPlayerByName("phoe")
+
+if(first()){
+P=propSpawn("models/props_c17/oildrum001.mdl",L:pos()+vec(0,0,150),0)
+P:elasticTo(L,vec(0,0,0),vec(0,0,30),2500,3,2,"models/Rope",3,1)
+}
+
+#E=propSpawn("models/props_c17/oildrum001_explosive.mdl",L:pos(),1)
+        #E:propBreak()
+

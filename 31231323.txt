@@ -1,0 +1,23 @@
+@name 31231323q
+@persist [EE Ow H]:entity Smooth Radius I360
+
+if(first()){
+    runOnTick(1)
+    
+    EE=entity()
+    Ow=owner()
+    Smooth=15
+    Radius=30
+    
+    H=holoCreate(1)
+    holoPos(1,EE:toWorld(vec(0,0,25)))
+    holoModel(1,"models/editor/axis_helper_thick.mdl")
+    holoScale(1,vec(1))
+    holoParent(1,EE)  
+}
+
+I360=(I360+0.5)%360
+EndPos=Ow:pos()+vec(sin(I360)*Radius,cos(I360)*Radius,cos(I360)*Radius/5)
+
+Elevation=H:pos()+(EndPos-H:pos())/Smooth
+holoPos(1,Elevation+vec(0,0,5))

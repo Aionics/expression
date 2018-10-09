@@ -1,0 +1,16 @@
+@name sdfsdfs
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+holoCreate(1)
+holoPos(1,entity():pos()+vec(0,-5,100))
+#holoModel(1,"models/gibs/helicopter_brokenpiece_04_cockpit.mdl")
+holoScale(1,vec(2))
+holoCreate(2)
+#holoModel(2,"models/gibs/helicopter_brokenpiece_04_cockpit.mdl")
+holoAng(2,ang(180,0,0))
+holoPos(2,entity():pos()+vec(0,5,100))
+holoScale(2,vec(-2))
+holoAlpha(2,125)

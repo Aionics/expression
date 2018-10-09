@@ -1,0 +1,110 @@
+@name ZOMBIE
+@inputs 
+@outputs [Tar]:entity A N N2 S:string K DMG N3 N4 Dist
+@persist [E Sacred]:entity Ra:ranger Ra2:ranger Ra3:ranger Rage Speed
+@trigger 
+
+if(first()){
+runOnTick(1)
+E=entity()
+
+
+holoCreate(1)
+holoModel(1,"models/props_combine/combine_mine01.mdl")
+#holoModel(1,"models/effects/vol_light128x512.mdl")
+holoMaterial(1,"models/XQM//Deg360")
+holoPos(1,E:pos()+vec(0,0,40))
+holoScale(1,vec(1.2,1.2,4))
+holoAnim(1,5)
+holoColor(1,vec(100))
+holoDisableShading(1,1)
+particleGravity(vec(0,0,-300))
+
+
+
+
+Sacred=entitySpawn("env_entity_dissolver",owner():pos(),1)
+Sacred:setKeyValue("Magnitude","0")
+Sacred:setKeyValue("Name","Aionics")
+Sacred:setKeyValue("TargetName","DoubleHeart")
+Sacred:setKeyValue("dissolvetype","2")  
+entity():removeOnDelete(Sacred)
+
+    Speed=1
+findIncludePlayerProps("magomedshah")
+#findIncludePlayerProps("Aionics")
+#findIncludeClass("prop_physics")
+#findIncludeClass("wire")
+#findIncludeClass("vehicle")
+findExcludeEntity(holoEntity(1))
+findExcludeEntity(entity())
+findInSphere(holoEntity(1):pos(),20000)
+
+Tar=findClosest(holoEntity(1):pos())        
+
+
+}
+if(Tar==noentity()){
+    findIncludePlayerProps("magomedshah")
+    findInSphere(holoEntity(1):pos(),10000)
+    findExcludeEntity(holoEntity(1))
+    findExcludeEntity(entity())
+    Tar=findClosest(holoEntity(1):pos())
+    Speed=1
+}
+holoAng(1,vec(Tar:pos():x()-holoEntity(1):pos():x(),Tar:pos():y()-holoEntity(1):pos():y(),Tar:pos():z()-holoEntity(1):pos():z()):normalized():toAngle()+ang(90,0,0))
+
+Ra=rangerOffsetHull(holoEntity(1):toWorld(vec(50,0,50)),Tar:pos()+vec(0,0,40),vec(-2,-2,0),vec(2,2,0))
+Ra2=rangerOffsetHull(holoEntity(1):pos()+vec(0,0,-10),holoEntity(1):pos()+vec(0,0,-15),vec(-10,-10,0),vec(10,10,0))
+Ra3=rangerOffsetHull(holoEntity(1):pos()+vec(0,0,5),holoEntity(1):pos()+vec(0,0,-45),vec(-10,-10,0),vec(10,10,0))
+K=Ra2:distance() 
+Dist=holoEntity(1):pos():distance(Tar:pos())
+if(Dist<=80){
+        A=1
+    
+}else{ A=0}
+
+if(!A){
+    
+    holoPos(1,vec(holoEntity(1):pos():x() + (Tar:pos()-holoEntity(1):pos()):normalized():x()*Speed,holoEntity(1):pos():y() + (Tar:pos()-holoEntity(1):pos()):normalized():y()*Speed,holoEntity(1):pos():z() + (Tar:pos()-holoEntity(1):pos()):normalized():z()*Speed))
+
+}
+
+
+N3=(N3+1)%50
+N4=(N4+1)%5
+if(N4==1)
+{
+#particle(2,20,1,"effects/blueflare1",vec(255,255,0),Aim+vec(random(-50,30),random(-50,50),random(0,5)),(Pos4-Aim)*15,1)
+
+    }
+if(N3==1){Speed= Speed + 1}
+
+if(A){
+
+    N=(N+1)%60
+    if(N==1){
+        Tar:setKeyValue("TargetName","Rectal")
+        Sacred:setFire("Dissolve","Rectal",0) 
+        }
+    }
+
+
+
+if(changed(A)&A){}
+if(changed(A)&!A){holoAnim(1,2)}
+
+
+N2=(N2+1)%100
+if(N2==1){
+  #  S="npc/zombie_poison/pz_pain"+round(random(1,3)):toString()+".wav"
+  #  holoEntity(1):soundPlay(1,2,S)
+  #  soundPitch(1,random(30,80))
+    holoColor(1,vec(255-(Speed-1)*100,255-(Speed-1)*100,255))
+}
+
+B  = owner():keyPressed("B")
+if(changed(B)&B){
+    print(Tar)    
+}
+

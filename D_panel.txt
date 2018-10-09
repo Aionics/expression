@@ -1,0 +1,19 @@
+@name 
+@persist 
+interval(100)
+
+if(first()) {
+    dPanel("Test Panel :D", vec2(20, 100), vec2(200, 140))
+    
+    dButton("Does it work?", "Test Panel :D", vec2(25, 40), vec2(150, 40))
+    
+    dSlider("Slide", "Test Panel :D", vec2(18, 90), 200, 0, 100)
+    
+    dPod(entity():isWeldedTo())
+}
+
+if(changed(entity():isWeldedTo():driver())) { enableMouse(1) }
+
+if(dClk("Does it work?")) {
+    entity():isWeldedTo():hintDriver("OF COURSE! Ang slide is " + round(dNval("Slide")), 3)
+}

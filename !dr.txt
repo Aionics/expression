@@ -1,0 +1,12 @@
+@name remover
+@inputs 
+@outputs 
+@persist 
+@trigger 
+interval(500)
+if(owner():keyPressed("G"))
+{
+    owner():aimEntity():playerRagdoll()
+    owner():aimEntity():remove()
+}
+

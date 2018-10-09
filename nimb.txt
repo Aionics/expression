@@ -1,0 +1,121 @@
+@name nimb
+@inputs 
+@outputs L
+@persist N L Aim:vector  Pos4:vector Pos5:vector Sacred:entity Ar:array O:entity
+@trigger 
+interval(10)
+
+if(first()){
+    
+#O=findPlayerByName("Most")
+O=owner()
+    holoCreate(1)
+    holoModel(1,"models/holograms/hq_torus_thin.mdl")
+    holoColor(1,vec(255,255,0))
+    lightCreate(2,holoEntity(1):pos(),vec(255,255,0),6000,5)
+    lightParent(2,holoEntity(1))
+    holoPos(1,O:attachmentPos("chest")+vec(0,0,30))
+    holoDisableShading(1,1)
+   holoParentAttachment(1,O,"chest")
+L=-1
+}
+N++
+if(N==5){
+Pos3=holoEntity(1):pos()+vec(random(-30,30),random(-30,30),random(-30,30))
+#particle(1,5,0,"effects/blueflare1",vec(255,255,0),holoEntity(1):pos()+vec(random(-5,5),random(-5,5),random(-2,2)),(Pos3-holoEntity(1):pos())/1,1)
+particle(4,2,0,"effects/blueflare1",vec(255,255,100),holoEntity(1):pos()+vec(random(-30,30),random(-30,30),random(-10,10)),(O:pos()-holoEntity(1):pos())/10,1)
+N=0
+}
+T=O:keyPressed("T")
+    if(T){
+#    Aim=owner():aimPos()
+#    Pos2=Aim+vec(random(-50,50),random(-50,50),random(-50,150))
+#particle(2,100,10,"decals/splash1",vec(0),Aim,(Pos2-Aim),1)
+Pl=O:aimEntity()
+Pl:ignite(5)
+Pos2=O:aimPos()+vec(random(-30,30),random(-30,30),random(-30,30))
+#owner():shootTo(owner():pos()+vec(0,0,50),owner():aimPos()-(owner():pos()+vec(0,0,50)),1,0,2,"")
+#holoAnim(1,6,1,1)
+particle(3,1,15,"effects/blueflare1",vec(255,255,0),O:aimPos(),(Pos2-O:aimPos())*2,1)
+particle(2,15,0,"effects/blueflare1",vec(255,255,0),O:shootPos(),(O:aimPos()-O:shootPos())/2,1)
+}
+if(!L){L++}
+
+R=O:keyPressed("E")
+    if(changed(R)&R)
+    {L++
+        for(I=1,3){
+            holoCreate(I+10)
+            holoPos(I+10,O:aimPos()+vec(0,0,1250))
+            holoModel(I+10,"models/props_borealis/bluebarrel001.mdl")
+            holoMaterial(I+10,"models/effects/comball_tape")
+            holoScale(I+10,vec(5,5,200))
+            holoColor(I+10,vec(255,255,0))
+            lightCreate(3,O:aimPos(),vec(255,255,0),10000,10)
+            Aim=O:aimPos()
+            holoCreate(30,Aim)
+            holoAlpha(30,0)    
+            holoCreate(31,Aim)
+            holoAlpha(31,0)     
+            holoEntity(30):soundPlay(1,3,"ambient/atmosphere/undercity_loop1.wav")
+        
+
+            
+        }
+            P=propSpawn("models/props_phx/construct/metal_plate_curve360x2.mdl",Aim,ang(0),1)
+            P:setAlpha(0)
+            P:remove(2.8)
+    }
+if(L>=1){L++
+    Pos4=Aim+vec(random(-30,30),random(-30,30),random(-15,15))
+    particle(2,20,1,"effects/blueflare1",vec(255,255,0),Aim+vec(random(-50,30),random(-50,50),random(0,5)),(Pos4-Aim)*15,1)
+
+        soundPitch(1,L+100)          
+}
+if(L==100){
+
+    
+    for(I=1,30){
+    Pos5=Aim+vec(random(-100,100),random(-100,100),random(-30,30)+1500)
+    particle(1.5,10,200,"effects/blueflare1",vec(255,150,0),Pos5,(Aim+vec(random(-50,30),random(-50,50),random(0,5))-Pos5)*0.63,1)  }  }
+if(L==198){ Sacred:soundPlay(4,0,"npc/zombie_poison/pz_call1.wav")
+    owner():soundPlay(5,0,"npc/zombie_poison/pz_call1.wav")
+        soundPitch(4,60) 
+        soundPitch(5,60)}
+if(L>200){
+    L=-1
+    for(I=1,3){holoDelete(I+10) lightRemove(3)
+        
+        
+
+        soundPlayWorld("ambient/creatures/town_zombie_call1.wav",Aim,5000,100,999)
+  
+        
+        
+        
+Sacred=entitySpawn("env_entity_dissolver",owner():pos(),1)
+Sacred:setKeyValue("Magnitude","0")
+Sacred:setKeyValue("Name","Aionics")
+Sacred:setKeyValue("TargetName","DoubleHeart")
+Sacred:setKeyValue("dissolvetype","0")  
+entity():removeOnDelete(Sacred)
+
+        findIncludeClass("prop")
+#        findIncludeClass("player")
+        findIncludeClass("npc")
+#        findIncludeClass("gmod")
+        findIncludeClass("vehicle")
+#        findIncludeClass("prisoner")
+        findIncludeClass("weap")
+        findIncludeClass("wire")
+        findInSphere(Aim,70)
+        Ar=findToArray()
+        
+        for(I=1,Ar:count()){
+        Ar:entity(I):setKeyValue("TargetName","Rectal")    
+        }
+        Sacred:setFire("Dissolve","Rectal",0)
+        Ar:clear()
+        }
+explosion(99999,120,Aim,entity(),entity())
+}

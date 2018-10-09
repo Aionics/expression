@@ -1,0 +1,37 @@
+@name anim_test
+@inputs 
+@outputs 
+@persist Anim
+@trigger 
+
+if (first()) {
+    runOnTick(1)
+    
+    for (I=1, 6) {
+        holoCreate(I)
+        holoModel(I, owner():model())
+        #holoCreate(I+2)
+        #holoParentAttachment(I+2, holoEntity(I), "anim_attachment_RH")
+    }
+    
+}
+Anim = owner():getAnimID()
+
+if (changed(Anim)) {
+    for (I=1, 6) {
+        holoAnim(I, Anim, 1, 1)
+        holoSetPose(I, "move_x", 1)  
+    }
+    
+}
+        
+for (I=1, 6) {
+    if (I == 3) {continue}
+    holoPos(I, owner():pos() + vec(0, (I - 3) * 40,0))
+    holoAng(I, owner():angles())
+    
+    local O = owner()
+    local Ang = (O:aimPos() - O:shootPos()):normalized():toAngle()
+    holoSetPose(I, "aim_pitch", Ang:pitch())
+    holoSetPose(I, "aim_yaw", Ang:yaw())
+}

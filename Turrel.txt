@@ -1,0 +1,44 @@
+@name forcesphere
+@inputs 
+@outputs 
+@persist [E Tar O Holo]:entity A
+@trigger 
+
+interval(10)
+if(first()){
+
+E=entity()
+O=owner()
+    #include "libs/GoodGuys"
+    holoCreate(1)
+    holoPos(1,E:pos()+vec(0,0,100))
+    holoModel(1,"models/Gibs/helicopter_brokenpiece_06_body.mdl")
+   # holoMaterial(1,"phoenix_storms/officewindow_1-1")
+    holoScale(1,vec(0.2))
+    Holo=holoEntity(1)
+
+}
+
+findInSphere(E:toWorld(vec(0,0,0)),1000)
+findSortByDistance(E:toWorld(vec(0,0,0)))
+findIncludeClass("player")
+findIncludeClass("NPC")
+for(I=0,GoodGuys:count()){
+    findExcludePlayer(GoodGuys[I,string])
+}
+
+Tar = find()
+
+A=(A+1.5)%360
+holoPos(1,E:pos()+vec(sin(A)*500,cos(A)*500,300))
+if(Tar&Tar:health()>0){
+Ang=(Holo:pos()-Tar:pos()):toAngle()
+holoAng(1,Ang)
+
+
+Holo:shootTo(Holo:pos()+vec(0,0,10),(Tar:pos()-Holo:pos()+vec(0,0,20)),10,20,10,"HelicopterTracer")
+#Holo:shootTo(Holo:pos()+vec(0,0,10),(Tar:pos()-Holo:pos()+vec(0,0,20)),10,20,10,"AirboatGunTracer")
+
+}
+
+

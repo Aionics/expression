@@ -1,0 +1,237 @@
+@name HOVERBOARD
+@inputs 
+@outputs D
+@persist [O E Board Seat Driver S1 S2]:entity
+@persist [RangFL RangFR RangBL RangBR RangMain]:ranger
+@persist Height1 Height2 Height3 Height4 Active Index Rot1 Part
+@persist [Color]:vector
+@persist [H0_1 H0_2 H1_1 H1_2 H2_1 H2_2 H1_3 H1_4 H2_3 H2_4 H3]:entity
+@trigger 
+
+if(first()){
+    runOnTick(1)
+    O = owner()
+    E = entity()
+    Board = propSpawn("models/hunter/plates/plate1x3.mdl",1)
+    Seat = entity():isWeldedTo()
+
+    Height1=50
+    Height2=50
+    Height3=50
+    Height4=50
+    
+    E:constraintBreak()      
+    E:propNotSolid(1) 
+    
+    Board:setMass(5)
+    Board:propGravity(0) 
+    Board:setAlpha(0)
+    #noCollideAll(Board, 1)
+    Board:drawShadow(0)
+    Seat:setMass(0)
+    Seat:propGravity(0)
+    noCollideAll(Seat,1)
+    Seat:setAlpha(0)
+    
+    Color=vec(100,100,100)
+    Color2=vec(255,255,0)
+    
+    Board:setPos(E:toWorld(vec(0,0,50)))
+    Board:setAng(ang(0))
+    Seat:setPos(E:toWorld(vec(0,0,50)))
+    Seat:setAng(ang(0,-90,0))
+    weld(Seat,Board)
+    
+
+    #E:setPos(vec(0,0,5999))
+    E:setPos(O:pos())
+
+
+    function do_Enter (){
+        Driver=Seat:driver()
+      #  Driver:playerSetBoneAng(0,ang(30,0,0))
+      #  Driver:playerSetBoneAng(1,ang(0,40,0))
+     #   Driver:playerSetBoneAng(2,ang(0,0,0))
+      #  Driver:playerSetBoneAng(3,ang(0,30,0))
+      #  Driver:playerSetBoneAng(4,ang(0,0,0))
+        Active=1
+        Seat:propNotSolid(1)
+        Board:propFreeze(0)
+        Color=vec(255,0,0)
+        holoColor(holoIndex(H0_1),Color)
+        holoColor(holoIndex(H0_2),Color)
+        holoAlpha(holoIndex(H3),0)
+        lightCreate(1,Board:toWorld(vec(0,0,-10)),Color,10000,4)
+        lightParent(1,Board)
+        S1=Board:drawSprite("sprites/light_glow01",Board:toWorld(vec(0,-29,-12)),Color,255,20,20)
+        S2=Board:drawSprite("sprites/light_glow01",Board:toWorld(vec(0,20,-12)),Color,255,20,20)
+        
+    }
+    function do_Exit (){ 
+     #   for(I=1,20){Driver:playerSetBoneAng(I-1,ang(0,0,0))}       
+        Active=0
+        Seat:propNotSolid(0)
+        Board:propFreeze(1)
+        Color=vec(100,100,100)
+        holoColor(holoIndex(H0_1),Color)
+        holoColor(holoIndex(H0_2),Color)
+        holoAlpha(holoIndex(H3),255)
+        lightCreate(1,Board:toWorld(vec(0,0,-10)),vec(255),5000,4)
+        lightParent(1,Board)
+        Driver=noentity()
+        
+    }
+    function entity do_holoCreate(Ent:entity, Pos:vector, Ang:angle, Mdl:string, Scale:vector, Mat:string, Color:vector, Alpha, Shading, Shadow){
+        Index++
+        holoCreate(Index)
+        holoParent(Index,Ent)
+        holoPos(Index,Pos)
+        holoAng(Index,Ang)
+        holoModel(Index,Mdl)
+        holoScale(Index,Scale)
+        holoMaterial(Index,Mat)
+        holoColor(Index,Color)
+        holoAlpha(Index,Alpha)
+        holoDisableShading(Index,Shading)
+        holoShadow(Index,Shadow)
+        
+        return holoEntity(Index)
+    }
+  
+H0_1=do_holoCreate(Board, Board:toWorld(vec(0)), Board:angles(), "models/hunter/plates/plate1x3.mdl", vec(0.4,0.5,1), "models/debug/debugwhite", Color, 255, 1, 1)
+H0_2=do_holoCreate(Board, Board:toWorld(vec(0,-30,0)), Board:toWorld(ang(0,90,0)), "models/hunter/tubes/circle2x2c.mdl", vec(0.4,0.2,1), "models/debug/debugwhite", Color, 255, 1, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,-40,0)), Board:angles()+ang(0,0,90), "models/sprops/geometry/hring_48.mdl", vec(0.42,1.05,0.7), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 1)
+ H3=do_holoCreate(Board, Board:toWorld(vec(0,0,0)), Board:toWorld(ang(0,-90,0)), "models/Humans/Group03m/male_09.mdl", vec(1,1,1), "models/props_combine/stasisfield_beam", vec(255,0,0), 255, 1, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,-40,0)), Board:angles()+ang(0,0,90), "models/sprops/geometry/hring_48.mdl", vec(0.45,1.05,0.9), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 1)
+    do_holoCreate(Board, Board:toWorld(vec(0,-40,0)), Board:angles()+ang(0,0,90), "models/sprops/geometry/hring_48.mdl", vec(0.45,1.05,1.2), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 1)
+    do_holoCreate(Board, Board:toWorld(vec(0,-30,0)), Board:angles()+ang(0,0,90), "models/sprops/geometry/hring_48.mdl", vec(0.30,1.05,0.8), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 1)
+    do_holoCreate(Board, Board:toWorld(vec(0,-30,0)), Board:angles()+ang(0,0,90), "models/sprops/geometry/hring_48.mdl", vec(0.33,1.05,0.8), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 1)
+    do_holoCreate(Board, Board:toWorld(vec(0,-30,0)), Board:angles()+ang(0,0,90), "models/sprops/geometry/hring_48.mdl", vec(0.37,1.05,0.8), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 1)
+    do_holoCreate(Board, Board:toWorld(vec(0,0,-5)), Board:angles()+ang(0,0,0), "models/props_combine/combine_bunker01.mdl", vec(0.11,0.12,0.05), "", vec(255), 255, 0, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,0,0)), Board:angles()+ang(0,0,90), "models/props_combine/breenconsole.mdl", vec(0.6,0.2,0.5), "", vec(255), 255, 0, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,-29,1.5)), Board:toWorld(ang(-90,0,0)), "models/props_combine/combine_intwallunit.mdl", vec(0.8,0.4,0.4), "", vec(255), 255, 0, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,-45,0)), Board:toWorld(ang(0,90,90)), "models/combine_room/combine_monitor002.mdl", vec(0.1,0.1,0.1), "", vec(255), 255, 0, 0)
+    do_holoCreate(Board, Board:toWorld(vec(1.5,20,-8)), Board:toWorld(ang(90,0,90)), "models/props_combine/breenpod_inner.mdl", vec(0.85,1.5,0.4), "", vec(255), 255, 0, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,20,0)), Board:toWorld(ang(90,90,0)), "models/props_combine/combine_intmonitor001.mdl", vec(1,0.6,0.3), "", vec(255), 255, 0, 0)
+    
+H1_1=do_holoCreate(Board, Board:toWorld(vec(0,-29,-7)), Board:angles()+ang(0,0,0), "", vec(0.2,0.2,0.1), "models/debug/debugwhite", vec(255), 100, 1, 0)
+H1_2=do_holoCreate(Board, Board:toWorld(vec(0,-29,-7)), Board:angles()+ang(0,0,0), "", vec(0.2,0.2,0.1), "models/debug/debugwhite", vec(255), 100, 1, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,-29,-6.5)), Board:toWorld(ang(0,0,90)), "models/sprops/misc/tubes/size_2/tube_24x6.mdl", vec(0.6,0.3,0.6), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,-29,-7.5)), Board:toWorld(ang(0,0,90)), "models/sprops/misc/tubes/size_2/tube_24x6.mdl", vec(0.55,0.35,0.55), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,-29,-8.5)), Board:toWorld(ang(0,0,90)), "models/sprops/misc/tubes/size_2/tube_24x6.mdl", vec(0.5,0.35,0.5), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 0)
+H1_5=do_holoCreate(Board, Board:toWorld(vec(0,-29,-7)), Board:toWorld(ang(0,0,180)), "models/sprops/misc/domes/size_0/dome_3x3.mdl", vec(1.2,1.2,1.4), "phoenix_storms/output_jack", vec(255), 255, 0, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,-29,-6.5)), Board:angles()+ang(0,0,0), "models/hunter/tubes/tube1x1x1.mdl", vec(0.25,0.25,0.15), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 1)
+    do_holoCreate(Board, Board:toWorld(vec(0,-29,-7)), Board:angles()+ang(0,0,0), "models/props_phx/construct/metal_angle360.mdl", vec(0.15,0.15,0.1), "models/debug/debugwhite", vec(0), 255, 1, 0)
+    do_holoCreate(H1_1, Board:toWorld(vec(0,-29,-7)), Board:angles()+ang(0,0,90), "models/props_wasteland/wheel01a.mdl", vec(0.17,0.05,0.17), "models/debug/debugwhite", vec(80,180,255), 255, 1, 0)
+H1_3=do_holoCreate(H1_2, Board:toWorld(vec(6,-29,-7)), Board:angles()+ang(0,0,180), "models/items/battery.mdl", vec(0.5,0.5,0.5), "", vec(255), 255, 0, 0)
+H1_4=do_holoCreate(H1_2, Board:toWorld(vec(-6,-29,-7)), Board:toWorld(ang(0,180,180)), "models/items/battery.mdl", vec(0.5,0.5,0.5), "", vec(255), 255, 0, 0)
+    
+H2_1=do_holoCreate(Board, Board:toWorld(vec(0,20,-7)), Board:angles()+ang(0,0,0), "", vec(0.2,0.2,0.1), "models/debug/debugwhite", vec(255), 100, 1, 0)
+H2_2=do_holoCreate(Board, Board:toWorld(vec(0,20,-7)), Board:angles()+ang(0,0,0), "", vec(0.2,0.2,0.1), "models/debug/debugwhite", vec(255), 100, 1, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,20,-6.5)), Board:toWorld(ang(0,0,90)), "models/sprops/misc/tubes/size_2/tube_24x6.mdl", vec(0.6,0.3,0.6), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,20,-7.5)), Board:toWorld(ang(0,0,90)), "models/sprops/misc/tubes/size_2/tube_24x6.mdl", vec(0.55,0.35,0.55), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,20,-8.5)), Board:toWorld(ang(0,0,90)), "models/sprops/misc/tubes/size_2/tube_24x6.mdl", vec(0.5,0.35,0.5), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 0)
+H2_5=do_holoCreate(Board, Board:toWorld(vec(0,20,-7)), Board:toWorld(ang(0,0,180)), "models/sprops/misc/domes/size_0/dome_3x3.mdl", vec(1.2,1.2,1.4), "phoenix_storms/output_jack", vec(255), 255, 0, 0)
+    do_holoCreate(Board, Board:toWorld(vec(0,20,-6.5)), Board:angles()+ang(0,0,0), "models/hunter/tubes/tube1x1x1.mdl", vec(0.25,0.25,0.15), "phoenix_storms/metalset_1-2", vec(255), 255, 0, 1)
+    do_holoCreate(Board, Board:toWorld(vec(0,20,-7)), Board:angles()+ang(0,0,0), "models/props_phx/construct/metal_angle360.mdl", vec(0.15,0.15,0.1), "models/debug/debugwhite", vec(0), 255, 1, 0)
+    do_holoCreate(H2_1, Board:toWorld(vec(0,20,-7)), Board:angles()+ang(0,0,90), "models/props_wasteland/wheel01a.mdl", vec(0.17,0.05,0.17), "models/debug/debugwhite", vec(80,180,255), 255, 1, 0)
+H2_3=do_holoCreate(H2_2, Board:toWorld(vec(6,20,-7)), Board:angles()+ang(0,0,180), "models/items/battery.mdl", vec(0.5,0.5,0.5), "", vec(255), 255, 0, 0)
+H2_4=do_holoCreate(H2_2, Board:toWorld(vec(-6,20,-7)), Board:toWorld(ang(0,180,180)), "models/items/battery.mdl", vec(0.5,0.5,0.5), "", vec(255), 255, 0, 0)
+
+lightCreate(1,Board:toWorld(vec(0,0,-10)),vec(255),5000,4)
+lightParent(1,Board)
+    
+  
+#[ for(I=100,105){
+    holoCreate(I)
+    holoScale(I,vec(0.3))
+    holoModel(I,"models/holograms/cube.mdl")
+}
+for(I=101,105){
+    holoCreate(I+5)
+    holoScale(I+5,vec(0.3))
+    holoModel(I+5,"models/holograms/hq_icosphere.mdl")
+}]#
+
+}
+Part=(Part+1)%5
+if(Part==1){
+    particle(2,3,0,"effects/blueflare1",Color,holoEntity(holoIndex(H1_3)):toWorld(vec(0,0,4)),holoEntity(holoIndex(H1_5)):toWorld(vec(0,0,4)),1)
+    particle(2,3,0,"effects/blueflare1",Color,holoEntity(holoIndex(H1_4)):toWorld(vec(0,0,4)),holoEntity(holoIndex(H1_5)):toWorld(vec(0,0,4)),1)
+    particle(2,3,0,"effects/blueflare1",Color,holoEntity(holoIndex(H2_3)):toWorld(vec(0,0,4)),holoEntity(holoIndex(H2_5)):toWorld(vec(0,0,4)),1)
+    particle(2,3,0,"effects/blueflare1",Color,holoEntity(holoIndex(H2_4)):toWorld(vec(0,0,4)),holoEntity(holoIndex(H2_5)):toWorld(vec(0,0,4)),1)
+}
+Rot1=(Rot1+2)%360
+holoAng(holoIndex(H1_1),Board:toWorld(ang(0,Rot1,0)))
+holoAng(holoIndex(H1_2),Board:toWorld(ang(0,360-Rot1,0)))
+holoAng(holoIndex(H2_1),Board:toWorld(ang(0,Rot1,0)))
+holoAng(holoIndex(H2_2),Board:toWorld(ang(0,360-Rot1,0)))
+
+RangFL=rangerOffset(Height1*1.69*2,Board:toWorld(vec(23,-70,-2)),Board:forward()+Board:right()+Board:up()*-1) 
+RangFR=rangerOffset(Height2*1.69*2,Board:toWorld(vec(-23,-70,-2)),Board:forward()*-1+Board:right()+Board:up()*-1) 
+RangBL=rangerOffset(Height3*1.69*2,Board:toWorld(vec(23,70,-2)),Board:forward()+Board:right()*-1+Board:up()*-1) 
+RangBR=rangerOffset(Height4*1.69*2,Board:toWorld(vec(-23,70,-2)),Board:forward()*-1+Board:right()*-1+Board:up()*-1) 
+holoPos(101,Board:toWorld(vec(23,-70,-2)))
+holoPos(106,RangFL:position())
+holoPos(102,Board:toWorld(vec(-23,-70,-2)))
+holoPos(107,RangFR:position())
+holoPos(103,Board:toWorld(vec(23,70,-2)))
+holoPos(108,RangBL:position())
+holoPos(104,Board:toWorld(vec(-23,70,-2)))
+holoPos(109,RangBR:position())
+
+RangMain=rangerOffset(200,Board:toWorld(vec(0,0,-2)),Board:up()*-1) 
+holoPos(105,Board:toWorld(vec(0,0,-2)))
+holoPos(110,RangMain:position())
+
+#if(RangMain:distance() == Height){Board:setVel(Board:vel()*-1)}
+
+W=Driver:keyPressed("W")
+
+
+  
+
+ 
+    Board:applyOffsetForce(Board:up() * Board:mass() / 4 * (Height1*1.69 - RangFL:distance())/5,Board:toWorld(vec(20,-30,-2)))
+    Board:applyOffsetForce(Board:up() * Board:mass() / 4 * (Height2*1.69 - RangFR:distance())/5,Board:toWorld(vec(-20,-30,-2)))
+    Board:applyOffsetForce(Board:up() * Board:mass() / 4 * (Height3*1.69 - RangBL:distance())/5,Board:toWorld(vec(20,30,-2)))
+    Board:applyOffsetForce(Board:up() * Board:mass() / 4 * (Height4*1.69 - RangBR:distance())/5,Board:toWorld(vec(-20,30,-2)))
+
+
+
+if(changed(Seat:driver())&Seat:driver()){
+    do_Enter()
+}
+if(changed(Seat:driver())&Seat:driver()==noentity()){
+    do_Exit()
+}
+if(Active){
+    
+    if(W){
+       Board:applyForce((Board:right()+Board:up()*0):normalized()*15)
+        }
+    if(Driver:keySprint()){
+       Board:applyForce((Board:right()+Board:up()*0):normalized()*100)
+        }    
+    if(Driver:keyPressed("s")){
+        Board:applyForce(Board:right()*-5)
+        }
+    D=Driver:keyJump()
+    if(D){
+        Board:applyOffsetForce(Board:up() * 4,Board:toWorld(vec(0,-80,-2)))
+        }
+    if(Driver:keyPressed("A")){
+        Board:applyOffsetForce(Board:forward() * 2,Board:toWorld(vec(0,-70,-2)))
+        Board:applyOffsetForce(Board:forward()*-1 * 2,Board:toWorld(vec(0,70,-2)))
+        }
+    if(Driver:keyPressed("D")){
+        Board:applyOffsetForce(Board:forward()*-1 * 2,Board:toWorld(vec(0,-70,-2)))
+        Board:applyOffsetForce(Board:forward() * 2,Board:toWorld(vec(0,70,-2)))
+        }
+
+   
+}
+
+
+
+ 

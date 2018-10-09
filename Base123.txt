@@ -1,0 +1,478 @@
+@name Base
+@inputs
+@outputs Spawn
+@persist Props:array Delt:array ADelt:array Home:vector I Counter Grab:array RProp Rotate:vector
+@trigger all
+
+#-- Created by Pyro-Fire @ http://wiremod.com
+runOnChat(1)
+Count = 55
+Dist = 25
+if(Counter<Count-1 & clk("interval"))
+{
+Spawn = !Spawn
+if(Spawn)
+{
+Counter++
+}
+interval(100)
+exit()
+}
+elseif(Counter == Count-1 & clk("interval"))
+{
+timer("run",300)
+Counter++
+}
+if(clk("run"))
+{
+runOnTick(1)
+    Model = "models/hunter/plates/plate05x05.mdl"
+    findIncludePlayerProps(owner())
+    findByClass("prop_physics")
+    findClipToModel(Model)
+    #findByModel(Model)
+    Props = findToArray()
+    I = 1
+    while(I<Count)
+    {
+        if(I<10)
+        {
+            Color = vec(0,255,255)
+        }
+        elseif(I<19)
+        {
+            Color = vec(255,255,0)
+        }
+        elseif(I<28)
+        {
+            Color = vec(255,0,255)
+        }
+        elseif(I<37)
+        {
+            Color = vec(255,0,0)
+        }
+        elseif(I<46)
+        {
+            Color = vec(0,255,0)
+        }
+        elseif(I<55)
+        {
+            Color = vec(0,0,255)
+        }
+        Props:entity(I):setColor(Color)
+        I++
+    }
+    I = 1
+    exit()
+}
+
+Home = entity():pos()
+AHome = ang()#entity():angles()
+#1-9
+#10-18
+#19-27
+#28-36
+#37-45
+#46-54
+
+#            45 37 38
+#            39 40 41
+#            42 43 44
+# 27 19 20   9  1  2   18 10 11
+# 21 22 23   3  4  5   12 13 14
+# 24 25 26   6  7  8   15 16 17
+#            36 28 29
+#            30 31 32
+#            33 34 35
+
+#            54 46 47
+#            48 49 50
+#            51 52 53
+R = 1
+if(clk("rotate"))
+{
+    #-- is rotating
+    if(((RProp == 29 | RProp == 35 | RProp == 32) & abs(Rotate:y()) > abs(Rotate:x())) |
+    ((RProp == 38 | RProp == 41 | RProp == 44) & abs(Rotate:y()) > abs(Rotate:x())) )
+    {
+        if(Rotate:y() < 0)
+        {CS = "r"}
+        else
+        {CS = "r r r"}
+    }
+    if(((RProp == 36 | RProp == 33 | RProp == 30) & abs(Rotate:y()) > abs(Rotate:x())) |
+    ((RProp == 45 | RProp == 42 | RProp == 39) & abs(Rotate:y()) > abs(Rotate:x())) )
+    {
+        if(Rotate:y() < 0)
+        {CS = "l l l"}
+        else
+        {CS = "l"}
+    }
+    if(((RProp == 20 | RProp == 19 | RProp == 27) & abs(Rotate:x()) > abs(Rotate:y())) |
+    ((RProp == 18 | RProp == 10 | RProp == 11) & abs(Rotate:x()) > abs(Rotate:y())) )
+    {
+        if(Rotate:x() > 0)
+        {CS = "b~"}
+        else
+        {CS = "b~ b~ b~"}
+    }
+    if(((RProp == 24 | RProp == 15 | RProp == 26) & abs(Rotate:x()) > abs(Rotate:y())) |
+    ((RProp == 15 | RProp == 16 | RProp == 17) & abs(Rotate:x()) > abs(Rotate:y())) )
+    {
+        if(Rotate:x() < 0)
+        {CS = "f"}
+        else
+        {CS = "f f f"}
+    }
+    
+    
+    
+    if((RProp == 29 | RProp == 28 | RProp == 36) & abs(Rotate:x()) > abs(Rotate:y()))
+    {
+        if(Rotate:x() > 0)
+        {CS = "t"}
+        else
+        {CS = "t t t"}
+    }
+    if(((RProp == 42 | RProp == 43 | RProp == 44) & abs(Rotate:x()) > abs(Rotate:y())))
+    {
+        if(Rotate:x() < 0)
+        {CS = "t"}
+        else
+        {CS = "t t t"}
+    }
+    if(((RProp == 18 | RProp == 12 | RProp == 15) & abs(Rotate:y()) > abs(Rotate:x())))
+    {
+        if(Rotate:y() > 0)
+        {CS = "t"}
+        else
+        {CS = "t t t"}
+    }
+    if(((RProp == 20 | RProp == 23 | RProp == 26) & abs(Rotate:y()) > abs(Rotate:x())))
+    {
+        if(Rotate:y() < 0)
+        {CS = "t"}
+        else
+        {CS = "t t t"}
+    }
+    
+    
+    if((RProp == 35 | RProp == 34 | RProp == 33) & abs(Rotate:x()) > abs(Rotate:y()))
+    {
+        if(Rotate:x() > 0)
+        {CS = "b"}
+        else
+        {CS = "b b b"}
+    }
+    if(((RProp == 45 | RProp == 37 | RProp == 38) & abs(Rotate:x()) > abs(Rotate:y())))
+    {
+        if(Rotate:x() < 0)
+        {CS = "b"}
+        else
+        {CS = "b b b"}
+    }
+    if(((RProp == 11 | RProp == 14 | RProp == 17) & abs(Rotate:y()) > abs(Rotate:x())))
+    {
+        if(Rotate:y() > 0)
+        {CS = "b"}
+        else
+        {CS = "b b b"}
+    }
+    if(((RProp == 27 | RProp == 21 | RProp == 24) & abs(Rotate:y()) > abs(Rotate:x())))
+    {
+        if(Rotate:y() < 0)
+        {CS = "b"}
+        else
+        {CS = "b b b"}
+    }
+    
+#            45 37 38
+#            39 40 41
+#            42 43 44
+# 27 19 20   9  1  2   18 10 11
+# 21 22 23   3  4  5   12 13 14
+# 24 25 26   6  7  8   15 16 17
+#            36 28 29
+#            30 31 32
+#            33 34 35
+
+#            54 46 47
+#            48 49 50
+#            51 52 53
+    
+    Cmds = CS:explode(" ")
+    S = 1
+    Delt = array()
+    ADelt = array()
+    while(S <= Cmds:count())
+    {
+    Cmd = Cmds:string(S)
+    if(Cmd == "t")
+    {
+        Temp = Props:clone()
+        Props:setEntity(5,Temp:entity(1))
+        Props:setEntity(8,Temp:entity(2))
+        Props:setEntity(1,Temp:entity(3))
+        Props:setEntity(4,Temp:entity(4))
+        Props:setEntity(7,Temp:entity(5))
+        Props:setEntity(9,Temp:entity(6))
+        Props:setEntity(3,Temp:entity(7))
+        Props:setEntity(6,Temp:entity(8))
+        Props:setEntity(2,Temp:entity(9))
+        
+        Props:setEntity(42,Temp:entity(26))
+        Props:setEntity(43,Temp:entity(23))
+        Props:setEntity(44,Temp:entity(20))
+        
+        Props:setEntity(18,Temp:entity(42))
+        Props:setEntity(12,Temp:entity(43))
+        Props:setEntity(15,Temp:entity(44))
+        
+        Props:setEntity(29,Temp:entity(18))
+        Props:setEntity(28,Temp:entity(12))
+        Props:setEntity(36,Temp:entity(15))
+        
+        Props:setEntity(20,Temp:entity(36))
+        Props:setEntity(23,Temp:entity(28))
+        Props:setEntity(26,Temp:entity(29))
+    }
+
+    if(Cmd == "l")
+    {
+        Temp = Props:clone()
+        Props:setEntity(23,Temp:entity(19))
+        Props:setEntity(26,Temp:entity(20))
+        Props:setEntity(19,Temp:entity(21))
+        Props:setEntity(22,Temp:entity(22))
+        Props:setEntity(25,Temp:entity(23))
+        Props:setEntity(27,Temp:entity(24))
+        Props:setEntity(21,Temp:entity(25))
+        Props:setEntity(24,Temp:entity(26))
+        Props:setEntity(20,Temp:entity(27))
+        
+        Props:setEntity(54,Temp:entity(36))
+        Props:setEntity(48,Temp:entity(30))
+        Props:setEntity(51,Temp:entity(33))
+        
+        Props:setEntity(36,Temp:entity(9))
+        Props:setEntity(30,Temp:entity(3))
+        Props:setEntity(33,Temp:entity(6))
+        
+        Props:setEntity(9,Temp:entity(45))
+        Props:setEntity(3,Temp:entity(39))
+        Props:setEntity(6,Temp:entity(42))
+        
+        Props:setEntity(45,Temp:entity(54))
+        Props:setEntity(39,Temp:entity(48))
+        Props:setEntity(42,Temp:entity(51))
+    }
+
+    if(Cmd == "r")
+    {
+        Temp = Props:clone()
+        Props:setEntity(14,Temp:entity(10))
+        Props:setEntity(17,Temp:entity(11))
+        Props:setEntity(10,Temp:entity(12))
+        Props:setEntity(13,Temp:entity(13))
+        Props:setEntity(16,Temp:entity(14))
+        Props:setEntity(18,Temp:entity(15))
+        Props:setEntity(12,Temp:entity(16))
+        Props:setEntity(15,Temp:entity(17))
+        Props:setEntity(11,Temp:entity(18))
+        
+        Props:setEntity(38,Temp:entity(2))
+        Props:setEntity(41,Temp:entity(5))
+        Props:setEntity(44,Temp:entity(8))
+        
+        Props:setEntity(2,Temp:entity(29))
+        Props:setEntity(5,Temp:entity(32))
+        Props:setEntity(8,Temp:entity(35))
+        
+        Props:setEntity(29,Temp:entity(47))
+        Props:setEntity(32,Temp:entity(50))
+        Props:setEntity(35,Temp:entity(53))
+        
+        Props:setEntity(47,Temp:entity(38))
+        Props:setEntity(50,Temp:entity(41))
+        Props:setEntity(53,Temp:entity(44))
+    }
+
+    if(Cmd == "b")
+    {
+        Temp = Props:clone()
+        Props:setEntity(48,Temp:entity(46))
+        Props:setEntity(54,Temp:entity(47))
+        Props:setEntity(52,Temp:entity(48))
+        Props:setEntity(49,Temp:entity(49))
+        Props:setEntity(46,Temp:entity(50))
+        Props:setEntity(53,Temp:entity(51))
+        Props:setEntity(50,Temp:entity(52))
+        Props:setEntity(47,Temp:entity(53))
+        Props:setEntity(51,Temp:entity(54))
+        
+        Props:setEntity(33,Temp:entity(17))
+        Props:setEntity(34,Temp:entity(14))
+        Props:setEntity(35,Temp:entity(11))
+        
+        Props:setEntity(11,Temp:entity(45))
+        Props:setEntity(14,Temp:entity(37))
+        Props:setEntity(17,Temp:entity(38))
+        
+        Props:setEntity(45,Temp:entity(24))
+        Props:setEntity(37,Temp:entity(21))
+        Props:setEntity(38,Temp:entity(27))
+        
+        Props:setEntity(27,Temp:entity(33))
+        Props:setEntity(21,Temp:entity(34))
+        Props:setEntity(24,Temp:entity(35))
+    }
+#            45 37 38
+#            39 40 41
+#            42 43 44
+# 27 19 20   9  1  2   18 10 11
+# 21 22 23   3  4  5   12 13 14
+# 24 25 26   6  7  8   15 16 17
+#            36 28 29
+#            30 31 32
+#            33 34 35
+
+#            54 46 47
+#            48 49 50
+#            51 52 53
+
+    if(Cmd == "b~")
+    {
+        Temp = Props:clone()
+        Props:setEntity(41,Temp:entity(37))
+        Props:setEntity(44,Temp:entity(38))
+        Props:setEntity(37,Temp:entity(39))
+        Props:setEntity(40,Temp:entity(40))
+        Props:setEntity(43,Temp:entity(41))
+        Props:setEntity(45,Temp:entity(42))
+        Props:setEntity(39,Temp:entity(43))
+        Props:setEntity(42,Temp:entity(44))
+        Props:setEntity(38,Temp:entity(45))
+        
+        Props:setEntity(9,Temp:entity(18))
+        Props:setEntity(1,Temp:entity(10))
+        Props:setEntity(2,Temp:entity(11))
+        
+        Props:setEntity(27,Temp:entity(9))
+        Props:setEntity(19,Temp:entity(1))
+        Props:setEntity(20,Temp:entity(2))
+        
+        Props:setEntity(53,Temp:entity(27))
+        Props:setEntity(52,Temp:entity(19))
+        Props:setEntity(51,Temp:entity(20))
+        
+        Props:setEntity(18,Temp:entity(53))
+        Props:setEntity(10,Temp:entity(52))
+        Props:setEntity(11,Temp:entity(51))
+    }
+
+    if(Cmd == "f")
+    {
+        Temp = Props:clone()
+        Props:setEntity(32,Temp:entity(28))
+        Props:setEntity(35,Temp:entity(29))
+        Props:setEntity(28,Temp:entity(30))
+        Props:setEntity(31,Temp:entity(31))
+        Props:setEntity(34,Temp:entity(32))
+        Props:setEntity(36,Temp:entity(33))
+        Props:setEntity(30,Temp:entity(34))
+        Props:setEntity(33,Temp:entity(35))
+        Props:setEntity(29,Temp:entity(36))
+        
+        Props:setEntity(17,Temp:entity(8))
+        Props:setEntity(16,Temp:entity(7))
+        Props:setEntity(15,Temp:entity(6))
+        
+        Props:setEntity(8,Temp:entity(26))
+        Props:setEntity(7,Temp:entity(25))
+        Props:setEntity(6,Temp:entity(24))
+        
+        Props:setEntity(26,Temp:entity(54))
+        Props:setEntity(25,Temp:entity(46))
+        Props:setEntity(24,Temp:entity(47))
+        
+        Props:setEntity(54,Temp:entity(17))
+        Props:setEntity(46,Temp:entity(16))
+        Props:setEntity(47,Temp:entity(15))
+    }
+
+    S++
+    }
+    exit()
+}
+if(chatClk(owner()))
+{
+    if(owner():lastSaid() == "search")
+    {
+        Counter = Count-1
+    timer("run",300)
+        exit()
+    }
+    elseif(owner():lastSaid() == "spawn")
+    {
+        interval(50)
+        exit()
+    }
+        
+
+    exit()
+}
+    
+
+while(R<7)#9
+{
+    if(inrange(I,1,9))
+    {
+        AHome = entity():angles()
+    }
+    elseif(inrange(I,10,18))
+    {
+        AHome = entity():angles()+ang(90,0,0)
+    }
+    elseif(inrange(I,19,27))
+    {
+        AHome = entity():angles()+ang(-90,0,0)
+    }
+    elseif(inrange(I,28,36))
+    {
+        AHome = entity():angles()+ang(0,0,90)
+    }
+    elseif(inrange(I,37,45))
+    {
+        AHome = entity():angles()+ang(0,0,-90)
+    }
+    elseif(inrange(I,46,54))
+    {
+        AHome = entity():angles()+ang(180,180,0)
+    }
+    Off = (I)%9
+    P = Props:entity(I)
+    TPos = (AHome:up()*Dist*1.55 + AHome:forward()*((Off%3)-1)*Dist + AHome:right()*(floor(Off/3)-1)*Dist + Home)
+    V = P:pos() - TPos
+    A = P:toLocal(AHome)
+    P:applyForce(-(V+(V-Delt:vector(I)))*24)
+    P:applyAngForce((A+(A-ADelt:angle(I)))*12)
+    Delt:setVector(I,V)
+    ADelt:setAngle(I,A)
+    if(!P:isPlayerHolding() & Grab:number(I) == 1 & (Off == 2 | Off == 6 | Off == 8 | Off == 0))
+    {
+        #-- Figure out what to rotate
+        timer("rotate",10)
+        #P:setColor(vec(255,255,255))
+        Rotate = P:toLocal(TPos)
+        RProp = I
+    }
+    Grab:setNumber(I,P:isPlayerHolding())
+    
+    I++
+    R++
+    if(I >= Count)
+    {
+        I = 1
+        exit()
+    }
+}

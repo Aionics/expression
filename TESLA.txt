@@ -1,0 +1,28 @@
+@name TESLA
+@inputs 
+@outputs 
+@persist Tesla:entity
+@trigger 
+
+if(first()){
+
+entity():propNotSolid(1)
+owner():setKeyValue("targetname","toparent")
+Tesla=entitySpawn("point_tesla",owner():pos()+vec(0,0,50),1)
+Tesla:setKeyValue("beamcount_min",5:toString())
+Tesla:setKeyValue("beamcount_max",10:toString())
+Tesla:setKeyValue("texture","effects/laser1.vmt")
+Tesla:setKeyValue("m_flRadius",30:toString())
+Tesla:setKeyValue("thick_max",5:toString())
+Tesla:setKeyValue("thick_min",2:toString())
+Tesla:setKeyValue("m_Color","255 180 0")
+Tesla:setKeyValue("SetParent","toparent")
+#Tesla:setKeyValue("scale","1 1 20")
+#Tesla:setKeyValue("m_SoundName","ambient/voices/f_scream1.wav")
+Tesla:setKeyValue("m_SoundName","ambient/animal/frog_2.wav")
+#Tesla:setKeyValue("m_SoundName","vo/breencast/br_collaboration08.wav")
+#Tesla:setKeyValue("m_SoundName","https://clck.ru/9utWj")
+}
+Tesla:setPos(owner():attachmentPos("anim_attachment_RH"))
+Tesla:setFire("doSpark","1",0)
+

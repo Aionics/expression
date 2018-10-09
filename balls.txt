@@ -1,0 +1,32 @@
+@name balls
+@inputs 
+@outputs 
+@persist O:entity E:entity
+@trigger 
+
+if(first()){
+    runOnTick(1)
+    O=owner()
+    entity():propNotSolid(1)
+    entity():setPos(entity():pos()+vec(0,0,-10))
+    E=entitySpawn("point_combine_ball_launcher",O:shootPos()+O:eye()*10,1)
+    E:setKeyValue("maxballbounces","1")
+    E:setKeyValue("ballcount","99999")
+    E:setKeyValue("ballradius","1000")
+    E:setKeyValue("launchconenoise","0")
+    E:setKeyValue("balltype","2")
+    E:setKeyValue( "minspeed", "3000" )
+    E:setKeyValue( "maxspeed", "3000" )
+}
+At2=O:keyPressed("T")
+#At2=O:keyAttack1()
+
+
+
+if(At2){ 
+    E:setPos(O:shootPos())
+    E:setAng(O:eyeAngles())
+    E:setFire("launchball","0",0)
+    #E:setFire("kill","3",0)
+}
+

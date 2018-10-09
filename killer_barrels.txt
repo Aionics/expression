@@ -1,0 +1,35 @@
+@name hope
+@inputs 
+@outputs 
+@persist [L P1 P2 P3]:entity
+#made by Aioncs
+
+
+if(first()){
+    runOnTick(1)
+    L=findPlayerByName("Aionics")
+    function do_Barr(){
+        P1:remove()
+        P2:remove()
+        P3:remove()
+    P1=propSpawn("models/props_c17/oildrum001.mdl",L:pos()+vec(0,0,150),0)
+    P1:elasticTo(L,vec(0,0,0),vec(0,0,30),2500,3,2,"models/Rope",3,1)
+    
+    P2=propSpawn("models/props_c17/oildrum001.mdl",L:pos()+vec(0,0,150),0)
+    P2:elasticTo(L,vec(0,0,0),vec(0,0,30),2500,3,2,"models/Rope",3,1)
+    
+    P3=propSpawn("models/props_c17/oildrum001.mdl",L:pos()+vec(0,0,150),0)
+    P3:elasticTo(L,vec(0,0,0),vec(0,0,30),2500,3,2,"models/Rope",3,1)
+}
+do_Barr()
+
+}
+if(changed(L:isAlive())&L:isAlive()){do_Barr()}
+
+DIST1=L:pos():distance(P1:pos())
+DIST2=L:pos():distance(P2:pos())
+DIST3=L:pos():distance(P3:pos())
+
+if(DIST1>=500){P1:setPos(L:pos()+vec(0,0,150))}
+if(DIST2>=500){P2:setPos(L:pos()+vec(0,0,150))}
+if(DIST3>=500){P3:setPos(L:pos()+vec(0,0,150))}

@@ -1,0 +1,52 @@
+@persist Skills:table
+
+Skills:pushTable(table(
+    "name" = "fireball",
+    "hotkey" = "mouse_right",
+    "group" = 1,
+    "key_pressed" = 0,
+    "price" = 50,
+    "type" = "projectile",
+    "damage" = 10,
+    "aoe" = 150,
+    "size" = 10,
+    "knockback" = 800,
+    "cd" = 5,
+    "cd_timer" = 0,
+    "cast_time" = 1.5,
+    "speed" = 10
+))
+
+Skills:pushTable(table(
+    "name" = "lifesteal",
+    "hotkey" = "e",
+    "group" = 2,
+    "key_pressed" = 0,
+    "price" = 50,
+    "type" = "projectile",
+    "damage" = 10,
+    "aoe" = 50,
+    "size" = 30,
+    "knockback" = 200,
+    "cd" = 3,
+    "cd_timer" = 0,
+    "cast_time" = 1,
+    "speed" = 20
+))
+
+Skills:pushTable(table(
+    "name" = "teleport",
+    "hotkey" = "lshift",
+    "group" = 3,
+    "key_pressed" = 0,
+    "price" = 50,
+    "type" = "instant",
+    "damage" = 10,
+    "aoe" = 100,
+    "size" = 0,
+    "knockback" = 1000,
+    "cd" = 3,
+    "cd_timer" = 0,
+    "cast_time" = 0.5,
+    "range" = 300
+))

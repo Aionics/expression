@@ -1,0 +1,32 @@
+@name killer_barrels_slow
+@inputs 
+@outputs 
+@persist 
+#made by Aioncs
+
+interval(50)
+
+L=findPlayerByName("melow")
+
+E=entity()
+#holoCreate(1)
+#holoModel(1,"models/props_junk/wood_crate001a_damaged.mdl")
+#holoScale(1,vec(2,2,4))
+
+#holoPos(1,L:pos()+vec(0,0,40))
+
+
+#E=propSpawn("models/props_c17/oildrum001_explosive.mdl",L:pos(),1)
+#E:propBreak()
+
+#if(L:health()>1) {
+explosion(1,10,L:pos()+vec(0,0,50))
+L:killPod()
+
+#}
+
+
+
+
+
+

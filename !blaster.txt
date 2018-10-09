@@ -1,0 +1,118 @@
+@persist [O]:entity
+@persist [Bullets_Table]:table
+@persist [Bullet_counter,Tick,FireRate, While_counter,Bullet_speed]
+@persist [Weapon]:string
+@persist [Ar]:array
+
+if(first()){
+    runOnTick(1)
+    
+    Weapon = "weapon_crowbar"
+    Bullet_counter=100
+    Tick = 1
+    FireRate = 5
+    Bullet_speed = 50
+    O=owner()
+    While_counter = 0
+    function do_shoot2 (N) {
+        local Smooth = O:pos():distance(O:aimPos())/N
+        AimPos=O:aimPos() + randvec(-Smooth,Smooth)
+            
+            
+            
+            ShootPos=O:shootPos()
+            holoCreate(Bullet_counter,ShootPos)
+            holoAlpha(Bullet_counter,0)
+            holoScale(Bullet_counter,vec(0.3))
+            local Sprite = holoEntity(Bullet_counter):drawSprite("sprites/glow1_noz",holoEntity(Bullet_counter):pos(),vec(200,255,255),255,7,7)
+            holoEntity(Bullet_counter):setTrails(20,10,0.7,"trails/laser",vec(200,255,255),100)
+            
+            local Direction = (AimPos - ShootPos):normalized()            
+            
+            local Tb=table(
+                "Bullet"=holoEntity(Bullet_counter),
+                "Direction"=Direction,
+                "Sprite"=Sprite
+            )
+            Bullets_Table:pushTable(Tb)
+            #printTable(Bullets_Table)
+            Bullet_counter++
+            if(Bullet_counter>=199){Bullet_counter = 100}
+            
+        }
+    function do_dissolve (Here:vector) {
+        findIncludeClass("player")
+        findIncludeClass("NPC")
+        findIncludeClass("prop_physics")
+        findIncludeClass("vehicle")
+        findInSphere(Here, 30)
+        Arr=findToArray()
+        for(I=1,Arr:count()){
+            #explosion(100,50,Here)
+            Arr[I,entity]:takeDamage(100,"dissolve")
+        } 
+    }
+        
+}
+At2=O:keyAttack2()
+At1=O:keyAttack1()
+if(At2&&owner():weapon():type()==Weapon){
+    Tick++
+    if(Tick%10==0){
+        do_shoot2(100)
+        Tick=1
+    }
+}
+if(changed(At1)&At1&&owner():weapon():type()==Weapon){
+    for(I=1,15){
+        do_shoot2(50)    
+    }
+}
+G=owner():keyPressed("G")
+if(changed(G)&G){
+    printTable(Bullets_Table)    
+}
+if(Bullets_Table:count()){
+    if (While_counter>Bullets_Table:count()) {While_counter=1}
+    while ( perf() & While_counter <= Bullets_Table:count() ){
+        local I = While_counter
+        rangerFilter(O)
+        local Ranger = rangerOffsetHull(Bullet_speed,Bullets_Table[I,table]["Bullet",entity]:pos(),Bullets_Table[I,table]["Direction",vector],vec(10))        
+                
+        Bullets_Table[I,table]["Bullet",entity]:setPos(Ranger:pos())
+        #local HI = holoIndex(Bullets_Table[I,table]["Bullet",entity])
+        #holoPos(HI, Ranger:pos())
+        
+        if(Ranger:hit()){
+            local Ranger2 = rangerOffset(Bullet_speed,Bullets_Table[I,table]["Bullet",entity]:pos(),Bullets_Table[I,table]["Direction",vector])
+            Ranger2:drawPaint("fadingscorch")
+    
+            particle(0.2, random(100,40), 1,"particle/warp1_warp",vec(255,255,255),Bullets_Table[I,table]["Bullet",entity]:pos(),vec(0),0, 0, 200, 0)
+            particle(0.2, random(150,70), 1,"sprites/glow1_noz",vec(200,255,255),Bullets_Table[I,table]["Bullet",entity]:pos(),vec(0),0, 0, 255, 0)            
+            effectSpawn("StunstickImpact",Bullets_Table[I,table]["Bullet",entity]:pos(),2)            
+            for(K=1,randint(3,7)){
+                Rand=toString(randint(10,15))                
+                particle(random(0.05,1), random(10,20), random(40,60),"particle/smokesprites_00"+Rand,vec(200,255,255),Bullets_Table[I,table]["Bullet",entity]:pos(),randvec(-50,50)+vec(0,0,50),random(-40,40), randint(-1,1), 35, 0)              
+            }
+            
+            local TempStr="weapons/physcannon/energy_sing_explosion2.wav"
+            Bullets_Table[I,table]["Bullet",entity]:soundPlay(I,1,TempStr)
+            soundPitch(I,random(150,222)) 
+            
+            
+            Bullets_Table[I,table]["Sprite",entity]:remove()
+            Bullets_Table[I,table]["Bullet",entity]:remove(2)
+            
+            
+            do_dissolve(Bullets_Table[I,table]["Bullet",entity]:pos())
+            Bullets_Table[I,table]=Bullets_Table:removeTable(toString(I))
+            
+
+            
+            Bullets_Table:remove(I)
+        }
+        While_counter++
+               
+    }    
+}
+

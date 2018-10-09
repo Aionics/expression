@@ -1,0 +1,387 @@
+@name Follower_nextgen2
+@model models/bull/gates/microcontroller1.mdl
+@outputs Rot1 Color:vector T Rang Ar:array LS:string Pt
+#@model models/balloons/balloon_classicheart.mdl
+@persist S4 S5 On T Rad1 Rad2 Sm1 Sm2 Rot1 Rot2 Rot3 Rot4 Rot5 I N [H1 H2 H3 O H4 Tesla Sacred]:entity L Strng:string GG 
+#made by Aionics
+
+
+E=entity()
+
+
+
+
+
+
+
+
+
+if(first()){
+    runOnTick(1)
+LS=owner():lastSaid()    
+#O=findPlayerByName(LS)   
+O=owner()    
+    On=1
+    N=100
+    Rad1=70
+    Rad2=30
+    Sm1=10
+    Sm2=3
+    Rot1=0
+    Rot2=120
+    Rot3=240
+    Rot4=180
+    Rot5=0   
+    S4=4
+    S5=4
+    
+    RH = O:bone(7)
+    LH = O:bone(5)
+
+  #  O:setKeyValue("health",220)
+   
+    
+    timer("t",3000)
+    
+#    for (I=1,3) {
+#        H(I)=holoCreate(I)
+#        H1:setTrails(15,0,0.5,"trails/tube",vec(180,180,255),255)
+#        holoPos(1,O:toWorld(vec(0,0,25)))
+#        holoModel(1,"models/dav0r/hoverball.mdl")
+#        holoMaterial(1,"models/cs_italy/light_orange")
+#        lightCreate(1,H1:pos(),Color,2000,5)
+#        lightParent(1,H1)
+#        interval(500
+
+
+
+#O:setKeyValue("targetname","toparent")
+Tesla=entitySpawn("point_tesla",E:pos()+vec(0,0,50),1)
+Tesla:setKeyValue("beamcount_min",1:toString())
+Tesla:setKeyValue("beamcount_max",5:toString())
+Tesla:setKeyValue("texture","effects/laser1.vmt")
+Tesla:setKeyValue("m_flRadius",200:toString())
+Tesla:setKeyValue("thick_max",70:toString())
+Tesla:setKeyValue("thick_min",1:toString())
+Tesla:setKeyValue("m_Color","255 50 50")
+#Tesla:setKeyValue("SetParent","toparent")
+#Tesla:setKeyValue("scale","1 1 20")
+#Tesla:setKeyValue("m_SoundName","ambient/voices/f_scream1.wav")
+
+Sacred=entitySpawn("env_entity_dissolver",owner():pos(),1)
+Sacred:setKeyValue("Magnitude","0")
+Sacred:setKeyValue("Name","Aionics")
+Sacred:setKeyValue("TargetName","DoubleHeart")
+Sacred:setKeyValue("dissolvetype","2")  
+entity():removeOnDelete(Sacred)
+
+        findIncludeClass("prop")
+#        findIncludeClass("player")
+        findIncludeClass("npc")
+        #        findIncludeClass("gmod")
+        findIncludeClass("vehicle")
+#        findIncludeClass("prisoner")
+#        findIncludeClass("weap")
+        findIncludeClass("wire")
+findExcludePlayerProps("aionics")
+        
+
+
+
+
+
+
+    H1=holoCreate(1)
+ #   H1:setTrails(10,0,0.5,"trails/tube",vec(180,180,255),255)
+    holoPos(1,E:pos())
+    holoModel(1,"hq_sphere")
+    holoScale(1,vec(0.5))
+    holoDisableShading(1,1)
+    lightCreate(1,H1:pos(),Color,6000,5)
+    lightParent(1,H1)
+    
+    holoCreate(11)
+    holoPos(11,H1:pos())
+    holoParent(11,H1)
+    holoModel(11,"hq_sphere")
+    holoScale(11,vec(-0.60))
+    holoColor(11,vec(0))
+    particleGravity(vec(0,0,80))
+    
+ #q   interval(2000)
+      
+    H2=holoCreate(2)#    H2:setTrails(10,0,0.5,"trails/tube",vec(180,180,255),255)
+    holoPos(2,E:pos())
+    holoModel(2,"hq_sphere")
+    holoScale(2,vec(0.5))
+    holoDisableShading(2,1)
+    lightCreate(2,H2:pos(),Color,6000,5)
+    lightParent(2,H2)
+    
+    holoCreate(21)
+    holoPos(21,H2:pos())
+    holoParent(21,H2)
+    holoModel(21,"hq_sphere")
+    holoScale(21,vec(-0.6))
+    holoColor(21,vec(0))
+#    interval(2000)
+       
+    H3=holoCreate(3)
+ #   H3:setTrails(10,0,0.5,"trails/tube",vec(180,180,255),255)
+    holoPos(3,E:pos())
+    holoScale(3,vec(0.5))
+    holoModel(3,"hq_sphere")
+    holoDisableShading(3,1)
+    lightCreate(3,H3:pos(),Color,6000,5)
+    lightParent(3,H3)
+    
+    holoCreate(31)
+    holoPos(31,H3:pos())
+    holoParent(31,H3)
+    holoModel(31,"hq_sphere")
+    holoScale(31,vec(-0.6))
+    holoColor(31,vec(0))
+#    interval(10000)
+         
+    E:setMass(1000)  
+}
+
+T=T+0.1
+if (T>700){T=0}
+Color=hsv2rgb(T,1,1)
+O:setColor(255,200,180)
+E:setColor(Color)
+
+
+
+#lightColor(1,Color)
+#lightColor(2,Color)
+#lightColor(3,Color)
+holoColor(1,Color)
+holoColor(2,Color)
+holoColor(3,Color)
+L++
+if(L==3){
+    particle(1,15,0,"effects/blueflare1",Color,holoEntity(1):pos()+vec(random(-5,5),random(-5,5),random(-5,5)),vec(0),1)
+    }
+if(L==4){
+    particle(1,15,0,"effects/blueflare1",Color,holoEntity(2):pos()+vec(random(-5,5),random(-5,5),random(-5,5)),vec(0),1)
+    }
+if(L==5){L=0
+particle(1,15,0,"effects/blueflare1",Color,holoEntity(3):pos()+vec(random(-5,5),random(-5,5),random(-5,5)),vec(0),1)
+#particle(1,15,0,"effects/blueflare1",Color,holoEntity(3):pos(),vec(0),1)
+}
+if(On){
+
+    At1=O:keyAttack1()
+    At2=O:keyAttack2()
+    R=O:keyReload()
+    EE=O:keyPressed("E")
+#    T=O:keyPressed("T")
+   
+            if (I<13&I>0){
+            I=I+0.1
+            holoScale(N-1,vec(I,I,I))
+            }            
+            if (I>=13){I=0}
+
+if(Pt>80){
+    Pt=Pt-0.02
+ soundPitch(1,Pt)   
+}
+if(changed(At2)&At2){
+    H1:soundPlay(3,25,"weapons/physcannon/superphys_hold_loop.wav")
+}
+if(changed(At2)&!At2){
+    H1:soundPlay(3,15,"weapons/physcannon/superphys_hold_loop.wav")
+    soundStop(3,0)
+
+}
+
+    if(!At2) {
+        
+        if(changed(O:isOnGround())&!O:isOnGround())
+        {holoParentAttachment(1,O,"chest")
+            holoParent(2,1)
+            holoParent(3,1)
+            }
+        if(changed(O:isOnGround())&O:isOnGround())
+        {holoUnparent(1)
+            holoUnparent(2)
+            holoUnparent(3)
+            }
+        if(O:isOnGround()){
+        
+            owner():playerSetBoneAng(8,ang(0,0,0))
+            owner():playerSetBoneAng(13,ang(0,0,0))
+        
+
+        Rot1=(Rot1+1.2)%360        
+        Rot2=(Rot2+1.4)%360        
+        Rot3=(Rot3+1.6)%360
+             
+        EndPos1=O:shootPos()+vec(sin(Rot1)*Rad1,cos(Rot1)*Rad1,cos(Rot1*2)*Rad1/5-30)
+        EndPos2=O:shootPos()+vec(sin(Rot2)*Rad1,cos(Rot2)*Rad1,cos(Rot2*2)*Rad1/5-30)
+        EndPos3=O:shootPos()+vec(sin(Rot3)*Rad1,cos(Rot3)*Rad1,cos(Rot3*2)*Rad1/5-30)
+    
+        El=H1:pos()+(EndPos1-H1:pos())/Sm1        
+        H1:setPos(El)
+        El=H2:pos()+(EndPos2-H2:pos())/Sm1        
+        H2:setPos(El)
+        El=H3:pos()+(EndPos3-H3:pos())/Sm1        
+        H3:setPos(El)
+
+        
+        if(O:weapon():type()=="weapon_crowbar"){O:playerSetBoneAng(8,ang(40,0,-90))}else{O:playerSetBoneAng(8,ang(0,0,0))}
+    }else{
+    if(changed(EE)&EE){
+        O:setVel(O:vel()*vec(-1)+O:eye()*1500)
+        GG=(GG+1)%2
+        holoEntity(GG+1):soundPlay(GG+10,1.1,"ambient/machines/catapult_throw.wav",0)
+        soundPitch(GG+10,130)
+        for(I=1,6){
+        particle(3,random(20,100),1,"particle/smokestack",Color,O:pos()+vec(random(-30,30),random(-30,30),random(-30,30)),vec(random(-40,40),random(-40,40),random(-50,-120)),1)
+    }
+      #  O:setVel(O:eye()*2000)
+        }
+    
+#        Rot1=(Rot1+1.5)%360        
+        Rot2=(Rot2+5)%360        
+        Rot3=(Rot3+5)%360
+               
+#        EndPos1=O:shootPos()+vec(sin(Rot1)*Rad1,cos(Rot1)*Rad1,cos(Rot1*2)*Rad1/5-30)
+        EndPos2=holoEntity(1):pos()+vec(sin(Rot2)*Rad1/5,cos(Rot2)*Rad1/5,0)
+        EndPos3=holoEntity(1):pos()+vec(sin(Rot3)*Rad1/5,cos(Rot3)*Rad1/5,0)
+    
+#        El=H1:pos()+(EndPos1-H1:pos())/Sm1        
+        H1:setPos(O:pos()+vec(0,0,40))
+   #     El=H2:pos()+(EndPos2-H2:pos())/Sm1        
+        H2:setPos(EndPos2)
+    #    El=H3:pos()+(EndPos3-H3:pos())/Sm1        
+        H3:setPos(EndPos3)
+        
+        
+}        
+ #  }else
+    }elseif
+   (O:weapon():type()=="weapon_crowbar")
+    {
+        findIncludeEntities(Ar)
+        Tesla:setPos(holoEntity(1):pos())
+        O:weapon():setAlpha(0)
+            owner():playerSetBoneAng(8,ang(0,0,-60))
+            owner():playerSetBoneAng(13,ang(70,0,-80))
+            
+            
+        #E=propSpawn("models/props_junk/harspoon002a.mdlaq",(qq():shootPos()+vec(0,0,40)),owner():eyeAngles(),1)
+        H1:setPos(O:aimPos()+vec(0,0,20))  
+        
+        Rot4=(Rot4+S4)%360        
+        Rot5=(Rot5+S5)%360
+        EndPos2=H1:pos()+vec(cos(Rot4)*Rad2,sin(Rot4)*Rad2,0)
+        EndPos3=H1:pos()+vec(sin(Rot5)*Rad2,0,cos(Rot5*1)*Rad2/1)
+        El=H2:pos()+(EndPos2-H2:pos())/Sm2       
+        H2:setPos(El)
+        El=H3:pos()+(EndPos3-H3:pos())/Sm2       
+        H3:setPos(El)
+        
+      
+    
+    
+    if(changed(At1)&At1){
+        particle(1,150,1,"sprites/plasmaember",Color,O:pos()+vec(0,0,60),vec(0,0,-50),1)
+        particle(1,150,1,"effects/tp_eyefx/tp_eyefx",Color,O:pos()+vec(0,0,60),vec(0,0,-50),1)
+     #   particle(2,70,1,"models/airboat/airboat_blur02",vec(255),O:pos()+vec(0,0,60),vec(0),1)
+        particle(1,150,1,"sprites/plasmaember",Color,H1:pos()+vec(0,0,40),vec(0,0,-50),1)
+        particle(1,150,1,"effects/tp_eyefx/tp_eyefx",Color,O:pos()+vec(0,0,60),vec(0,0,-50),1)
+      #  particle(2,70,1,"models/airboat/airboat_blur02",vec(255),H1:pos()+vec(0,0,40),vec(0),1)
+            
+            
+           # particle(2,5,3,"effects/ar2_altfire1",vec(255),O:pos()+vec(0,0,60),vec(0),1)
+           # particle(2,5,3,"effects/ar2_altfire1",vec(255),H1:pos()+vec(0,0,40),vec(0),1)
+            O:setPos(H1:pos())
+            O:setVel(O:vel()*vec(-1))
+            H1:soundPlay(1,2,"weapons/physcannon/energy_sing_flyby2.wav")
+            O:soundPlay(1,50,"vo/breencast/br_collaboration10.wavq")
+            Pt=100
+            
+            
+        }
+    
+      if(changed(R)&R) {
+             
+            Rad2=200
+            S4=10
+            S5=10
+            H1:soundPlay(2,15,"weapons/physcannon/energy_sing_loop4.wav") 
+            
+          #[  holoCreate(4)            
+            holoModel(4,"models/Combine_Helicopter/helicopter_bomb01.mdl")
+            holoMaterial(4,"models/effects/comball_tape")
+            holoScale(4,vec(12))]#
+                        } 
+       
+    
+    
+
+     if(R){
+        while(perf()){   
+            findInSphere(holoEntity(1):pos(),180)
+            Ar=findToArray()
+            
+            for(I=1,Ar:count()){
+            Ar:entity(I):setKeyValue("TargetName","Rectal")    
+            }
+            Sacred:setFire("Dissolve","Rectal",0) 
+            
+            Strng=(Color:x()+0):toString()+" "+(Color:y()+0):toString()+" "+(Color:z()+0):toString()
+            Tesla:setKeyValue("m_Color",Strng)
+                   Tesla:setFire("doSpark","1",0)  
+            explosion(50000,200,H1:pos()+vec(0,0,50),H1,H1)
+            holoPos(4,H1:pos()) 
+            effectSpawn("StunstickImpact",H2:pos(),20)
+            effectSpawn("StunstickImpact",H3:pos(),20)
+            
+            
+            LH:applyForce(500*(O:shootPos() - LH:pos()))
+        }
+    
+        
+        }
+        
+    }
+        
+    }
+        
+       
+        if((changed(R)&!R)|!At2){
+        Rad2=30
+        holoEntity(4):remove(0.1)
+        soundStop(2,0)
+        Ar:clear()
+        }
+    #}
+ #   if(changed(R)&R) {
+        
+ #       P=propSpawn("models/props_c17/oildrum001_explosive.mdl",E:pos(),1)
+        #P=propSpawn("models/props_c17/oildrum001_explosive.mdl",G:pos(),1)
+#q        P:propBreak()
+        #P:applyAngForce(O:eyeAngles())
+ #   }
+    
+
+  #      O=entitySpawn("item_battery",1)
+   #if(owner():health()<220&owner():health()>0) {
+   # O:setKeyValue("health",220)}
+
+
+#     if(owner():health()<2299999999&owner():health()>0) {
+#    O:setKeyValue("health",2209999999)}
+  
+#}
+
+Color:toString()
+
+#Made by Aionics
+
+

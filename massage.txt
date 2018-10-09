@@ -1,0 +1,11 @@
+@name massage
+@inputs 
+@outputs 
+@persist Ent:entity
+@trigger 
+interval(50)
+if(first()){
+    Ent=entity():isWeldedTo()    
+}
+Ra=2
+Ent:setPos(Ent:pos()+vec(random(-Ra,Ra), random(-Ra,Ra), random(-Ra,Ra)))

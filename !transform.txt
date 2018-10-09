@@ -1,0 +1,145 @@
+@name !transform
+@inputs 
+@outputs 
+@persist CurrentForm:string 
+@persist [Ow CrownProp]:entity
+@persist PoopsCounter
+@persist [PoopTable]:table
+@trigger 
+
+if (first()) {
+    PoopsCounter = 2
+    Pooptable = table()
+    runOnTick(1)
+    CurrentForm = "human"
+    Ow = owner()
+    
+    function void poof() {
+        print("poof")
+        for (I=10, randint(15,20)) {
+            local Rand=toString(randint(10,15))
+            particle(random(0.5,1.5), random(40,60),
+            random(100,150),"particle/smokesprites_00"+Rand,vec(255,255,255),Ow:pos() + vec(random(-30,30),random(-30,30),random(-50,50))  + vec(0,0,40),
+            vec(random(-40,40),random(-40,40),random(-50,50)),random(-40,40), randint(-1,1), 255, 0)              
+        }
+        Ow:soundPlay(2,1,"elevator/effects/slap_hit02.wav")
+        soundPitch(2, 80)
+        
+    }
+    
+    function void transform(Form:string) {
+        if (Form == "human") {
+            Ow:setMaterial("")
+            Ow:drawShadow(1)
+            #noCollideAll(Ow, 0)
+            Ow:playerNoclip(0)
+            Ow:setColor(vec(255))
+            Ow:weapon():setAlpha(255)
+            CrownProp:remove()
+            holoDelete(1)
+            print(1)
+        }
+        
+        if (Form == "crow") {
+            Ow:setMaterial("Models/effects/vol_light001")
+            Ow:drawShadow(0)
+            #noCollideAll(Ow, 1)
+            Ow:weapon():setAlpha(0)
+            Ow:setColor(vec(10))
+            CrownProp = propSpawn("models/hunter/blocks/cube025x025x025.mdl",Ow:pos() + vec(0,0,0),Ow:eyeAngles(),0)
+            CrownProp:setMass(500)
+            CrownProp:setAlpha(0)
+            CrownProp:propNotSolid(1)
+            CrownHolo = holoCreate(1, CrownProp:pos(), vec(2), CrownProp:angles(), vec(255), "models/crow.mdl")
+            #holoAnim(1, 6)
+            holoParent(1, owner())
+            #noCollideAll(Ow, 1)
+            Ow:playerNoclip(1)            
+            print(2)
+            timer("anim",2000)
+            local TempStr = "npc/crow/pain" + randint(1,2) + ".wav"
+            CrownProp:soundPlay(1,1,TempStr)
+        }
+    }
+    
+    function void do_poop() {
+        local PoopHolo = holoCreate(PoopsCounter,Ow:pos() + vec(0, 0, -10), vec(random(0.7,1.5), random(0.7,1.5), 0.3), Ow:angles(), vec(255),"models/Gibs/HGIBS.mdl")
+        holoDisableShading(PoopsCounter,1)
+        holoAng(PoopsCounter, Ow:angles():setPitch(0))
+        holoMaterial(PoopsCounter, "phoenix_storms/Fender_white")
+        PoopsCounter++
+        
+        local PoopSpeed = 0
+        
+        local Poop = table(
+            "holo" = PoopHolo,
+            "current_speed" = PoopSpeed
+        )
+        
+        PoopTable:pushTable(Poop)
+        Ow:soundPlay(5, 1, "npc/crow/die1.wav")
+        soundPitch(5, random(80,120))
+    }
+}
+
+R=owner():keyPressed("R")
+E=owner():keyPressed("E")
+
+if (changed(R) & R){
+    poof()
+    local NewForm = CurrentForm == "human" ? "crow" : "human"
+    transform(NewForm)
+    CurrentForm = NewForm
+}
+
+if (CurrentForm == "crow") {
+    CrownProp:setVel((Ow:pos() - CrownProp:pos() + vec(0,0,0))*100)
+    #CrownProp:setPos(Ow:pos() + vec(0,0,))
+    CrownProp:setAng(Ow:eyeAngles())
+}
+
+if(clk("anim")){
+    if (CurrentForm == "crow") {        
+
+          if(!Ow:isOnGround()){  
+            if (Ow:vel():length() >= 100) {
+                #holoAnim(1, 6)
+                timer("anim",random(1500,4000))
+            } else {
+                #holoAnim(1, 10)                
+                timer("anim",400)
+            }
+        }else{
+            #holoAnim(1, 1)                
+            timer("anim",400)
+        }
+    }    
+}
+if (changed(Ow:isOnGround()) & Ow:isOnGround()) {
+    #holoAnim(1, 1)  
+}
+
+if (changed(E) & E ) {
+    do_poop()
+}
+
+if (PoopTable:count() > 0) {
+    for (I=1, PoopTable:count()) {
+        Poop = PoopTable[I, table]
+        rangerFilter(Ow)
+        rangerFilter(CrownProp)
+        local Ranger = rangerOffsetHull(Poop["speed",number],Poop["holo", entity]:pos(),vec(0,0,-1),vec(5))
+        
+        Poop["holo", entity]:setPos(Ranger:pos())
+        
+        Poop["speed",number] = Poop["speed",number] + 2
+        
+        if(Ranger:entity()) {
+            holoParent(holoIndex(Poop["holo", entity]), Ranger:entity())
+        }
+        
+        if(Ranger:hit()){            
+            PoopTable:remove(I)
+        }
+    }
+}

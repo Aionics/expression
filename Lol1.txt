@@ -1,0 +1,39 @@
+@name Lol1
+@inputs 
+@outputs 
+@persist T H X [EE Ow]:entity
+@trigger 
+
+interval(10)
+
+if(first()) { 
+    holoCreate(1)
+    holoEntity(1):setTrails(10,10,2,"trails/physbeam",vec(100,200,255),255)
+    holoModel(1,"hq_sphere")
+    holoScale(1,vec(1))
+    holoColor(1,vec(100,200,255))
+
+}
+
+T=T+10
+
+
+holoPos(1,owner():pos()+vec(sin(T)*40,cos(T)*40,H))
+
+if(H==0){
+    X=0
+}
+if(H==100){
+    X=1
+}
+if(X==0){
+    H++
+}
+if(X==1){
+    H--
+}
+
+
+
+
+EndPos=Ow:attachmentPos("eyes")

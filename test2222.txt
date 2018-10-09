@@ -1,0 +1,11 @@
+@name test
+@inputs 
+@outputs A_s:string
+@persist A:vector
+@trigger 
+
+interval(5)
+
+A = owner():eye()
+A_s = A:toString()
+

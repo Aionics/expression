@@ -1,0 +1,22 @@
+@name Shield 3
+@persist Active
+@model  
+
+runOnTick(1)
+
+O = owner()
+
+    findIncludeClass("prop_combine_ball")
+    findInSphere(O:pos()+vec(0,0,90),300)
+    Target = find()
+    
+if(!Target)
+{
+    Active=1
+}
+else{Active=0}
+
+if(Active==0)
+{
+    Target:setPos(Target:pos())
+}

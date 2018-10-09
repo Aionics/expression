@@ -1,0 +1,14 @@
+@name killer_for_assholes_5hp'er
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+#[
+    A new preprocessor command, @autoupdate has been added.
+    See the wiki for more info.
+
+    Documentation and examples are available at:
+    http://wiki.wiremod.com/wiki/Expression_2
+    The community is available at http://www.wiremod.com
+]#

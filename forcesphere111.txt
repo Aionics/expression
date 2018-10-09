@@ -1,0 +1,238 @@
+@name forcesphere
+@inputs 
+@outputs Ar_s:string N Ar:array Tar:entity M TarN 
+@persist [E Tar O Holo]:entity A  Arc:array Spr:entity Size:vector LS:string
+@trigger 
+
+
+
+
+if(first()){
+runOnTick(1)
+
+E=entity()
+#E:propNotSolid(1)
+
+E:setMaterial("models/debug/debugwhite")
+E:setColor(vec(255,0,0),255)
+O=owner()
+E:removeOnDelete(owner())
+
+
+
+    holoCreate(1)
+    holoPos(1,E:toWorld(vec(0)))
+    holoModel(1,"models/holograms/icosphere3.mdl")
+    holoMaterial(1,"models/debug/debugwhite")
+    holoScale(1,vec(75))
+    holoColor(1,vec(15,15,15))
+    holoAlpha(1,250)
+    holoDisableShading(1,1)
+    
+    holoCreate(3)
+    holoPos(3,E:toWorld(vec(0)))
+    holoModel(3,"models/holograms/icosphere3.mdl")
+    holoMaterial(3,"models/wireframe")
+    holoScale(3,vec(75))
+    holoColor(3,vec(250,0,0))
+    holoAlpha(3,255)
+    holoDisableShading(3,1)
+    
+    holoCreate(2)
+    holoPos(2,E:toWorld(vec(0)))
+    holoModel(2,"models/holograms/icosphere3.mdl")
+    holoMaterial(2,"models/debug/debugwhite")
+    holoScale(2,vec(-75))
+    holoColor(2,vec(20,20,20))
+    holoAlpha(2,150)
+    holoDisableShading(2,1)
+    
+    holoCreate(4)
+    holoPos(4,E:toWorld(vec(0)))
+    holoModel(4,"models/holograms/icosphere3.mdl")
+    holoMaterial(4,"models/shadertest/predator")
+    holoScale(4,vec(75.1))
+    holoColor(4,vec(20,20,20))
+    holoAlpha(4,255)
+    holoDisableShading(4,1)
+for(I=5,10){   
+    holoCreate(I)
+    holoPos(I,E:toWorld(vec(0)))
+    holoModel(I,"models/hunter/misc/shell2x2a.mdl")
+    holoMaterial(I,"models/props_combine/portalball001_sheet")
+    holoScale(I,vec(6.5))
+    holoColor(I,vec(255,0,0))
+    holoAlpha(I,255)
+    holoDisableShading(I,1)
+    holoParent(I,E)
+}
+    
+
+
+
+holoParent(1,E)
+
+holoParent(2,E)
+
+holoParent(3,E)
+
+holoParent(4,E)
+
+findInSphere(E:toWorld(vec(0,0,0)),100)
+findSortByDistance(E:toWorld(vec(0,0,0)))
+#findIncludeClass("player")
+findIncludeClass("NPC")
+#findIncludeClass("prop_physics")
+#findExcludePlayer("aionics")
+findExcludePlayer("Most")
+findExcludePlayer("Den246")
+findExcludePlayer("Alex67")
+findExcludePlayer("banan")
+findExcludePlayer("cocobo")
+findExcludePlayer("double")
+findExcludePlayer("balala")
+findExcludePlayer("flart")
+findExcludePlayer("forest")
+findExcludePlayer("freekill")
+findExcludePlayer("immortal")
+findExcludePlayer("Mr.Phoenix")
+findExcludePlayer("botosh")
+findExcludePlayer("Bangal")
+findExcludePlayer("Batman")
+findExcludePlayer("myc9")
+findExcludePlayer("borov")
+findExcludePlayer("SerGun")
+findExcludePlayer("shepard")
+findExcludePlayer(">Yoko<")
+findExcludePlayer("realne")
+findExcludePlayer("orange")
+findExcludePlayer("kast")
+findExcludePlayer("mr. con")
+findExcludePlayer("san9q")
+findExcludePlayer("Hero")
+findExcludePlayer("очка")
+
+
+
+
+
+
+
+}
+LS=owner():lastSaid()
+findInSphere(E:pos(),455)
+#findClipFromSphere(E:pos(),99999)
+#findClipToSphere(holoEntity(7):toWorld(vec(0,0,0)),250)
+#findClipToSphere(holoEntity(2):toWorld(vec(0,0,0)),250)
+#findSortByDistance(holoEntity(2):toWorld(vec(0,0,0)))
+findExcludeClass("weapon")
+findIncludeClass("player")
+findIncludeClass("vehicle")
+#qfindIncludeClass("wire")
+findExcludePlayer("aionics")
+findExcludePlayer("flart")
+findExcludePlayer("realn")
+findExcludePlayer("double")
+findExcludePlayer("flart")
+findExcludePlayer("theden")
+findExcludePlayer("chorb")
+findExcludePlayer("Unnamed")
+findExcludePlayer("phoenix")
+findExcludePlayer("marku")
+findExcludePlayer("SnOOp")
+findExcludePlayer("Most")
+findExcludePlayer("Artes")
+findExcludePlayer("Sayaka")
+findExcludePlayer("Cirno")
+findExcludePlayer("shepard")
+findExcludePlayer("Kast")
+findExcludePlayer("SerGun")
+findExcludePlayer("empty")
+findExcludePlayer("theshad")
+findExcludePlayer("balala")
+#findExcludePlayer(LS)
+findExcludePlayerProps("Most")
+findExcludePlayerProps("double")
+findExcludePlayerProps("theden")
+findExcludePlayerProps("phoenix")
+findExcludePlayerProps("SnOOp")
+findExcludePlayerProps("realne")
+findExcludePlayerProps("balala")
+findExcludePlayerProps("chorb")
+findExcludePlayerProps("Cirno")
+findExcludePlayerProps("Kast")
+findExcludePlayerProps("shepard")
+findExcludePlayerProps("maiha")
+findExcludePlayerProps("theshad")
+findExcludePlayerProps("Unnamed")
+findExcludePlayerProps("SerGun")
+findExcludePlayerProps("Sayaka")
+findExcludePlayerProps("empty")
+findExcludePlayerProps("Artes")
+findExcludePlayerProps(owner())
+findIncludeClass("NPC")
+findIncludeClass("wire")
+findIncludeClass("prop_physics")
+findIncludeClass("rpg")
+findIncludeClass("prop_combine_ball")
+findIncludeClass("crossbow_bolt")
+findIncludeClass("grenade_ar2")
+
+
+
+Tar=find()
+Ar=findToArray()
+for(I=1,Ar:count()){
+
+    if(Ar[I,entity]:isNPC()|Ar[I,entity]:isVehicle()){Ar[I,entity]:remove()}
+    if(Ar[I,entity]:isPlayer()|Ar[I,entity]:isVehicle()){Ar[I,entity]:setVel( (Ar[I,entity]:pos()-E:pos()):normalized()*30+vec(0,0,20))}
+    #if(Ar[I,entity]:isPhysics()|Ar[I,entity]:isVehicle()){Ar[I,entity]:remove()}
+
+    Ar[I,entity]:setPos((Ar[I,entity]:pos()-E:pos()):normalized()*465+E:pos())
+    Ar[I,entity]:playerNoclip(0)
+    Ar[I,entity]:setVel(Ar[I,entity]:vel()*vec(-1))    
+    Ar[I,entity]:propFreeze(0)
+    Ar[I,entity]:setVel((Ar[I,entity]:pos()-E:pos())*4)
+
+}
+#[if(Tar:isNPC()|Tar:isVehicle()){Tar:remove()}
+if(changed(Tar)&Tar){
+    Tar:setPos((Tar:pos()-E:pos()):normalized()*465+E:pos())
+    Tar:playerNoclip(0)
+    Tar:setVel(Tar:vel()*vec(-1))    
+    Tar:propFreeze(0)
+    Tar:setVel((Tar:pos()-E:pos())*4)
+    
+}]#
+if(changed(Tar)&Tar){
+#    N=(N+1)%9
+#    holoPos(N+1,Tar:pos())
+for(I=1,5){
+particle(1.5,30,0,"effects/tp_eyefx/tp_eyefx",vec(255),Tar:pos(),vec(0))
+}
+}
+TarN=Tar:isNPC()
+#for(I=1,9)
+#{
+#    Size=holoEntity(I+1):size()
+#}
+
+#[
+Ar_s=""
+Ar=Arc
+#if (tpe == "player") {
+Ar=findToArray()
+#}
+for(I=1,Ar:count()){
+
+Ar_s=Ar_s+" #
+#"+Ar[I,entity]:toString()
+}
+]#
+
+#Tar:setVel((Tar:pos()-E:pos())*2000) 
+M=owner():keyPressed("N")
+if(changed(M)&M){
+    E:setPos(owner():aimPos())
+        holoScale(4,vec(75.1))
+}

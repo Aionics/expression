@@ -1,0 +1,130 @@
+@name @Bong@
+@inputs 
+@outputs 
+@persist [E O]:entity Color:vector4 T
+@trigger 
+interval(100)
+
+if(first()){
+    E = entity()
+    O = owner()
+    
+    Color=vec4(200,200,200,100)
+    
+    holoCreate(0)
+    holoScale(0,vec(0,0,0))
+    holoPos(0,O:attachmentPos("anim_attachment_RH"))
+    holoAng(0,O:attachmentAng("anim_attachment_RH"))
+    holoParentAttachment(0,O,"anim_attachment_RH")
+
+    holoCreate(100)
+    holoScale(100,vec(0,0,0))
+    holoPos(100,O:attachmentPos("zipline"))
+    holoAng(100,O:attachmentAng("zipline"))
+    holoParentAttachment(100,O,"zipline")    
+
+    holoCreate(200)
+    holoScale(200,vec(0,0,0))
+    holoPos(200,O:attachmentPos("eyes"))
+    holoAng(200,O:attachmentAng("eyes"))
+    holoParentAttachment(200,O,"eyes")
+
+    
+    holoCreate(1)
+    holoScale(1,vec(0,0,0))
+    
+    holoCreate(2)
+    holoModel(2,"hq_tube_thin")  
+    holoScale(2,vec(0.3,0.3,1.5)) 
+    holoPos(2,holoEntity(1):toWorld(vec(0,0,0)))
+    holoParent(2,1)
+    holoColor(2,Color)
+
+    holoCreate(3)
+    holoModel(3,"hq_torus_thin")  
+    holoScale(3,vec(0.32,0.32,0.32)) 
+    holoPos(3,holoEntity(1):toWorld(vec(0,0,9.01)))
+    holoParent(3,1)
+    holoColor(3,Color)
+
+    holoCreate(4)
+    holoModel(4,"hq_torus_thin")  
+    holoScale(4,vec(0.3,0.3,0.3)) 
+    holoPos(4,holoEntity(1):toWorld(vec(0,0,9.01)))
+    holoParent(4,1)
+    holoColor(4,Color)
+
+    holoCreate(5)
+    holoModel(5,"hqcone")  
+    holoScale(5,vec(0.5,0.5,0.1)) 
+    holoPos(5,holoEntity(1):toWorld(vec(0,0,-8.8)))
+    holoParent(5,1)
+    holoColor(5,Color)
+
+    holoCreate(6)
+    holoModel(6,"hq_tube_thin")  
+    holoScale(6,vec(0.03,0.03,0.3)) 
+    holoPos(6,holoEntity(1):toWorld(vec(1.5,0,-5.8)))
+    holoParent(6,1)
+    holoColor(6,Color)
+    holoAng(6,holoEntity(1):toWorld(ang(35,0,0)))
+
+    holoCreate(7)
+    holoModel(7,"models/props_junk/TrafficCone001a.mdl")  
+    holoScale(7,vec(0.1,0.1,0.05)) 
+    holoPos(7,holoEntity(6):toWorld(vec(0,0,2.5)))
+    holoParent(7,6)
+    holoColor(7,vec4(0,0,0,200))
+    holoAng(7,holoEntity(6):toWorld(ang(180,0,0)))
+
+    holoCreate(8)
+    holoModel(8,"hqcylinder")  
+    holoScale(8,vec(0.28,0.28,1)) 
+    holoPos(8,holoEntity(1):toWorld(vec(0,0,3)))
+    holoParent(8,1)
+   
+
+    
+    holoEntity(1):soundPlay(0,0,"ambient/water/leak_1.wav")
+    soundPitch(0,80)
+    
+}
+
+if(O:weapon():model() == "models/weapons/w_crowbar.mdl"|O:inVehicle()){
+    O:weapon():setAlpha(0)
+    if(O:keyAttack2()){
+        if(O:health() <= 300){
+        O:setHealth(O:health()+1)
+        }
+        holoParent(1,200)
+        holoPos(1,holoEntity(200):toWorld(vec(8,0,-10)))
+        holoAng(1,holoEntity(200):toWorld(ang(-50,0,0)))
+        soundVolume(0,1)
+        if(T<250){T=T+5}
+        
+    }
+    else{
+        
+        
+        holoParent(1,0)
+        holoPos(1,holoEntity(0):toWorld(vec(0,0,0)))
+        holoAng(1,holoEntity(0):toWorld(ang(0,0,0)))
+        soundVolume(0,0)
+        if(T>0){T=T-5}
+        particle(25,random(15,25),random(50,200),"particle/smokesprites_0001",vec(200,200,200),holoEntity(200):toWorld(vec(4,0,-2)),holoEntity(200):forward()*20+vec(0,0,30),randint(0,360),random(-3,3),T,0)
+        
+    }
+   
+}
+else{
+    
+    holoParent(1,100)
+    holoPos(1,holoEntity(100):toWorld(vec(0,0,0)))
+    holoAng(1,holoEntity(100):toWorld(ang(0,0,0)))
+    soundVolume(0,0)
+    particle(38,60,50,"particle/smokesprites_0001",vec(200,200,200),holoEntity(200):toWorld(vec(4,0,-2)),holoEntity(200):forward()*20+vec(0,0,30),randint(0,360),2,T,0)
+    if(T>0){T=T-5}
+       
+}
+holoAlpha(8,T)
+

@@ -1,0 +1,14 @@
+@name HoloVis
+
+
+interval(50)
+
+
+
+if (first()){
+E=entity()    
+E=holoCreate(1)
+}
+O=findPlayerByName("FREEKILL")
+holoPos(1,O:pos())
+#holoPos(1,findPlayerByName("FREEKILL"))

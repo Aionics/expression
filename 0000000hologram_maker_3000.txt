@@ -1,0 +1,836 @@
+@name 0000000hologram_maker_3000
+@inputs 
+@outputs Active Step Arr_s1:string I Page_m Page_c Scale V_scale_s:string Prop:entity EGP_s:vector2 Page_new 
+@persist [O P EGP1 Prop]:entity EGP:wirelink
+@persist [A_vec4 D_vec4 W_vec4 B_vec4]:vector4
+@persist Active Ang_box6 E Step I N L Name:string Page_m Page_c  Scale Button_N V_scale:vector Sound_index
+@persist Arr_name:array Arr_s:array Arr_p:array Arr_active:array
+@trigger 
+
+########################################################################################################################
+#[
+main buttons = I+3/5
+
+]#
+########################################################################################################################
+runOnTick(1)
+if(first()){
+    O=owner()
+#    O=findPlayerByName("Phoen")
+    Step=1
+    Active=0
+    Page=1
+    
+    EGP = entity():isWeldedTo():wirelink()
+    A_vec4=vec4(255,255,100,255)
+    D_vec4=vec4(255,255,200,255)
+    W_vec4=vec4(255,150,150,255)
+    B_vec4=vec4(20,20,20,255)
+    I=(-1)
+    N=(-1)
+    L=0
+
+
+
+    EGP:egpClear()
+    EGP:egpDrawTopLeft(1)
+    EGP:egpRoundedBox(99,vec2(-10,-10),vec2(600,600))
+    EGP:egpBox(6,vec2(100,100),vec2(300,300))
+    EGP:egpCircle(1,vec2(250,250),vec2(150,150))
+#    EGP:egpBox(7,EGP:egpPos(1)-vec2(140),EGP:egpPos(1)+vec2(0))
+    EGP:egpTriangle(48,vec2(0,0),vec2(0,28),vec2(10,22))
+    EGP:egpTriangle(49,vec2(1,4),vec2(1,26.5),vec2(8.5,22))
+    
+    EGP:egpText(3,"Let's do this",vec2(180,240))
+    EGP:egpColor(1,vec4(255,255,150,255))
+    EGP:egpColor(99,vec4(30,30,30,255))
+    EGP:egpColor(3,vec4(30,30,30,255))
+    EGP:egpColor(49,vec4(255,255,150,255))
+    EGP:egpColor(48,vec4(30,30,30,255))
+    EGP:egpColor(6,vec4(255,255,150,5))
+    EGP:egpSize(3,30)
+ #   EGP:egpParent(5,4)
+    EGP:egpParentToCursor(48)
+    EGP:egpParentToCursor(49)
+    
+    
+            function do_drawHOLOlist ()
+            {
+                EGP:egpSetText(15,Page_c:toString())
+                for(J=1,10){
+                    EGP:egpColor(J-1+50,B_vec4)
+                }
+                if(Page_c==Page_m){
+                    for(J=1,I-(Page_c-1)*10)
+                    {
+                        if(Arr_active[J+(Page_c-1)*10,number])
+                        {
+                            EGP:egpColor(J-1+50,A_vec4)
+                        }else{
+                            EGP:egpColor(J-1+50,D_vec4)
+                        }
+                        EGP:egpSetText(J-1+60,Arr_name[(Page_c-1)*10+J,string])
+                    }
+                }else{
+                    for(J=1,10)
+                    {
+                        if(Arr_active[J+(Page_c-1)*10,number])
+                        {
+                            EGP:egpColor(J-1+50,A_vec4)
+                        }else{
+                            EGP:egpColor(J-1+50,D_vec4)
+                        }
+                        EGP:egpSetText(J-1+60,Arr_name[(Page_c-1)*10+J,string])
+                    }
+                }
+            }
+            function do_soundCLCK ()
+            {
+                Sound_index=(Sound_index+1)%10
+                soundPlay(Sound_index+12,1.5,"buttons/button17.wav")
+                soundPitch(Sound_index+12,70) 
+                
+            }
+            function do_activeHOLO ()
+            {
+                if(Page_c==Page_m){
+                    for(J=1,I-(Page_c-1)*10)
+                    {
+                        if(inrange(EGP:egpCursor(O),vec2(10,90+(J-1)*41), vec2(10,90+(J-1)*41)+EGP:egpSize(50)))
+                        {
+                            Arr_active[J+(Page_c-1)*10,number]=!Arr_active[J+(Page_c-1)*10,number]
+                            if(Arr_active[J+(Page_c-1)*10,number])
+                                {
+                                    EGP:egpColor(J-1+50,A_vec4)   
+                                }else{
+                                    EGP:egpColor(J-1+50,D_vec4)
+                                }
+                            do_soundCLCK()
+                        }
+                    }
+                
+                }else{
+                    for(J=1,10)
+                    {
+                        if(inrange(EGP:egpCursor(O),vec2(10,90+(J-1)*41), vec2(10,90+(J-1)*41)+EGP:egpSize(50)))
+                        {
+                            Arr_active[J+(Page_c-1)*10,number]=!Arr_active[J+(Page_c-1)*10,number]
+                            if(Arr_active[J+(Page_c-1)*10,number])
+                                {
+                                    EGP:egpColor(J-1+50,A_vec4)   
+                                }else{
+                                    EGP:egpColor(J-1+50,D_vec4)
+                                }
+                            do_soundCLCK()
+                        }
+                    }
+                }
+                
+            }
+            function do_newPAGE ()
+            {
+                Page_m++
+                Page_c=Page_m
+                EGP:egpSetText(17,Page_m:toString())
+                do_drawHOLOlist()              
+                
+            }
+
+            function do_pageUP ()
+            {
+                if(Page_c>1)
+                {
+                    EGP:egpColor(14,A_vec4)
+                    Page_c--
+                    do_soundCLCK()                   
+                    do_drawHOLOlist()
+                }else{
+                    EGP:egpColor(14,W_vec4)
+                    soundPlay(10,1.5,"buttons/button8.wav")
+                    soundPitch(10,145)
+                }
+               
+            }
+            function do_pageDOWN ()
+            {
+                if(Page_c<Page_m)
+                {
+                    EGP:egpColor(18,A_vec4)
+                    Page_c++
+                    do_soundCLCK()
+                    do_drawHOLOlist()
+                }else{
+                    EGP:egpColor(18,W_vec4)
+                    soundPlay(10,1.5,"buttons/button8.wav")
+                    soundPitch(10,145)
+                }
+            }
+}
+
+E=O:keyUse()
+if( changed(E)&E&!Active&( (inrange(EGP:egpCursor(O),EGP:egpPos(1)-vec2(140), EGP:egpPos(1)+vec2(140))) | Step==2)  ){Step++}
+
+
+
+if(Step==1)
+{
+    if(inrange(EGP:egpCursor(O),EGP:egpPos(1)-vec2(140), EGP:egpPos(1)+vec2(140)))
+    {
+        
+        Ang_box6=Ang_box6-1
+        EGP:egpColor(6,vec4(255,255,150,15))
+        EGP:egpText(3,"Press me!",vec2(180,240))        
+        }else{
+        Ang_box6=Ang_box6+0.25
+        EGP:egpColor(6,vec4(255,255,150,5))
+        EGP:egpText(3,"Let's do this",vec2(180,240))
+    }
+    EGP:egpAngle(6,vec2(250),vec2(-150),Ang_box6)
+}
+if(changed(Step)&Step==2)
+{
+    holoCreate(1)
+    holoMaterial(1,"models/debug/debugwhite") 
+    holoModel(1,"models/hunter/blocks/cube4x4x4.mdl")
+    holoColor(1,vec(255,100,20))
+    holoScale(1,vec(1,1.55,1.55))
+    holoAlpha(1,50)  
+    holoDisableShading(1,1)
+    EGP:egpText(3,"Now place this!",vec2(170,240))
+    
+}
+if(Step==2)
+{   
+    holoPos(1,O:aimPos()+vec(0,0,100))
+    Ang_box6=Ang_box6-1
+    EGP:egpAngle(6,vec2(250),vec2(-150),Ang_box6)
+}
+if(changed(Step)&Step==3)
+{
+    Active=1
+    I=-1
+###BOX###   
+
+    holoCreate(2,O:aimPos())
+    holoDelete(1)
+    holoCreate(3,holoEntity(2):pos()+vec(-150,-150,0))
+    holoCreate(4,holoEntity(2):pos()+vec(150,150,200))
+    
+    holoCreate(5,holoEntity(2):pos()+vec(0,-150,0),vec(0.25,0.25,25),ang(90,0,0),vec(255,255,100),"models/holograms/cylinder.mdl")
+    holoAlpha(5,70)  
+    holoDisableShading(5,1)
+    
+    holoCreate(6,holoEntity(2):pos()+vec(-150,0,0),vec(0.25,0.25,25),ang(0,0,90),vec(255,255,100),"models/holograms/cylinder.mdl")
+    holoAlpha(6,100)  
+    holoDisableShading(6,1)
+    
+    holoCreate(7,holoEntity(2):pos()+vec(150,0,0),vec(0.25,0.25,25),ang(0,0,90),vec(255,255,100),"models/holograms/cylinder.mdl")
+    holoAlpha(7,100)  
+    holoDisableShading(7,1)
+
+    holoCreate(8,holoEntity(2):pos()+vec(0,150,0),vec(0.25,0.25,25),ang(90,0,0),vec(255,255,100),"models/holograms/cylinder.mdl")
+    holoAlpha(8,70)  
+    holoDisableShading(8,1)
+    
+    holoPos(2,holoEntity(2):pos()+vec(0,0,0))
+
+    holoCreate(10,holoEntity(2):pos()+vec(0,0,50),vec(0.25,0.25,0.25),ang(0,0,0),vec(255,255,0),"hq_sphere")
+    holoAlpha(10,30)  
+    holoDisableShading(10,1)
+    
+    holoCreate(11,holoEntity(10):pos(),vec(0.25,0.25,25),ang(90,0,0),vec(255,50,50),"models/holograms/cylinder.mdl")
+    holoAlpha(11,30)  
+    holoDisableShading(11,1)
+    
+    holoCreate(12,holoEntity(10):pos(),vec(0.25,0.25,25),ang(90,0,90),vec(50,50,255),"models/holograms/cylinder.mdl")
+    holoAlpha(12,30)  
+    holoDisableShading(12,1)
+    
+    holoCreate(13,holoEntity(10):pos(),vec(0.25,0.25,25),ang(0,0,0),vec(50,255,50),"models/holograms/cylinder.mdl")
+    holoAlpha(13,30)  
+    holoDisableShading(13,1)
+
+###/BOX###
+     
+###EGP###
+    EGP:egpClear()
+
+    EGP:egpBox(1,vec2(0,0),vec2(512,512)) #back
+    EGP:egpColor(1,vec4(30,30,30,255))
+    
+    EGP:egpBox(2,-EGP:egpSize(1)/2+vec2(5,5),vec2(500,65)) #main_buttons_back
+    EGP:egpColor(2,B_vec4)
+    EGP:egpParent(2,1)
+    
+    
+    EGP:egpBox(3,-EGP:egpSize(1)/2+vec2(5,75),vec2(500,3)) #horizontal_line
+    EGP:egpColor(3,A_vec4)
+    EGP:egpParent(3,1)
+    
+    for(I=1,5)
+    {
+        EGP:egpBox(I+3,-EGP:egpSize(2)/2+vec2((I-1)*109+3,0),vec2(60,60)) #8_end_main_buttons
+        EGP:egpColor(I+3,D_vec4)
+        EGP:egpParent(I+3,2)
+    }
+    
+    EGP:egpColor(4,A_vec4)
+    
+    EGP:egpBox(9,-EGP:egpSize(1)/2+vec2(5,85),vec2(500,420)) #back_2
+    EGP:egpColor(9,B_vec4)
+    EGP:egpParent(9,1)
+    
+    EGP:egpBox(12,-EGP:egpSize(9)/2+vec2(0,0),vec2(335,420)) #holos_back
+    EGP:egpColor(12,B_vec4)
+    EGP:egpParent(12,9)
+    
+    EGP:egpBox(13,-EGP:egpSize(9)/2+vec2(335,0),vec2(165,420)) #buttons_right1_back
+    EGP:egpColor(13,B_vec4)
+    EGP:egpParent(13,9)
+    
+    EGP:egpTriangle(14,-EGP:egpSize(9)/2+vec2(335,110),-EGP:egpSize(9)/2+vec2(328,150),-EGP:egpSize(9)/2+vec2(342,150)) #UP
+    EGP:egpColor(14,D_vec4)
+    EGP:egpParent(14,9)    
+
+    EGP:egpText(15,"1",-EGP:egpSize(9)/2+vec2(330,165)) 
+    EGP:egpSize(15,20)
+    EGP:egpColor(15,A_vec4)
+    EGP:egpParent(15,9)
+    
+    EGP:egpText(16,"/",-EGP:egpSize(9)/2+vec2(330,190)) 
+    EGP:egpSize(16,20)
+    EGP:egpColor(16,A_vec4)
+    EGP:egpParent(16,9)
+    
+    EGP:egpText(17,"1",-EGP:egpSize(9)/2+vec2(330,215)) 
+    EGP:egpSize(17,20)
+    EGP:egpColor(17,A_vec4)
+    EGP:egpParent(17,9)
+    
+    EGP:egpTriangle(18,-EGP:egpSize(9)/2+vec2(335,290),-EGP:egpSize(9)/2+vec2(328,250),-EGP:egpSize(9)/2+vec2(342,250)) #Down
+    EGP:egpColor(18,D_vec4)
+    EGP:egpParent(18,9)
+    
+    EGP:egpBox(19,-EGP:egpSize(13)/2+vec2(15,0),vec2(150,50)) #button_scale
+    EGP:egpColor(19,D_vec4)
+    EGP:egpParent(19,13)    
+    EGP:egpText(20,"Scale",-EGP:egpSize(19)/2+vec2(30,5)) 
+    EGP:egpSize(20,40)
+    EGP:egpColor(20,B_vec4)
+    EGP:egpParent(20,19)
+    
+    EGP:egpBox(21,-EGP:egpSize(13)/2+vec2(15,52),vec2(48,50)) #button_scale_X
+    EGP:egpColor(21,D_vec4)
+    EGP:egpParent(21,13)    
+    EGP:egpText(22,"X",-EGP:egpSize(21)/2+vec2(13,5)) 
+    EGP:egpSize(22,40)
+    EGP:egpColor(22,B_vec4)
+    EGP:egpParent(22,21)
+    
+    EGP:egpBox(23,-EGP:egpSize(13)/2+vec2(66,52),vec2(48,50)) #button_scale_Y
+    EGP:egpColor(23,D_vec4)
+    EGP:egpParent(23,13)    
+    EGP:egpText(24,"Y",-EGP:egpSize(23)/2+vec2(13,5)) 
+    EGP:egpSize(24,40)
+    EGP:egpColor(24,B_vec4)
+    EGP:egpParent(24,23)
+
+    EGP:egpBox(25,-EGP:egpSize(13)/2+vec2(116,52),vec2(48,50)) #button_scale_Z
+    EGP:egpColor(25,D_vec4)
+    EGP:egpParent(25,13)    
+    EGP:egpText(26,"Z",-EGP:egpSize(25)/2+vec2(13,5)) 
+    EGP:egpSize(26,40)
+    EGP:egpColor(26,B_vec4)
+    EGP:egpParent(26,25)
+    
+    EGP:egpBox(27,-EGP:egpSize(13)/2+vec2(15,110),vec2(150,50)) #button_rotation
+    EGP:egpColor(27,D_vec4)
+    EGP:egpParent(27,13)    
+    EGP:egpText(28,"Rotation",-EGP:egpSize(27)/2+vec2(5,5)) 
+    EGP:egpSize(28,40)
+    EGP:egpColor(28,B_vec4)
+    EGP:egpParent(28,27)
+    
+    EGP:egpBox(29,-EGP:egpSize(13)/2+vec2(15,162),vec2(48,50)) #button_rotation_X
+    EGP:egpColor(29,D_vec4)
+    EGP:egpParent(29,13)    
+    EGP:egpText(30,"X",-EGP:egpSize(29)/2+vec2(13,5)) 
+    EGP:egpSize(30,40)
+    EGP:egpColor(30,B_vec4)
+    EGP:egpParent(30,29)
+    
+    EGP:egpBox(31,-EGP:egpSize(13)/2+vec2(66,162),vec2(48,50)) #button_rotation_Y
+    EGP:egpColor(31,D_vec4)
+    EGP:egpParent(31,13)    
+    EGP:egpText(32,"Y",-EGP:egpSize(31)/2+vec2(13,5)) 
+    EGP:egpSize(32,40)
+    EGP:egpColor(32,B_vec4)
+    EGP:egpParent(32,31)
+
+    EGP:egpBox(33,-EGP:egpSize(13)/2+vec2(116,162),vec2(48,50)) #button_rotation_Z
+    EGP:egpColor(33,D_vec4)
+    EGP:egpParent(33,13)    
+    EGP:egpText(34,"Z",-EGP:egpSize(33)/2+vec2(13,5)) 
+    EGP:egpSize(34,40)
+    EGP:egpColor(34,B_vec4)
+    EGP:egpParent(34,33)
+    
+    EGP:egpBox(35,-EGP:egpSize(13)/2+vec2(15,272),vec2(150,50)) #button_align
+    EGP:egpColor(35,D_vec4)
+    EGP:egpParent(35,13)    
+    EGP:egpText(36,"Align",-EGP:egpSize(35)/2+vec2(20,5)) 
+    EGP:egpSize(36,40)
+    EGP:egpColor(36,B_vec4)
+    EGP:egpParent(36,35)
+    
+    EGP:egpBox(37,-EGP:egpSize(13)/2+vec2(15,324),vec2(48,50)) #button_align_X
+    EGP:egpColor(37,D_vec4)
+    EGP:egpParent(37,13)    
+    EGP:egpText(38,"X",-EGP:egpSize(37)/2+vec2(13,5)) 
+    EGP:egpSize(38,40)
+    EGP:egpColor(38,B_vec4)
+    EGP:egpParent(38,37)
+    
+    EGP:egpBox(40,-EGP:egpSize(13)/2+vec2(66,324),vec2(48,50)) #button_align_Y
+    EGP:egpColor(40,D_vec4)
+    EGP:egpParent(40,13)    
+    EGP:egpText(41,"Y",-EGP:egpSize(40)/2+vec2(13,5)) 
+    EGP:egpSize(41,40)
+    EGP:egpColor(41,B_vec4)
+    EGP:egpParent(41,40)
+
+    EGP:egpBox(42,-EGP:egpSize(13)/2+vec2(116,324),vec2(48,50)) #button_align_X
+    EGP:egpColor(42,D_vec4)
+    EGP:egpParent(42,13)    
+    EGP:egpText(43,"Z",-EGP:egpSize(42)/2+vec2(13,5)) 
+    EGP:egpSize(43,40)
+    EGP:egpColor(43,B_vec4)
+    EGP:egpParent(43,42)
+            
+    EGP:egpBox(10,-EGP:egpSize(9)/2+vec2(335,0),vec2(3,100)) #vertical_line1
+    EGP:egpColor(10,A_vec4)
+    EGP:egpParent(10,9)
+    
+    EGP:egpBox(11,-EGP:egpSize(9)/2+vec2(335,300),vec2(3,120)) #vertical_line2
+    EGP:egpColor(11,A_vec4)
+    EGP:egpParent(11,9)
+    
+    for(I=1,10)
+        {
+            EGP:egpBox(I-1+50,-EGP:egpSize(12)/2+vec2(5,(I-1)*41+5),vec2(315,36)) #holo_list
+            EGP:egpColor(I-1+50,B_vec4)
+            EGP:egpParent(I-1+50,12)           
+        }
+    for(I=1,10)
+        {
+            EGP:egpText(I-1+60,I:toString(),-EGP:egpSize(I-1+50)/2+vec2(3,7))
+            EGP:egpFont(I-1+60,"Coolvetica") 
+            EGP:egpSize(I-1+60,20)
+            EGP:egpColor(I-1+60,B_vec4)
+            EGP:egpParent(I-1+60,I-1+50)         
+        }
+        
+    EGP:egpBox(70,-EGP:egpSize(13)/2+vec2(116,214),vec2(48,50)) #button_align_Z=0
+    EGP:egpColor(70,D_vec4)
+    EGP:egpParent(70,13)    
+    EGP:egpText(71,"Z=0",-EGP:egpSize(42)/2+vec2(2,10)) 
+    EGP:egpSize(71,25)
+    EGP:egpColor(71,B_vec4)
+    EGP:egpParent(71,70)
+    
+    EGP:egpBox(72,-EGP:egpSize(13)/2+vec2(66,214),vec2(48,50)) #button_align_X=0
+    EGP:egpColor(72,D_vec4)
+    EGP:egpParent(72,13)    
+    EGP:egpText(73,"Y=0",-EGP:egpSize(42)/2+vec2(2,10)) 
+    EGP:egpSize(73,25)
+    EGP:egpColor(73,B_vec4)
+    EGP:egpParent(73,72)
+    
+    EGP:egpBox(74,-EGP:egpSize(13)/2+vec2(15,214),vec2(48,50)) #button_align_X=0
+    EGP:egpColor(74,D_vec4)
+    EGP:egpParent(74,13)    
+    EGP:egpText(75,"X=0",-EGP:egpSize(42)/2+vec2(2,10)) 
+    EGP:egpSize(75,25)
+    EGP:egpColor(75,B_vec4)
+    EGP:egpParent(75,74)
+
+    EGP:egpTriangle(48,vec2(0,0),vec2(0,28),vec2(10,22)) #coursor
+    EGP:egpTriangle(49,vec2(1,4),vec2(1,26.5),vec2(8.5,22))
+    EGP:egpColor(49,vec4(255,255,150,255))
+    EGP:egpColor(48,vec4(30,30,30,255))
+    EGP:egpParentToCursor(48)
+    EGP:egpParentToCursor(49)
+    
+    Page_c=1
+    Page_m=1
+    
+}
+if(Active)
+{
+
+    findInBox(holoEntity(2):pos()+vec(-150,-150,0),holoEntity(2):pos()+vec(150,150,200))
+    findSortByDistance(holoEntity(2):toWorld(vec(0,0,0)))
+    findExcludeModel("models/hunter/blocks/cube025x025x025.mdl")
+    findIncludeClass("prop_physics")    
+    Prop=find()
+
+    ###Smena stranicu###
+    if(changed(E)&E)
+    {
+#        for(J=1,10){
+#        EGP:egpCircle(100+J,vec2(10,90+(J-1)*41),vec2(5,5))
+#        EGP:egpCircle(121+J,vec2(10,90+(J-1)*41)+EGP:egpSize(50),vec2(5,5))
+#    }
+        if(inrange(EGP:egpCursor(O),vec2(335,200), vec2(335,200)+vec2(15,35))) #vverh
+        {
+            do_pageUP()
+        }
+        if(inrange(EGP:egpCursor(O),vec2(335,335), vec2(335,335)+vec2(15,35))) #vniz
+        {
+            do_pageDOWN()
+        }
+#        if(inrange(EGP:egpCursor(O),EGP:egpPos(12)-EGP:egpSize(12)/2, EGP:egpPos(12)+EGP:egpSize(12)/2))
+#        {
+            do_activeHOLO()
+#        }
+        if(changed(Page_c))
+            {
+                
+            } 
+    }
+    if(changed(E)&!E)
+    {
+        EGP:egpColor(14,D_vec4)
+        EGP:egpColor(18,D_vec4)
+    }
+    
+    if(changed(Prop)&Prop)
+    {
+        if(I>=0)
+        {
+            I++
+            N++
+            Arr_active[I,number]=0
+#            Arr_s1=Prop:toString()
+            Name=Prop:model()
+            Arr_s[I,string]=Name
+            Name=Name:sub(Name:find("/")+1,Name:length())
+            Name=Name:sub(Name:find("/")+1,Name:length())
+            Name=I:toString()+". "+Name
+            Arr_name[I,string]=Name
+            if(Page_c!=Page_m){Page_c=Page_m do_drawHOLOlist()}
+            if(Page_new==1){do_newPAGE() Page_new=0}
+ 
+            EGP:egpColor(I-(Page_m-1)*10-1+50,D_vec4)
+            EGP:egpSetText(I-(Page_m-1)*10-1+60,Arr_name[I,string])
+            
+            
+            if((mod(I,10))==0)
+            {Page_new=1}  
+            Prop:remove()
+            
+            soundPlay(4,1.5,"items/suitchargeok1.wav")
+            soundPitch(4,180)
+      }else{I=0}
+    }   
+}
+
+#[ 
+    
+    
+
+    
+    EGP:egpBox(36,vec2(10,90),vec2(320,400)) #back2
+    EGP:egpColor(36,vec4(30,30,30,255))
+    
+    EGP:egpBox(1,vec2(0,70),vec2(512,4)) #line
+    EGP:egpColor(1,A_vec4)
+    
+    EGP:egpBox(11,vec2(340,90),vec2(4,400)) #line_holo
+    EGP:egpColor(11,A_vec4)
+    
+    EGP:egpBox(2,vec2(35,10),vec2(50)) #1st button
+    EGP:egpColor(2,A_vec4)
+    
+    EGP:egpBox(4,vec2(120,10),vec2(50)) #2nd button
+    EGP:egpColor(4,D_vec4)
+    
+    EGP:egpBox(6,vec2(205,10),vec2(50)) #3d button
+    EGP:egpColor(6,D_vec4)
+    
+    EGP:egpBox(8,vec2(200,-200),vec2(50)) #4d button
+    EGP:egpColor(8,D_vec4)
+    EGP:egpParent(8,36)
+    
+#    EGP:egpBox(501,vec2(200,-200),vec2(50)) #4d button
+#    EGP:egpColor(501,D_vec4)
+#    EGP:egpParent(501,36)
+    
+ #   EGP:egpBox(10,vec2(440,100),vec2(50)) #4d button
+ #   EGP:egpColor(10,D_vec4)
+    
+    EGP:egpText(3,"holo",vec2(-22,-12)) #1st button_text
+    EGP:egpSize(3,25)
+    EGP:egpColor(3,vec4(30,30,30,255))
+    EGP:egpParent(3,2)    
+    
+    EGP:egpText(5,"Togl",vec2(-22,-12)) #2nd button_text
+    EGP:egpSize(5,25)
+    EGP:egpColor(5,vec4(30,30,30,255))
+    EGP:egpParent(5,4)
+    
+    EGP:egpText(7,"othe",vec2(-22,-12)) #3d button_text
+    EGP:egpSize(7,25)
+    EGP:egpColor(7,vec4(30,30,30,255))
+    EGP:egpParent(7,6)
+    
+    EGP:egpTriangle(37,vec2(140,60),vec2(133,25),vec2(147,25))
+    EGP:egpColor(37,D_vec4)
+    EGP:egpParent(37,36)
+    
+    
+    EGP:egpTriangle(38,vec2(140,-95),vec2(133,-60),vec2(147,-60))
+    EGP:egpColor(38,D_vec4)
+    EGP:egpParent(38,36)
+    
+
+    EGP:egpText(201,"1",vec2(135,-10)) 
+    EGP:egpSize(201,20)
+    EGP:egpColor(201,A_vec4)
+    EGP:egpParent(201,36)
+    
+    EGP:egpText(200,"/",vec2(135,-30)) 
+    EGP:egpSize(200,20)
+    EGP:egpColor(200,A_vec4)
+    EGP:egpParent(200,36)
+    
+    EGP:egpText(202,"1",vec2(135,-50)) 
+    EGP:egpSize(202,20)
+    EGP:egpColor(202,A_vec4)
+    EGP:egpParent(202,36)
+
+
+#EGP:egpPos(36,vec2(200,40))
+
+  for(J=1,10){
+    EGP:egpRoundedBox(J-1+50,vec2(10,-50),vec2(280,30)) #4d button
+    EGP:egpColor(J-1+50,D_vec4)
+    EGP:egpParent(J+-150,36)
+    EGP:egpPos(J-1+50,vec2(-500))
+}
+    for(J=1,10){
+    EGP:egpText(J-1+60,"",vec2(-135,-10)) #3d button_text
+    EGP:egpSize(J-1+60,17)
+    EGP:egpColor(J-1+60,vec4(30,30,30,255))
+    EGP:egpParent(J-1+60,J-1+50)
+}
+
+
+
+
+    
+    
+    EGP:egpTriangle(48,vec2(0,0),vec2(0,28),vec2(10,22)) 
+    EGP:egpTriangle(47,vec2(1,4),vec2(1,26.5),vec2(8.5,22))
+    EGP:egpColor(48,vec4(255,255,180,255))
+    EGP:egpColor(47,vec4(30,30,30,255))
+    EGP:egpParentToCursor(48)
+    EGP:egpParentToCursor(47)
+    
+
+   
+    
+    
+   
+    
+    Active=1
+}
+
+
+
+
+    
+    if(changed(Prop)&Prop)
+    
+    {
+
+             
+        holoCreate(I+100,Prop:pos(),vec(1),ang(0),vec(255),Arr_s[I,string])
+        Arr_p[I,entity]=propSpawn("models/hunter/blocks/cube025x025x025.mdl",Prop:pos(),ang(0),1)
+        Arr_p[I,entity]:noCollideAll(1)
+        Arr_p[I,entity]:setAlpha(50)
+        Arr_p[I,entity]:setColor(random(150,255),random(150,255),random(150,255))
+        holoParent(I+100,Arr_p[I,entity])
+        
+        for(K=1,Arr_s:count())  {EGP:egpColor(K+50,D_vec4)}
+        EGP:egpColor(I+50,A_vec4)
+            
+        Prop:propDelete()
+        
+        if((mod(Arr_s:count(),10))!=0)
+        {   
+            if(Page_new)
+            {
+                Page_m++
+                for(J=1+(Page_m-2)*10,10+(Page_m-2)*10)
+                    {
+                        EGP:egpPos(J+50,vec2(-500) )
+                    }
+                EGP:egpSetText(201,Page_m:toString())
+                EGP:egpSetText(202,Page_m:toString())    
+                Page_new=0                
+                Page_c=Page_m  
+            }    
+            
+            EGP:egpPos(I+50,vec2(-160, ((N-2)*40)-200) )
+            EGP:egpSetText(I+100,Arr_name[I,string]:left(35))   
+        }else{
+            
+            Page_new=1
+            EGP:egpPos(I+50,vec2(-160, ((N-2)*40)-200) )
+            EGP:egpSetText(I+100,Arr_name[I,string]:left(35)) 
+            N=1 
+        } 
+    }
+    
+if(changed(E)&E){
+    if(inrange(EGP:egpCursor(O),EGP:egpPos(2)-vec2(0), EGP:egpPos(2)+vec2(50))) #1st button
+    {
+        
+        EGP:egpColor(2,A_vec4)
+        EGP:egpColor(4,D_vec4)
+        EGP:egpColor(6,D_vec4)
+        soundPlay(1,1.5,"buttons/button3.wav")
+        soundPitch(1,60)
+        
+    }
+    if(inrange(EGP:egpCursor(O),EGP:egpPos(4)-vec2(0), EGP:egpPos(4)+vec2(50))) #2nd button
+    {
+        EGP:egpColor(2,D_vec4)
+        EGP:egpColor(4,A_vec4)
+        EGP:egpColor(6,D_vec4)
+        soundPlay(2,1.5,"buttons/button3.wav")
+        soundPitch(2,60)
+        
+    }
+    if(inrange(EGP:egpCursor(O),EGP:egpPos(6)-vec2(0), EGP:egpPos(6)+vec2(50))) #3d button
+    {
+        EGP:egpColor(2,D_vec4)
+        EGP:egpColor(4,D_vec4)
+        EGP:egpColor(6,A_vec4)
+        soundPlay(3,1.5,"buttons/button3.wav")
+        soundPitch(3,60)
+        
+    }
+    if(inrange(EGP:egpCursor(O),EGP:egpPos(37)+vec2(305,315), EGP:egpPos(37)+vec2(325,345))) #vniz
+    {
+        if(Page_c<Page_m){
+            EGP:egpColor(37,A_vec4)
+            soundPlay(10,1.5,"buttons/button14.wav")
+            soundPitch(10,70)                      
+            for(J=1+(Page_c-1)*10,10+(Page_c-1)*10)
+            {
+                EGP:egpPos(J+50,vec2(-500) )
+            }        
+            Page_c++
+            EGP:egpSetText(202,Page_c:toString())                   
+            for(J=1+(Page_c-1)*10,10+(Page_c-1)*10)
+            {
+                L++                               
+                EGP:egpPos(J+50,vec2(-160, ((L-1)*40)-200) )
+                if(L+(Page_c-1)*10>=Arr_s:count()){break} 
+                            
+            } 
+            L=0
+        }else{
+            EGP:egpColor(37,W_vec4)
+            soundPlay(10,1.5,"buttons/button8.wav")
+            soundPitch(10,145)
+        }                       
+    }
+    if(inrange(EGP:egpCursor(O),EGP:egpPos(38)+vec2(305,200), EGP:egpPos(38)+vec2(325,230))) #vverkh
+    {
+        if(Page_c>1){
+            EGP:egpColor(38,A_vec4)
+            soundPlay(10,1.5,"buttons/button14.wav")
+            soundPitch(10,70)       
+            for(J=1+(Page_c-1)*10,10+(Page_c-1)*10)
+            {
+                EGP:egpPos(J+50,vec2(-500) )
+            }        
+            Page_c--
+            EGP:egpSetText(202,Page_c:toString())                         
+            for(J=1+(Page_c-1)*10,10+(Page_c-1)*10)
+            {
+                L++
+                EGP:egpPos(J+50,vec2(-160, ((L-1)*40)-200) )
+            } 
+            L=0
+        }else{
+            EGP:egpColor(38,W_vec4)
+            soundPlay(10,1.5,"buttons/button8.wav")
+            soundPitch(10,145)
+        }                
+    }
+    if(inrange(EGP:egpCursor(O),EGP:egpPos(8)+vec2(170,290), EGP:egpPos(8)+vec2(220,340))) #scale
+    {
+        Scale=!Scale        
+    }
+    if(changed(Scale))
+    {
+        if(Scale)
+        {
+            EGP:egpColor(8,A_vec4)
+        }
+        if(!Scale)
+        {
+            EGP:egpColor(8,D_vec4)
+        }
+    }
+#    for(J=1,2){
+ #   EGP:egpCircle(555,EGP:egpPos(8)+vec2(220,340),vec2(5))
+#}
+    for(J=1,Arr_s:count())
+    { #EGP:egpCircle(J+150,EGP:egpPos(J+50)+vec2(170,290),vec2(5))
+        if(inrange(EGP:egpCursor(owner()),EGP:egpPos(J+50)+vec2(170,290), EGP:egpPos(J+50)+vec2(280,30)+vec2(170,290)))
+#        if(inrange(EGP:egpCursor(owner()),EGP:egpPos(J)-EGP:egpSize(J)/2, EGP:egpPos(J)+EGP:egpSize(J)/2))
+        {
+            for(K=1,Arr_s:count())  {EGP:egpColor(K+50,D_vec4)}
+            EGP:egpColor(J+50,A_vec4)
+            soundPlay(J,1.5,"buttons/button14.wav")
+            soundPitch(J,70)
+            Button_N=J            
+        }
+    }   
+    
+    
+}
+if(changed(E)&!E){
+    EGP:egpColor(37,D_vec4)  
+    EGP:egpColor(38,D_vec4)
+     
+}    
+}
+Plus=O:keyPressed("PAD_PLUS")
+if(changed(Plus)&Plus)
+{
+    if(Scale)
+    {
+        V_scale=holoScale(Button_N+100)
+        V_scale=V_scale+(V_scale/100)*5    
+        holoScale(Button_N+100,V_scale)
+    }
+}
+Minus=O:keyPressed("PAD_MINUS")
+if(changed(Minus)&Minus)
+{
+    if(Scale)
+    {
+        V_scale=holoScale(Button_N+100)
+        V_scale=V_scale-(V_scale/100)*5    
+        holoScale(Button_N+100,V_scale)
+    }
+}
+V_scale_s=V_scale:toString()
+]#    
+    

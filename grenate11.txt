@@ -1,0 +1,34 @@
+@name grenate11
+@inputs 
+@outputs 
+@persist G:entity
+@trigger 
+
+interval(100)
+
+R=owner():keyPressed("R")
+if(changed(R)&R){
+
+#G=entitySpawn("env_entity_dissolver",entity():pos()+vec(0,0,20),1)
+#G:setKeyValue("Magnitude",0)
+#G:setKeyValue("Name","DoubleHeart")
+#G:setKeyValue("dissolvetype","1")  
+#    G:setVel(vec(100))
+
+   G=entitySpawn("npc_grenade_frag",0)
+    G:setKeyValue("rendercolor","255 20 20")
+  #  G:setFire("Dissolve","Rectal",0)
+#---    G:setKeyValue("solid","0")
+
+
+#    G:setKeyValue("velocity","100 100 100")
+
+#    G=entitySpawn("env_shake",0)
+#    G:setKeyValue("duration","5.75")
+#    G:setKeyValue("amplitude","8")
+# #   G:setKeyValue("radius","4000")
+#    G:setKeyValue("duration","0.75")
+#    G:setKeyValue("frequency","128")
+#    G: "StartShake", 0, 0 )
+    }
+

@@ -1,0 +1,409 @@
+@name !Mech
+@model models/kobilica/relay.mdl
+@persist [Ent Ow Body Seat EGP]:entity
+@persist LeftButt:entity Cabine:entity Knee2:entity Sas:entity Sas2:entity Test:entity Door:entity
+@persist [Legs]:table
+@persist [StepMode SoundStep]:string
+@persist EGP_W:wirelink
+@persist Mass MoveSpeed BodyHeight LegCycle LegOrder StepFreq StepFreqUsed StepProgress FootMaxHeight LegLength DoorAngle ExpressStep
+@persist HoloIndex Ready SoundCounter 
+@persist EGPIndex Cursor
+@outputs [LeftWeapon Cabine]:entity
+@persist EGPOrigin:vector2
+
+
+if ( first() ) {
+    
+    #include "libs/HoloCreate"
+    runOnTick(1)
+    Ent = entity()
+    Ow = owner()
+    Seat = Ent:isWeldedTo()
+    findIncludeClass("gmod_wire_egp_emitter")
+    findInSphere(Seat:pos(), 200)
+    EGP = find()
+    #EGP_W = EGP:wirelink()
+    
+    if (!Seat) {
+        #print("seat required")
+        #Body:remove()
+        #selfDestructAll()     
+    }
+
+    
+#>> presets
+    Mass = 2000
+    MoveSpeed = 5
+    BodyHeight = 100
+    StepFreq = 80
+    LegsAmount = 2
+    LegsOffset = 40
+    FootMaxHeight = 60    
+    LegLength = 60  #means 1/2 of leg 
+    
+    SoundStep = "npc/dog/dog_rollover_servos1.wav"  
+#<< 
+    Body = propSpawn("models/hunter/blocks/cube05x05x025.mdl", Ent:pos() + vec(0,0,40), ang(0,90,0), 1)   
+    Body:setMass(Mass)
+    #Body:propNotSolid(1)
+    #Body:setAlpha(0)
+    Body:setMaterial("phoenix_storms/metalset_1-2")
+    Seat:setMass(0)
+    Seat:propFreeze(1)
+    Seat:setPos(Body:pos()+vec(0,0,5))
+    Seat:setAng(ang(0))
+    
+    EGP:setPos(Body:toWorld(vec(20,0,0)))
+    timer("prepare", 200)
+    
+    EGPOrigin = vec2(255,372)
+    HoloIndex = 100
+    EGPIndex = 0
+    LegCycle = 0
+    LegOrder = 1
+    StepMode = "check"
+    StepFreqUsed = StepFreq
+    StepProgress = 0
+    SoundCounter = 0
+    DoorAngle = 180
+    ExpressStep = 0 
+    Legs = table()
+    
+    
+    Alpha_key = 0
+    Alpha_main = 255
+    for(I=1, LegsAmount) {
+        local Angle = 360 / LegsAmount * I
+        local Offset = vec(sin(Angle) * LegsOffset, cos(Angle) * LegsOffset, 0)
+
+        local Butt = do_holocreate_key(I * 10, Body, vec(sin(Angle) * 30, cos(Angle) * 30, -15), ang(0), Alpha_key)
+        local Knee = do_holocreate_key(I * 10 + 1, noentity(), vec(0), ang(0), Alpha_key)
+        local Foot = do_holocreate_key(I * 10 + 2, noentity(), vec(0), ang(0), Alpha_key)
+        local BotBone = do_holocreate(I * 10 + 3, noentity(), "models/props_junk/iBeam01a.mdl", vec(0), ang(0), vec(0.5), vec(255), 0)
+        local UpBone = do_holocreate(I * 10 + 4, noentity(), "models/props_junk/iBeam01a.mdl", vec(0), ang(0), vec(0.5), vec(255), 0)
+        
+        local Leg = table(
+            "offset" = Offset,
+            "steps" = table(
+                "first" = Body:toWorld(Offset),
+                "second" = Body:toWorld(Offset),
+                "third" = Body:toWorld(Offset),
+                "last" = Body:toWorld(Offset)
+            ),
+            "butt" = Butt,
+            "knee" = Knee,
+            "foot" = Foot,
+            "footholo" = do_holocreate(I * 10 + 5, BotBone, "models/props_combine/combine_mine01.mdl", vec(-34,-2,0), ang(45,0,0), vec(0.8,0.8,0.8), vec(255), Alpha_main),
+            "legbotbone" = BotBone,
+            "legbot" = do_holocreate(I * 10 + 6, BotBone, "models/props_combine/CombineThumper002.mdl", vec(-35,-3,5), ang(0,90,90), vec(0.2,0.2,0.27), vec(255), Alpha_main),
+            "legupbone" = UpBone,
+            "legup" = do_holocreate(I * 10 + 7, UpBone, "models/props_combine/combine_generator01.mdl", vec(0,3,0), ang(0,90,90), vec(0.25,0.25,0.35), vec(255), Alpha_main)
+            
+        )
+        
+        #do_holocreate(I * 6 + 4, Leg["foot", entity], "models/props_combine/CombineThumper002.mdl", vec(-0,0,0), ang(0,90,0), vec(0.17,0.17,0.3), vec(255), 255)        
+        
+        Legs:pushTable(Leg)
+    }
+    particleBounce(0)
+    rangerFilter(Seat) 
+    rangerFilter(Body)
+    
+    findIncludeClass("player")
+    findInSphere(Body:pos(), 20000)
+    local Arr = findToArray()
+    rangerFilter(Arr)
+    rangerHitEntities(1)
+    rangerPersist(1)
+    Ready = 0
+
+#>> usefull functions <<
+#>> key holos
+    
+    Cabine = do_holocreate_key(HoloIndex, Body, vec(0,0,10), ang(0,0,0), 0) HoloIndex++
+    Door = do_holocreate_key(HoloIndex, Cabine, vec(-25,0,55), ang(0,0,0), 0) HoloIndex++
+    LeftWeapon = do_holocreate_key(HoloIndex, Cabine, vec(0,50,12), ang(0,0,0), 0) HoloIndex++
+    
+
+#>> drawing holos <<    
+    do_holocreate(HoloIndex, Body, "models/props_combine/combine_intwallunit.mdl", vec(0,0,-5), ang(90,0,0), vec(1.2), vec(255), 255) HoloIndex++
+    do_holocreate(HoloIndex, Body, "models/props_combine/breenconsole.mdl", vec(0,-22,20), ang(180,0,0), vec(0.8), vec(255), 255) HoloIndex++
+    do_holocreate(HoloIndex, Body, "models/props_combine/breenconsole.mdl", vec(0,22,20), ang(180,180,0), vec(0.8), vec(255), 255) HoloIndex++
+    do_holocreate(HoloIndex, Body, "models/props_combine/combine_booth_short01a.mdl", vec(15,0,12), ang(180,180,0), vec(0.3,0.18,0.18), vec(255), 255) HoloIndex++
+    do_holocreate(HoloIndex, Cabine, "models/props_combine/breenconsole.mdl", vec(25,0,-35), ang(0,-90,0), vec(1.1,0.8,1), vec(255), 255) 
+    do_holoclip(HoloIndex, 1, vec(0,0,30), vec(0,-1,1)) HoloIndex++
+    do_holocreate(HoloIndex, Cabine, "models/props_combine/tprotato2.mdl", vec(0,20,25), ang(20,90,0), vec(0.4,0.8,0.4), vec(255), 255)
+    holoColor(HoloIndex, vec(200)) HoloIndex++
+    do_holocreate(HoloIndex, Cabine, "models/props_combine/tprotato2.mdl", vec(0,-20,25), ang(20,-90,0), vec(0.3,0.8,0.4), vec(255), 255) HoloIndex++      
+    holoColor(HoloIndex, vec(200)) HoloIndex++
+    do_holocreate(HoloIndex, Cabine, "models/props_combine/masterinterface.mdl", vec(90,0,-30), ang(-40,0,0), vec(0.45,0.8,0.8), vec(255), 255) 
+    do_holoclip(HoloIndex, 1, vec(0,0,95), vec(0.7,0,1))
+    do_holoclip(HoloIndex, 2, vec(5,0,88), vec(-1.3,0,1)) HoloIndex++
+    do_holocreate(HoloIndex, Door, "models/props_combine/combine_barricade_tall02b.mdl", vec(5,0,0), ang(180,0,0), vec(0.5,0.35,0.25), vec(255), 255)
+    do_holoclip(HoloIndex, 1, vec(-2,0,0), vec(1,0,0)) HoloIndex++
+    do_holocreate(HoloIndex, Cabine, "models/props_combine/combine_barricade_bracket02b.mdl", vec(0,35,20), ang(0,90,90), vec(0.9), vec(255), 255) HoloIndex++ 
+    do_holocreate(HoloIndex, LeftWeapon, "models/props_combine/combinebutton.mdl", vec(0), ang(0,90,0), vec(1.2), vec(255), 255) HoloIndex++ 
+    do_holocreate(HoloIndex, LeftWeapon, "models/props_combine/tprotato1_chunk04.mdl", vec(15,-3,3), ang(0,90,-90), vec(0.5), vec(255), 255) HoloIndex++
+    
+#>> drawing EGP <<
+    EGP_W:egpClear() 
+    local Alpha = 200
+    EGPIndex++ EGP_W:egpLine(EGPIndex,EGPOrigin + vec2(-2,-2), EGPOrigin + vec2(-2,2)) 
+    Cursor = EGPIndex
+    EGP_W:egpColor(EGPIndex,vec4(0,255,255,Alpha))
+    EGPIndex++ EGP_W:egpLine(EGPIndex,EGPOrigin + vec2(-2,-2), EGPOrigin + vec2(2,-2)) 
+    EGP_W:egpColor(EGPIndex,vec4(0,255,255,Alpha))
+    EGPIndex++ EGP_W:egpLine(EGPIndex,EGPOrigin + vec2(2,2), EGPOrigin + vec2(-2,2)) 
+    EGP_W:egpColor(EGPIndex,vec4(0,255,255,Alpha))
+    EGPIndex++ EGP_W:egpLine(EGPIndex,EGPOrigin + vec2(2,2), EGPOrigin + vec2(2,-2)) 
+    EGP_W:egpColor(EGPIndex,vec4(0,255,255,Alpha))
+    
+    EGPIndex++ EGP_W:egpPolyOutline(
+        EGPIndex,
+        vec2(-67,-35) + EGPOrigin,
+        vec2(-30,-20) + EGPOrigin,
+        vec2(30,-20) + EGPOrigin,
+        vec2(67,-35) + EGPOrigin,
+        vec2(62,10) + EGPOrigin,
+        vec2(50,12) + EGPOrigin,
+        vec2(40,40) + EGPOrigin,
+        vec2(-40,40) + EGPOrigin,
+        vec2(-50,12) + EGPOrigin,
+        vec2(-62,10) + EGPOrigin,
+        vec2(-67,-35) + EGPOrigin
+    )
+    EGP_W:egpColor(EGPIndex,vec4(0,255,255,Alpha))
+    
+    EGPIndex++ EGP_W:egpCircle(EGPIndex,EGPOrigin-vec2(0.5), vec2(1))
+    
+    EGP_W:egpColor(EGPIndex,vec4(0,255,255,Alpha-50))
+    EGP_W:egpParentToCursor(EGPIndex) 
+    
+
+
+}
+
+if( clk("prepare") ) {
+    Seat:parentTo(Body)
+    #Ent:removeAllConstraints()
+    Ent:propNotSolid(1)
+    Ent:setAlpha(0)
+    Ent:propFreeze(1)
+    Ent:setPos(Ent:pos()-vec(0,0,300))
+    EGP:parentTo(Cabine)
+    Body:propFreeze(0)
+    
+    Ready = 1
+}
+
+
+local Driver = Seat:driver()
+
+local W = Driver:keyPressed("w")
+local A = Driver:keyPressed("a")
+local S = Driver:keyPressed("s")
+local D = Driver:keyPressed("d")
+local Shift = Driver:keySprint()
+local Space = Driver:keyJump()
+
+local Ranger = rangerOffset(BodyHeight, Body:pos(), vec(0, 0, -1))
+
+local Moving = max(Body:vel():setZ(0):length(), 1)
+local Time = curtime()*700
+local SinT = sin(Time) * Moving / 10
+
+if (Ranger:hit()) {
+    Body:propGravity(0)
+    
+          
+    if (Driver) {
+        local Height = vec(0, 0, BodyHeight - 10 - Ranger:distance() + SinT) 
+        local Strafe = Body:right() * (D - A) * MoveSpeed / 2
+        local Forward = Body:forward() * (W - S) * MoveSpeed
+        local Damping = vec(5, 5, 1)
+    
+        local YawDelta = abs(Driver:eyeAngles():yaw() - Body:angles():yaw())
+        local NewYaw = (Body:forward() + (Driver:eye() - Body:forward()) / 1.7):toAngle():yaw()
+        local Yaw = YawDelta > 50 ? NewYaw : Body:forward():toAngle():yaw()
+        
+       if (Shift) {
+            Forward = Forward * 3
+            Strafe = vec(0)
+            Yaw = Body:forward():toAngle():yaw()
+            StepFreqUsed = StepFreq / 2
+        } else {
+            StepFreqUsed = StepFreq
+        }
+        
+        if (changed(Shift) & Shift) {
+            StepMode = "execute"
+        }
+        
+        Body:applyAngForce(Body:toLocal(ang(0, Yaw, 0))*500 - Body:angVel()*400)    
+        Body:applyForce(((Forward + Strafe + Height)*5 - Body:vel() / Damping) * Mass)
+        
+        if (Door:angles():pitch() > 0) {
+            Door:setAng(Door:angles() + ang(-1,0,0))
+        }
+        
+    } else {
+        local Height = vec(0, 0, 50 - Ranger:distance()) 
+        Body:applyAngForce(Body:toLocal(ang(0, Body:forward():toAngle():yaw(), 0))*500 - Body:angVel()*400)
+        Body:applyForce(( Height * 5 - Body:vel() / 5) * Mass)        
+        
+        if (Door:angles():pitch() < 60) {
+
+            Door:setAng(Door:angles() + ang(1,0,0))
+        }
+    }
+} else {
+    Body:propGravity(1)
+}
+
+#>> legs <<
+LegCycle++
+if (!(LegCycle % round(StepFreqUsed))) { 
+    LegCycle = 0
+    LegOrder = 0
+}
+if (changed(W)&!W) {
+    timer("soundstop", 2000)
+}
+if (clk("soundstop")) {
+    Body:soundPlay("stop",1,"npc/dog/dog_pneumatic2.wav")
+    soundPitch("stop",80)
+    
+    for(I=1, randint(5,10)){
+        local Rand = toString(randint(10,15))
+        particle(random(0.2,1),0,random(20,40),"particle/smokesprites_00"+Rand,vec(255),Legs[1, table]["butt", entity]:pos(),vec(random(-5,5), random(-5,5), random(-50,-100)),random(-1,1),random(-1,1),150,0)
+        particle(random(0.2,1),0,random(20,40),"particle/smokesprites_00"+Rand,vec(255),Legs[2, table]["butt", entity]:pos(),vec(random(-5,5), random(-5,5), random(-50,-100)),random(-1,1),random(-1,1),150,0)
+    }
+}
+
+if (StepMode == "check") {
+
+    if (!(LegCycle % round(StepFreqUsed / Legs:count()))) {
+        LegOrder++
+        local Leg = Legs[LegOrder, table]
+        local Direction = min(Body:vel():setZ(0), Body:vel():setZ(0):normalized() * LegLength * 2)
+        local Ranger = rangerOffsetHull(LegLength*3, Body:toWorld(Leg["offset", vector]) + Direction + vec((LegOrder * 2 - 3) * 5 ,0,0) / 1.5, vec(0, 0, -1), vec(4))
+
+        if (Ranger:hit()) {
+            local Steps = Leg["steps", table]
+            Steps["first", vector] = Steps["last", vector]
+            Steps["third", vector] = Ranger:position()         
+            
+            
+            if (Steps["third", vector]:distance(Legs[LegOrder, table]["butt", entity]:pos()) > LegLength * 3) {
+                #local Ranger = rangerOffsetHull(LegLength*2, Body:toWorld(Leg["offset", vector]) + Body:vel():setZ(0)*0.7 + vec((LegOrder*2-3)*5,0,0) / 1.5, vec(0, 0, -1), vec(4))
+                #Steps["third", vector] = Ranger:position()
+            }
+            
+            Steps["second", vector] = (Steps["first", vector] + Steps["third", vector])*0.5 + vec(0, 0, min(Steps["first", vector]:distance(Steps["third", vector]), FootMaxHeight))
+
+            if(Steps["first", vector]:distance(Steps["third", vector]) > 10) {
+                StepMode = "execute"
+            }   
+            
+        }
+    }
+} elseif (StepMode == "execute") {
+    local ExpressSpeed = ExpressStep ? 2 : 1
+    StepProgress = min(StepProgress + Legs:count() / (StepFreqUsed * 0.8) * ExpressSpeed, 1)
+    local Steps = Legs[LegOrder, table]["steps", table]
+    Steps["last", vector] = bezier(Steps["first", vector], Steps["second", vector], Steps["third", vector], StepProgress/1)
+    
+    if (StepProgress >= 1) {
+        SoundCounter++
+        if(SoundCounter == 8) {SoundCounter = 0}
+        holoEntity(10+SoundCounter):soundPlay(SoundCounter:toString(),0,SoundStep)
+        soundPitch(SoundCounter:toString(),150)
+        ExpressStep = 1
+        StepProgress = 0
+        StepMode = "check"
+
+        if (ExpressStep) {ExpressStep = 0}
+    }
+}
+
+#[for (I=1, Legs:count()) {
+    local Leg = Legs[I, table]
+    local Steps = Leg["steps", table]
+    local Distance = Steps["last", vector]:distance(Body:toWorld(Leg["offset", vector]))
+    if (Distance > LegLength * 2) {
+        print(Distance)
+        LegOrder = I
+        StepMode = "check"
+        ExpressStep = 1
+    }
+}]#
+
+#>> animating <<
+
+
+for (I=1, Legs:count()) {
+    local Foot = Legs[I, table]["foot", entity]
+    local Knee = Legs[I, table]["knee", entity]
+    local Butt = Legs[I, table]["butt", entity]
+    local LegBottomBone = Legs[I, table]["legbotbone", entity]
+    local LegBottom = Legs[I, table]["legbot", entity]
+    local FootHolo = Legs[I, table]["footholo", entity]
+    local LegUpBone = Legs[I, table]["legupbone", entity]
+    local LegUp = Legs[I, table]["legup", entity]
+    
+    local CurrentHeight = rangerOffset(LegLength * 3 - min(Body:vel():z(), 0) / 5, Body:pos(), vec(0, 0, -1))
+    #Test:setPos(CurrentHeight:pos())
+    if (CurrentHeight:distance() >= LegLength * 2.1) {
+        
+        local IsHit = CurrentHeight:hit()
+        if (!IsHit) {
+            Legs[I, table]["steps", table]["last", vector] = Butt:pos() - vec(0,0,20)
+        } else {
+            Legs[I, table]["steps", table]["last", vector] = Butt:pos() - vec(0,0,LegLength*1.8)
+        }
+        
+        if (changed(IsHit) & IsHit) {
+            for(I=1, randint(10,30)){
+                local Rand = toString(randint(10,15))
+                local Velocity = vec(random(-10,10) + Body:vel():x(), random(-10,10) + Body:vel():y(), random(-50,-200) + min(Body:vel():z(), 0))
+                particle(random(0.5,1), 0, random(40,100), "particle/smokesprites_00"+Rand,vec(255), Legs[1, table]["butt", entity]:pos(), Velocity, random(-1,1), random(-1,1), 150, 0)
+                particle(random(0.5,1), 0, random(40,100), "particle/smokesprites_00"+Rand,vec(255), Legs[2, table]["butt", entity]:pos(), Velocity, random(-1,1), random(-1,1), 150, 0)
+            }
+            Body:soundPlay("stop",1,"npc/dog/dog_pneumatic2.wav")
+            soundPitch("stop",70)
+        }      
+    }
+    
+    Foot:setPos(Legs[I, table]["steps", table]["last", vector])
+    Foot:setAng(Body:forward():toAngle())
+    
+    local CabineYaw = (Cabine:forward() + (Driver:eye() - Cabine:forward()) / 50):toAngle()
+    #Cabine:setAng(ang(Body:angles():pitch(), CabineYaw:yaw(), Body:angles():roll()))
+    Cabine:setAng(ang(Body:angles():pitch(), CabineYaw:yaw(), Body:angles():roll()))
+    
+    local LegAxis = Foot:pos() - Butt:pos()
+    local CenterOfAxis = Butt:pos() + LegAxis / 2
+    local Angle = acos(LegAxis:length()^2 / (2 * LegLength * LegAxis:length())) #  |\
+    local Angle2 = atan(Foot:pos():setZ(0):distance(Butt:pos():setZ(0)) / CurrentHeight:distance())  #  | /
+    local KneeDepth = LegLength * sin(Angle)
+    
+    local FootXtoBody = Body:toLocal(Foot:pos()):x()
+    if(FootXtoBody > 0) {
+        Angle2 = -Angle2
+    }
+    Knee:setPos(CenterOfAxis + Body:forward():normalized():rotateAroundAxis(Body:toWorld(vec(0,0,0)) - Body:toWorld(vec(0,1,0)), -Angle2) * KneeDepth * (-1))
+    
+    local Direction = (Knee:pos() - Foot:pos()):normalized():toAngle()
+    local LegBotPos = Foot:pos() + (Knee:pos() - Foot:pos()) / 2
+    LegBottomBone:setPos(LegBotPos)
+    LegBottomBone:setAng(Direction:setRoll(Body:angles():roll()))
+    FootHolo:setAng(ang(0,LegBottomBone:angles():yaw()+30,0))
+    
+    Direction = (Knee:pos() - Butt:pos()):normalized():toAngle()
+    local LegUpPos = Butt:pos() + (Knee:pos() - Butt:pos()) / 2
+    LegUpBone:setPos(LegUpPos)
+    LegUpBone:setAng(Direction:setRoll(Body:angles():roll()))
+
+}
+
+# >> EGP <<

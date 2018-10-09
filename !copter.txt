@@ -1,0 +1,94 @@
+@name !copter
+@persist [Seat E Board Driver Prop]:entity
+@persist Traction
+@outputs Traction
+@model models/props_c17/trappropeller_engine.mdl
+
+if(first()){
+    runOnTick(1)
+    
+    O=owner()
+    E=entity()
+    Seat=entity():isWeldedTo()
+    Board=propSpawn("models/props_wasteland/prison_bedframe001b.mdl",Seat:pos()+vec(0,0,50),ang(0),1)
+    Traction = -50
+    
+    Seat:setPos(Board:pos()+vec(-10,0,8))
+    Seat:setAng(ang(0,90,0))
+    Seat:weldTo(Board, 1)
+    
+    Board:setMass(20)
+    
+    E:setMass(0)
+    E:propGravity(0)
+    E:noCollideAll(1)
+    E:removeAllConstraints()
+    Prop=propSpawn("models/hunter/blocks/cube025x025x025.mdl", Seat:pos()+vec(50,0,10), 1)
+    
+    
+
+    
+    timer("second",20)  
+}
+
+if(clk("second")){
+    E:setAng(ang(0,0,0))
+    E:setPos(Seat:pos()+vec(20,3,5))
+    E:weldTo(Board, 1)
+    
+    
+    holoCreate(1,Seat:pos()+vec(0,0,-8),vec(0.4,0.4,0.3),ang(0),vec(255),"models/props_c17/oildrum001.mdl")
+    holoParent(1, Seat)
+    
+    holoCreate(2,Seat:pos()+vec(20,0,40),vec(0.3,0.5,0.5),ang(90,0,0),vec(255),"models/props_junk/iBeam01a.mdl")
+    holoParent(2, Seat)
+    
+    holoCreate(3, Seat:pos()+vec(20,0,70), vec(1), ang(0), vec(255), "models/props_c17/TrapPropeller_Blade.mdl")
+    holoCreate(4, Seat:pos()+vec(20,0,70), vec(1), ang(0,180,0), vec(255), "models/props_c17/TrapPropeller_Blade.mdl")
+    holoParent(3, 2)
+    holoParent(4, 2)
+}
+Driver = Seat:driver()
+Space = Driver:keyJump()
+Shift = Driver:keySprint()
+W = Driver:keyPressed("W")
+
+if(Driver){
+    if(Traction != 0 && !Space && !Shift){
+        Traction = Traction - 0.1 * Traction / abs(Traction)     
+    }
+    
+    if(Space){
+        if(Traction <= 30){
+            Traction=Traction+0.1
+              
+        }
+    }
+    if(Shift){
+        if(Traction >= -1){
+            Traction=Traction-0.1
+        }
+    }
+    if(Traction==0){
+        Board:setVel(Board:vel()*0.3)    
+    }
+    
+    if(Traction > 0) {
+        Board:setPos(Board:pos()+Board:up()*Traction/10 )    
+    }
+}
+#Board:setVel(Board:vel()*0.95 + Board:up() * Traction)
+if(W){
+    Prop:setAng(ang(30,0,0))
+}
+if(!W){
+    Prop:setAng(ang(0,0,0))
+}
+
+
+
+if(changed(Traction)&Traction<-47 & Traction>-49){
+    E:soundPlay("1",900,"vehicles/airboat/fan_motor_idle_loop1.wav")
+}
+soundPitch("1",(Traction+50)*2+50)
+holoAng(2, holoEntity(2):toWorld(ang(0,0,(Traction+50)/3)))

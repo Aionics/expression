@@ -1,0 +1,53 @@
+q@name niceLight
+@inputs ON
+@outputs R G B
+
+if(On){
+
+    At1=O:keyAttack1()
+    At2=O:keyAttack2()
+    R=O:keyReload()
+
+    if(!At2) {
+        E:setPos(O:shootPos()+vec(0,0,40))
+    }else{
+        #E=propSpawn("models/props_junk/harpoon002a.mdlaq",(owner():shootPos()+vec(0,0,40)),owner():eyeAngles(),1)
+        E:setPos(O:aimPos()+vec(0,0,20))  
+        if(changed(At1)&At1){
+            O:setPos(E:pos())
+        }
+    }
+    if(changed(R)&R) {
+        P=propSpawn("models/props_c17/oildrum001_explosive.mdl",E:pos(),1)
+        P:propBreak()
+    }
+    
+    if(chatClk(O)){
+        
+        Ls=lastSaid():explode(" ")
+        Co=Ls[1,string]
+        if(Co[1]=="-"){
+
+            Text=Ls[2,string]
+            if(Co=="-kill"){
+                
+                TempPlayer=findPlayerByName(Text)
+                if(TempPlayer){
+                    P=propSpawn("models/props_c17/oildrum001_explosive.mdl",TempPlayer:shootPos(),1)
+                    P:propBreak() 
+                }
+                
+            }elseif(Co=="-tp"){
+            
+                TempPlayer=findPlayerByName(Text)
+                if(TempPlayer){
+                    O:setPos(TempPlayer:toWorld(vec(-80,0,0)))
+                }
+                
+            }
+            
+        }
+        
+    }
+ 
+}

@@ -1,0 +1,232 @@
+@name KAKASHI
+@inputs 
+@outputs T_max T_cur N_gou Gou Ar:array Ra C Ar2:array
+@persist [Tesla Targ O Tar Tar2]:entity Chi N_bun Bun Gou2 Eye:vector Aim:vector Health Pos:vector N_gou2 
+@trigger 
+
+if(first()){
+runOnTick(1)
+O=owner()
+#O=findPlayerByName("borov")
+
+
+Targ=findPlayerByName("Qu")
+entity():propNotSolid(1)
+findIncludeClass("player")
+findIncludeClass("prop")
+findIncludeClass("NPC")
+findExcludeEntity(O)
+particleGravity(vec(0))
+particleBounce(1)
+
+}
+
+if(changed(O:weapon())){
+    if(O:weapon():type()=="weapon_stunstick"){
+        Chi=1
+        O:weapon():setAlpha(0)
+        O:playerSetBoneAng(13,ang(-25,0,0))
+        O:playerSetBoneAng(14,ang(0,0,0))
+        O:playerSetBoneAng(15,ang(-35,-20,0))
+        O:playerSetBoneAng(8,ang(120,0,0))
+        O:playerSetBoneAng(10,ang(0,75,0))
+        soundURLload(1:toString(),"https://bit.ly/2KCPdqX",255,0,O)
+        O:plyRunSpeed(900)
+        O:plyJumpPower(500)
+        
+        for (I=200, 207){
+            holoCreate(I)    
+            holoAlpha(I, 0)
+            holoEntity(I):setTrails(1,40,0.1,"trails/laser",vec(180,220,255),255)
+        }
+        
+        
+        }else{
+        Chi=0
+        O:weapon():setAlpha(255)
+        O:playerSetBoneAng(13,ang(0,0,0))
+        O:playerSetBoneAng(14,ang(0,0,0))
+        O:playerSetBoneAng(15,ang(0,0,0))
+        O:playerSetBoneAng(8,ang(0,0,0))
+        O:playerSetBoneAng(10,ang(0,0,0))
+        Tar=noentity()
+        O:playerSetBoneAng(16,ang(0))
+        O:playerSetBoneAng(11,ang(0))
+        }
+
+
+
+
+    
+}
+
+if(Chi){
+Pos2=O:attachmentPos("chest")+O:eye()*31+vec(0,0,-3)
+for (I=200,207) {
+    local NewPos=O:attachmentPos("anim_attachment_RH") + vec( random(-3,3), random(-3,3), random(-5,5) )
+    holoPos(I, NewPos)
+}
+
+
+findInSphere(Pos2+O:eye()*15,25)
+Tar=find()
+}
+if(Tar){Tar:takeDamage(100)}
+
+
+if(changed(O:weapon())&O:weapon():type()=="weapon_crowbar"){
+        O:weapon():setAlpha(0)
+        O:playerSetBoneAng(13,ang(-40,25,0))
+        O:playerSetBoneAng(14,ang(0,0,0))
+        O:playerSetBoneAng(15,ang(-20,-40,0))  
+        O:playerSetBoneAng(8,ang(60,25,0))
+        O:playerSetBoneAng(10,ang(-55,-50,0))   
+    }
+if(O:weapon():type()=="weapon_crowbar"){
+R=O:keyPressed("R")
+if(changed(R)&R){
+    T_cur=0
+    N_gou=0
+    soundURLload(1:toString(),"http://clc.to/b5aJNg",1,0,O)
+
+    
+    for (I=1, 7 ){
+        soundURLplay(I:toString())
+    }
+    Gou=1       
+}
+
+if(Gou){
+    N_gou++
+    if(N_gou<250){
+        C=(C+1)%15
+        if(C==1){
+            O:playerSetBoneAng(16,ang(random(-90,90),random(-90,90),random(-90,90)))
+            O:playerSetBoneAng(11,ang(random(-90,90),random(-90,90),random(-90,90)))
+        }
+    }
+    if(N_gou==250){
+        T_cur=0
+        Ra=rangerOffsetHull(O:toWorld(vec(40,0,60)),O:aimPos(),vec(-5,-5,0),vec(5,5,0)):distance()
+        holoCreate(1)
+        #lightCreate(1,holoEntity(1):pos(),vec(255,200,20),30000,50)
+        #lightParent(1,holoEntity(1))
+        holoAlpha(1,0)
+        holoPos(1,O:toWorld(vec(20,0,60)))
+        holoAng(1,O:eyeAngles())
+        Eye=O:eye()
+        Aim=O:aimPos()
+     #   T_max=(abs(Aim:x()-holoEntity(1):pos():x())+abs(Aim:y()-holoEntity(1):pos():y())+abs(Aim:z()-holoEntity(1):pos():z()))/13.8
+        
+    }
+    if(N_gou>=250){
+        S="sprites/flamelet"+random(1,5):toString()
+        particle(random(1,1),80,10,S,vec(255,255,255),holoEntity(1):pos()+vec(random(-50,50),random(-50,50),random(-50,50)),vec(0,0,20),0,1,100,10)
+        T_cur=T_cur+30
+        
+        Dir=(Aim-holoEntity(1):pos()):normalized()
+        holoPos(1,holoEntity(1):pos()+Dir*30)
+        
+        if(Ra-T_cur<=90) { 
+            findInSphere(holoEntity(1):pos(),300)
+        } else {
+            findInSphere(holoEntity(1):pos(),60)
+        }
+        
+        Tar2=find()
+        if(changed(Tar2)&Tar2)
+        {
+            Ent=rangerOffsetHull(holoEntity(1):toWorld(vec(0,0,0)),Tar2:toWorld(vec(0,0,10)),vec(-1,-1,0),vec(1,1,0)):entity()
+            if(Ent==Tar2){        
+                Tar2:ignite(10)
+            }
+        }
+}
+    if(T_cur>Ra){Gou=0 }
+}
+
+if(changed(Gou)&!Gou){
+    #lightRemove(1)
+    for(I=1,30){
+        
+        S="sprites/flamelet"+random(1,5):toString()
+        particle(random(1,3),350,10,S,vec(255,255,255),holoEntity(1):pos()+vec(random(-60,60),random(-60,60),random(-60,60)),vec(random(-500,500),random(-500,500),random(-60,100)),0,1,100,10)
+        effectSpawn("explosion",holoEntity(1):pos(),10)
+    }
+    
+    
+#    Tar2=find()
+ #   Tar2:ignite(10)
+    Ar=findToArray()
+    for(J=1,Ar:count()){
+        Ent=rangerOffsetHull(holoEntity(1):toWorld(vec(0,0,10)),Ar[J,entity]:toWorld(vec(0,0,10)),vec(-1,-1,0),vec(1,1,0)):entity()
+        if(Ent==Ar[J,entity]){
+            #Ar[J,entity]:propFreeze(0)
+            Ar[J,entity]:setPos(Ar[J,entity]:pos()+vec(0,0,20))  
+            Ar[J,entity]:setVel((Ar[J,entity]:pos()+vec(0,0,50)-holoEntity(1):pos()):normalized()*500)      
+            Ar[J,entity]:ignite(10)
+            Ar[J,entity]:takeDamage(1)
+        }
+    }
+    
+}
+E=O:keyPressed("E")
+if(changed(E)&E){
+    soundURLload(1:toString(),"https://clck.ru/9ueNY",255,0,O)
+    Gou2=1
+    N_gou2=0
+    
+}
+if(Gou2){
+        N_gou2++
+    if(N_gou2<250){
+        C=(C+1)%15
+        if(C==1){
+            O:playerSetBoneAng(16,ang(random(-90,90),random(-90,90),random(-90,90)))
+            O:playerSetBoneAng(11,ang(random(-90,90),random(-90,90),random(-90,90)))
+        }
+    }
+    if(N_gou2==250){O:soundPlay("1",30,"ambient/gas/cannister_loop.wav")}
+    if(N_gou2>=250){
+        S="sprites/flamelet"+random(1,5):toString()
+        particle(0.5,5,60,S,vec(255,255,255),O:pos()+vec(0,0,60)+O:eye()*20,vec(O:eye():x()+random(-40,40)/100,O:eye():y()+random(-40,40)/100,O:eye():z()+random(-20,20)/100)*800,0,1,100,10)
+        findInCone(O:toWorld(vec(0,0,60)),O:eye(),350,30)
+        Ar2=findToArray()
+        for(J=1,Ar2:count()){
+            Ent=rangerOffsetHull(O:toWorld(vec(40,0,60)),Ar2[J,entity]:toWorld(vec(0,0,10)),vec(-1,-1,0),vec(1,1,0)):entity()
+            if(Ent==Ar2[J,entity]){
+                #Ar2[J,entity]:propFreeze(0)
+                Ar2[J,entity]:ignite(5)
+                Ar2[J,entity]:takeDamage(1)    
+    
+        }
+    }
+}
+}
+if(changed(E)&!E){
+    Gou2=0
+    soundStop("1")
+}
+}
+
+if(Bun){
+    N_bun++
+    if(N_bun>=300){
+        for(I=1,8){
+          particle(4,20,random(50,100),"particle/smokestack",vec(255),O:pos()+vec(random(-10,10),random(-10,10),random(30,80)),vec(random(-20,20),random(-20,20),random(-20,40)),1,1,255,0)
+         
+        }
+        Bun=0
+        O:setKeyValue("health",Health)
+        O:setPos(Pos)
+
+    }
+}
+    
+    
+
+
+
+
+
+

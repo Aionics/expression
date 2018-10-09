@@ -1,0 +1,95 @@
+@name forcesphere_robo
+@inputs 
+@outputs Ar_s:string N Ar:array Tar:entity M TarN 
+@persist [E Tar O Holo]:entity A  Arc:array Spr:entity Size:vector LS:string Active
+@trigger 
+
+interval(1)
+
+
+if(first()){
+
+Active = 1
+E=entity()
+O=owner()
+E:setAlpha(0)
+
+findInSphere(E:toWorld(vec(0,0,0)),100)
+findSortByDistance(E:toWorld(vec(0,0,0)))
+#findIncludeClass("player")
+findIncludeClass("NPC")
+#findIncludeClass("prop_physics")
+#findExcludePlayer("aionics")
+findExcludePlayer("Most")
+findExcludePlayer("Den246")
+findExcludePlayer("Alex67")
+findExcludePlayer("banan")
+findExcludePlayer("cocobo")
+findExcludePlayer("double")
+findExcludePlayer("balala")
+findExcludePlayer("flart")
+findExcludePlayer("forest")
+findExcludePlayer("freekill")
+findExcludePlayer("immortal")
+findExcludePlayer("Mr.Phoenix")
+findExcludePlayer("botosh")
+findExcludePlayer("Bangal")
+findExcludePlayer("Batman")
+findExcludePlayer("myc9")
+findExcludePlayer("borov")
+findExcludePlayer("shepard")
+findExcludePlayer(">Yoko<")
+findExcludePlayer("realne")
+findExcludePlayer("orange")
+findExcludePlayer("kast")
+findExcludePlayer("mr. con")
+findExcludePlayer("san9q")
+
+
+
+
+}
+if(Active)
+{
+LS=owner():lastSaid()
+findInSphere(E:pos(),300)
+#findClipFromSphere(E:pos(),99999)
+#findClipToSphere(holoEntity(7):toWorld(vec(0,0,0)),250)
+#findClipToSphere(holoEntity(2):toWorld(vec(0,0,0)),250)
+#findSortByDistance(holoEntity(2):toWorld(vec(0,0,0)))
+findExcludeClass("weapon")
+findIncludeClass("player")
+findIncludeClass("vehicle")
+#qfindIncludeClass("wire")
+findExcludePlayer("aionics")
+findExcludePlayer(LS)
+findExcludePlayerProps(owner())
+findIncludeClass("NPC")
+findIncludeClass("wire")
+findIncludeClass("prop_physics")
+findIncludeClass("rpg")
+#findIncludeClass("prop_combine_ball")
+findIncludeClass("crossbow_bolt")
+findIncludeClass("grenade_ar2")
+
+
+
+Tar=find()
+if(Tar:isNPC()|Tar:isVehicle()){Tar:remove()}
+if(Tar){
+    Tar:playerNoclip(0)
+    Tar:setVel(Tar:vel()*vec(-1))    
+    Tar:propFreeze(0)
+    Tar:setVel((Tar:pos()-E:pos())*3)
+#    Tar:setVel(vec(-100,0,100)*3)
+    
+}
+if(changed(Tar)&Tar){
+#    N=(N+1)%9
+#    holoPos(N+1,Tar:pos())
+for(I=1,5){
+particle(1.5,5,50,"particle/warp1_warp",vec(255),Tar:pos(),vec(0))
+}
+}
+TarN=Tar:isNPC()
+}

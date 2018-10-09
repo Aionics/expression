@@ -1,0 +1,15 @@
+@name OMG
+@inputs 
+@outputs 
+@persist Door:entity
+@trigger 
+
+interval(10)
+if(first()){
+Door=entity():isWeldedTo()
+}
+
+T=Ow:keyPressed("T")
+
+if(T){Door:propNotSolid(1)}else{Door:propNotSolid(0)}
+

@@ -1,0 +1,7 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+interval(10)
+effectSpawn("cball_explode",entity(),1)

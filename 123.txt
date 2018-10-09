@@ -1,0 +1,15 @@
+@persist Ow:entity
+
+if (first()) {
+    runOnTick(1)
+    Ow = owner()
+}
+
+
+At1 = Ow:keyAttack1()
+
+if (changed(At1) && At1) {
+    Bottle = propSpawn("models/props_borealis/bluebarrel001.mdl" , Ow:shootPos(), 0)
+    Bottle:remove(2)
+    Bottle:setVel(Ow:eye() * 5000)
+}

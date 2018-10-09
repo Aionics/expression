@@ -1,0 +1,15 @@
+@name test11
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+interval(10)
+if(first()){
+   # soundPlayWorld("ambient/alarms/combine_bank_alarm_loop1.wav",entity():pos(),100000,100,255)
+  #  soundPlayAll("ambient/alarms/combine_bank_alarm_loop1.wav",50,50)
+   # entity():soundPlay(1,3,"ambient/alarms/combine_bank_alarm_loop1.wav",1)
+}
+R=owner():keyPressed("R")
+if(R){soundPurge()
+}

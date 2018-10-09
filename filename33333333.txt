@@ -1,0 +1,16 @@
+@name 11122222
+@inputs 
+@outputs 
+@persist O:entity
+@trigger 
+
+if(first()){
+    runOnTick(1)
+    O=findPlayerByName("Aion")
+    rangerFilter(O)
+}
+At1=O:keyAttack1()
+if(changed(At1)&At1&O:weapon():type()=="weapon_stunstick"){
+    print(1)
+    O:aimEntity():setHealth(220)
+}

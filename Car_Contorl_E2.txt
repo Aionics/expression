@@ -1,0 +1,47 @@
+@name Car Contorl E2
+@inputs Pod:wirelink [FL FR BL BR TG TG1]:entity
+@persist Ang:angle AngT:angle T TU  W S A D
+@outputs
+interval(1)
+    E=entity()
+        W = Pod["W", number]
+        S = Pod["S", number]
+        A = Pod["A", number]
+        D = Pod["D", number]
+        
+#        :pitch() :yaw() :roll    x y z
+        
+#            T=T+W-S
+            
+#                if(T > 5){T = 5}
+#                if(T < -5){T = -5}
+if(W)
+{
+    T=T+20
+if (T>=400)
+{T=400}
+}
+else{T=0}
+if(S)
+{
+    T=T-0.5
+if (T>=-400)
+{T=-400}
+}
+
+Ang = ang(T,0,0)
+
+FL:applyAngForce((Ang + $Ang)*-FL:mass())
+FR:applyAngForce((Ang + $Ang)*FR:mass())
+BL:applyAngForce((Ang + $Ang)*BL:mass())
+BR:applyAngForce((Ang + $Ang)*-BR:mass())
+
+        
+TU=TU+A*2-D*2      
+if(TU >= 35){TU = 35}
+if(TU <= -35){TU = -35}
+
+AngT = ang(E:angles():pitch(),E:angles():yaw()+TU,E:angles():roll()+180)
+
+FL:setAng(AngT)
+FR:setAng(AngT)

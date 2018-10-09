@@ -1,0 +1,9 @@
+@name testMod
+@inputs A
+@outputs B
+@persist A B
+@trigger 
+
+interval(10)
+
+B=mod(A,10)
