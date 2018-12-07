@@ -18,8 +18,8 @@ if (first()) {
     findInSphere(owner():pos(), 1000)
     
     Ent = entity()
-    #local MECH = findToArray()[1, entity]:wirelink()
-    local MECH = table()
+    local MECH = findToArray()[1, entity]:wirelink()
+    #local MECH = table()
     Seat = entity():isWeldedTo()
     Cabine = MECH["LeftWeapon", entity]
     LeftWeapon = MECH["LeftWeapon", entity]

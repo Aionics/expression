@@ -1,0 +1,227 @@
+#particle(number Duration,number StartSize,number EndSize,string Mat,vector RGB,vector Position,
+#vector Velocity,number Pitch,number RollDelta,number StartAlpha,number EndAlpha)
+
+
+@persist [Ow]:entity
+@persist [DeleteQueue]:array
+@persist [Global Constants Targets Knifes]:table
+@persist HoloIndex KnifeCounter
+if (first()) {
+    runOnTick(1)
+    Ow = owner()
+
+    Targets = table()
+    Global = table(
+        "State" = "none",
+        "Speed" = 0.1,
+        "Scale" = 1,
+        "Sphere" = array(),
+        "throwing" = 0
+    )
+    Constants = table(
+        "KnifeSpeed" = 50,
+        "Smooth" = 50,
+        "Damage" = 10,
+        "Knockback" = 50,
+        "Range" = 1000
+    )
+    HoloIndex = 1
+    KnifeCounter = 1
+    for(I=501, 502) {
+        print(I)
+        holoCreate(I)
+        holoPos(I, owner():pos() + vec(0,0,40))
+        holoModel(I, "models/hunter/misc/sphere375x375.mdl")
+        holoDisableShading(I, 1)
+        holoMaterial(I, "effects/tp_refract")
+        holoColor(I, vec(80,180,150))
+        holoAlpha(I, 0)
+        Global["Sphere", array]:pushEntity(holoEntity(I))
+    }
+    findIncludeClass("player")
+    findIncludeClass("NPC")
+    findIncludeClass("prop_physics")
+    findExcludeEntity(Ow)
+    
+    function void do_freeze() {
+        findInSphere(Ow:pos(), 1500)
+        local Find = findToArray()
+        foreach(Index, Target_:entity=Find) {
+            local Target = table(
+                "entity" = Target_,
+                "type" = Target_:type(),
+                "vel" = Target_:vel(),
+                "frozen" = Target_:isFrozen(),
+                "damage" = 0
+            )
+            Targets:pushTable(Target)
+            if (Target_:type() == "player") {
+                print(Target)
+                Target_:playerFreeze()
+            }
+            if (Target_:type() == "prop_physics") {
+                Target_:propFreeze(1)
+            }
+
+        }
+    }
+    function void do_unfreeze() {
+        printTable(Targets)
+
+        foreach(Index, Holo:entity=Global["Sphere", array]) {
+            holoAlpha(holoIndex(Holo), 0)
+        }
+
+        Global["State", string] = "none"
+        Global["throwing", number] = 1
+        for (Index=1, Targets:count()) {
+            local Target = Targets[Index, table]
+            local Ent = Target["entity", entity]
+            if (Target["type", string] == "player") {
+                local Ent = Target["entity", entity]
+                Ent:playerUnFreeze()
+                Ent:setVel(Target["vel", vector])
+            }
+            printTable(Target)
+            print(Target["type", string] == "prop_physics")
+            if (Target["type", string] == "prop_physics") {
+                printTable(Target)
+                if (!Target["frozen", number]) {
+                    print(Ent)
+                    Ent:propFreeze(0)
+                    Ent:setVel(Target["vel", vector])
+                }
+            }
+        }
+        Targets = table()
+    }
+}
+
+local At1 = Ow:keyAttack1()
+local At2 = Ow:keyAttack2()
+local Shift = Ow:keySprint()
+local Weapon = (Ow:weapon():type() == "weapon_crowbar")
+
+if (Weapon) {
+    if (changed(At2) && At2) {
+        print(Global["State", string] == "none")
+        if (Global["State", string] == "none") {
+            print(2)
+            soundURLload(1:toString(),"https://clck.ru/EWhiL",255,0,owner())
+            timer("init", 3500)
+            Global["State", string] = "init"
+            Global["Speed", number] = 0.1
+            Global["Scale", number] = 1
+        } else {
+            soundURLload(3:toString(),"https://clck.ru/EWnP5",255,0,owner())
+            timer("done", 1500)
+        }
+    }
+    if (changed(At1) && At1 && Global["State", string] == "done" && !Shift) {
+        Global["State", string] = "muda"
+        soundURLload(1:toString(),"https://clck.ru/EWmGm",255,0,owner())
+        timer("muda", 1200)
+        timer("muda_1", 1200 + 5000)
+    }
+}
+if (clk("init")) {
+    if (Global["State", string] == "init") {
+        Global["throwing", number] = 0
+        Global["State", string] = "init_1"
+        foreach(Index, Holo:entity=Global["Sphere", array]) {
+            holoAlpha(holoIndex(Holo), 255)
+            holoPos(holoIndex(Holo), Ow:pos() + vec(0,0,50))
+        }
+    }
+    if (Global["Scale", number] < 100) {
+        Global["Speed", number] = Global["Speed", number] + 0.01
+        Global["Scale", number] = Global["Scale", number] + Global["Speed", number]
+
+        holoScale(holoIndex(Global["Sphere", array][1, entity]), vec(Global["Scale", number]*0.5))
+        holoScale(holoIndex(Global["Sphere", array][2, entity]), vec(-Global["Scale", number]*0.5))
+        timer("init", 1)
+    } else {
+        Global["State", string] = "done"
+        do_freeze()
+    }
+}
+
+if (clk("muda")) {
+    local SpawnPos = Ow:shootPos() + Ow:eye() * 30 + randvec(-30, 30)
+    local Holo = holoCreate(HoloIndex, SpawnPos, vec(1.15), Ow:eyeAngles(), vec(255), "models/weapons/w_knife_ct.mdl")
+    holoMaterial(HoloIndex, "sprops/textures/sprops_metal3")
+    particle(0.3, 40, 1,"sprites/animglow02",vec(200,255,255), SpawnPos,vec(0),0, 0, 255, 0)
+    HoloIndex = HoloIndex < 400 ? HoloIndex + 1 : 1
+    Holo:setTrails(20,1,0.5,"trails/laser",vec(255),150)
+
+    local AimPos = Ow:aimPos()
+    local Smooth = Ow:pos():distance(AimPos) / Constants["Smooth", number]
+    local Direction = (AimPos - SpawnPos):normalized()
+
+    local Knife = table(
+        "entity" = Holo,
+        "direction" = Direction,
+        "distance" = 0
+    )
+    Knifes:pushTable(Knife)
+
+    if (Global["State", string] == "muda") {
+        timer("muda", 300)
+    }
+}
+if (clk("muda_1")) {
+    Global["State", string] = "done"
+    #printTable(Knifes)
+    #print("MUDA DONE")
+}
+if (clk("done")) {
+    do_unfreeze()
+}
+
+if (Global["throwing", number]) {
+    if (Knifes:count()) {
+        if (KnifeCounter>Knifes:count()) {KnifeCounter=1}
+        while(perf() && KnifeCounter <= Knifes:count()) {
+            local Knife  = Knifes[KnifeCounter, table]
+            local Ent = Knife["entity", entity]
+            local Direction = Knife["direction", vector]
+            rangerFilter(Ow)
+
+            local Ranger = rangerOffsetHull(Constants["KnifeSpeed", number], Ent:pos(), Direction, vec(10))
+            Ent:setPos(Ranger:pos())
+            Knife["distance", number] = Knife["distance", number] + Constants["KnifeSpeed", number]
+
+            if (Ranger:hit()) {
+                local HitEntity = Ranger:entity()
+                if (HitEntity) {
+                    holoParent(holoIndex(Ent), HitEntity)
+                    print(HitEntity:type())
+                    if (HitEntity:type() == "player" || HitEntity:type():find("npc") > 0) {
+                        HitEntity:setVel(Direction * Constants["Knockback", number])
+                        print(HitEntity)
+                        particle(3, 1, random(15,40), "decals/blood" + randint(1,6):toString(),vec(200,255,255), Ent:pos(),randvec(-30,30) + vec(0,0,-20),random(-2,2), random(-2,2), 180, 0)
+                        local SoundId = (KnifeCounter+200):toString()
+                        HitEntity:soundPlay(SoundId, 1, "physics/flesh/flesh_squishy_impact_hard"+randint(2,4)+".wav")
+                        soundPitch(SoundId, random(130, 180))
+                    } else {
+                        HitEntity:setVel(HitEntity:vel() + Direction * Constants["Knockback", number])
+                        particle(1.2, 1, random(5,30), "particles/smokey",vec(200,255,255), Ent:pos(),randvec(-20,20),random(-2,2), random(-2,2), 180, 0)
+                        local SoundId = (KnifeCounter+200):toString()
+                        HitEntity:soundPlay(SoundId, 1, "physics/metal/metal_canister_impact_hard"+randint(1,3)+".wav")
+                        soundPitch(SoundId, random(130, 150))
+                    }
+                    HitEntity:takeDamage(Constants["Damage", number], "slash")
+                }
+                Ent:remove(6)
+                Knifes:remove(KnifeCounter)
+            } elseif (Knife["distance", number] > Constants["Range", number] * 1.2) {
+                Ent:remove()
+                Knifes:remove(KnifeCounter)
+            }
+            KnifeCounter++
+        }
+    } else {
+        Global["throwing", number] = 0
+    }
+}
+

@@ -21,7 +21,7 @@ Tesla:setKeyValue("SetParent","toparent")
 #Tesla:setKeyValue("m_SoundName","ambient/voices/f_scream1.wav")
 #Tesla:setKeyValue("m_SoundName","ambient/alarms/combine_bank_alarm_loop1.wav")
 
-O:playerModel("models/Humans/Group01/male_09.mdl")
+#O:playerModel("models/Humans/Group01/male_09.mdl")
 findIncludeClass("player")
 findIncludeClass("prop")
 findIncludeClass("NPC")

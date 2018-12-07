@@ -29,7 +29,7 @@ if(first()){
     EGPCounter=1
     #E:propNotSolid(1)
     
-    Speed = 3
+    Speed = 0
     
     entity():setAng(ang(0))
     EGP_e:setAng(ang(0))

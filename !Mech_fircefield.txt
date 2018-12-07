@@ -13,8 +13,8 @@ if (first()) {
     Seat = entity():isWeldedTo()
     Toggle = 0
     Ready = 0
-    ShieldSize = 200
-    MaxSize = 200
+    ShieldSize = 100
+    MaxSize = 100
     
     Quads = table()
     QuadTargets = array()

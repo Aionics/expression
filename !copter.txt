@@ -1,94 +1,501 @@
-@name !copter
-@persist [Seat E Board Driver Prop]:entity
-@persist Traction
-@outputs Traction
-@model models/props_c17/trappropeller_engine.mdl
+@name !copter_main
+@inputs 
+@outputs THRUST
+@persist [SEAT ORIGIN HOLO_SLAVE HOLO_TARGET]:entity
+@persist [HOLO_ORIGIN HOLO_LEFT_DOOR HOLO_RIGHT_DOOR HOLO_ROOF HOLO_AIRSCREW_MAIN HOLO_AIRSCREW_MAIN_1 HOLO_AIRSCREW_MAIN_2]:entity
+@persist [HOLO_SCREW_MAIN_0 HOLO_SCREW_MAIN_1 HOLO_SCREW_MAIN_2 HOLO_SCREW_MAIN_3 HOLO_LEFT_CHASSIS HOLO_RIGHT_CHASSIS]:entity
+@persist [SCREW_QUAD CABIN_LIGHT]:entity
+@persist [ANGLES]:angle
+@persist [MASS THRUST G AIR_RESISTANCE LAZY_MODE HEALTH]:number
+@persist [HI Window_alpha KeyAlpha SOUND_COUNTER TIMER_SCREWS TIMER_DOORS TIMER_CHASSIS PARTICLE_TICK]:number
+@persist [Window_color VELOCITY]:vector
+@persist [WINDOWS]:array
 
-if(first()){
+if (first()) {
+    #include "libs/HoloCreate"
+    
+    SEAT = entity():isWeldedTo()
+    SEAT:setPos(SEAT:pos() + vec(0,0,30))
+    SEAT:setAng(ang(0))
+    SEAT:propFreeze(1)
+    
+    MASS = 500
+    SEAT:setMass(0)
+    ANGLES = ang(0)
+    SEAT:propGravity(0)
+    entity():constraintBreak()
+    entity():setPos(SEAT:pos() + vec(0,0,-50))
+    
+    HOLO_SLAVE = holoCreate(1)
+    holoAlpha(1, 100)
+    holoColor(1, vec(255,100,100))
+    
+    HOLO_TARGET = holoCreate(2)
+    holoColor(2, vec(100,100,255))
+    holoAlpha(2, 100)
+
+    timer("second", 50)
+    timer("third", 200)
     runOnTick(1)
     
-    O=owner()
-    E=entity()
-    Seat=entity():isWeldedTo()
-    Board=propSpawn("models/props_wasteland/prison_bedframe001b.mdl",Seat:pos()+vec(0,0,50),ang(0),1)
-    Traction = -50
+    THRUST = 0
+    HI = 100
     
-    Seat:setPos(Board:pos()+vec(-10,0,8))
-    Seat:setAng(ang(0,90,0))
-    Seat:weldTo(Board, 1)
+    KeyAlpha = 100
+    Window_alpha = 0
+    Window_color = vec(255,255,200)
+    TIMER_SCREWS = 0
+    TIMER_DOORS = 0
+    SOUND_COUNTER = 1
+    G = 9.8
+    AIR_RESISTANCE = 0.005
+    LAZY_MODE = 0
+    HEALTH = 5000
+    PARTICLE_TICK = 0
     
-    Board:setMass(20)
-    
-    E:setMass(0)
-    E:propGravity(0)
-    E:noCollideAll(1)
-    E:removeAllConstraints()
-    Prop=propSpawn("models/hunter/blocks/cube025x025x025.mdl", Seat:pos()+vec(50,0,10), 1)
-    
-    
-
-    
-    timer("second",20)  
-}
-
-if(clk("second")){
-    E:setAng(ang(0,0,0))
-    E:setPos(Seat:pos()+vec(20,3,5))
-    E:weldTo(Board, 1)
-    
-    
-    holoCreate(1,Seat:pos()+vec(0,0,-8),vec(0.4,0.4,0.3),ang(0),vec(255),"models/props_c17/oildrum001.mdl")
-    holoParent(1, Seat)
-    
-    holoCreate(2,Seat:pos()+vec(20,0,40),vec(0.3,0.5,0.5),ang(90,0,0),vec(255),"models/props_junk/iBeam01a.mdl")
-    holoParent(2, Seat)
-    
-    holoCreate(3, Seat:pos()+vec(20,0,70), vec(1), ang(0), vec(255), "models/props_c17/TrapPropeller_Blade.mdl")
-    holoCreate(4, Seat:pos()+vec(20,0,70), vec(1), ang(0,180,0), vec(255), "models/props_c17/TrapPropeller_Blade.mdl")
-    holoParent(3, 2)
-    holoParent(4, 2)
-}
-Driver = Seat:driver()
-Space = Driver:keyJump()
-Shift = Driver:keySprint()
-W = Driver:keyPressed("W")
-
-if(Driver){
-    if(Traction != 0 && !Space && !Shift){
-        Traction = Traction - 0.1 * Traction / abs(Traction)     
+    function void playSound(ID:string, Path:string, Pitch:number, Duration:number) {
+        holoEntity(SOUND_COUNTER+101):soundPlay(ID, Duration, Path)
+        soundPitch(ID, Pitch)
+        SOUND_COUNTER = SOUND_COUNTER >= 101 ? 0 : SOUND_COUNTER + 1
     }
+}
+
+if (clk("second")) {
+    holoAng(1, ang(0))
+    holoAng(2, ang(0))
+
+    holoPos(1, SEAT:pos())
+    holoPos(2, SEAT:pos())
+
+    ORIGIN = propSpawn("models/hunter/blocks/cube05x05x025.mdl", SEAT:pos()+vec(0,0,-15), ang(0), 1)
+    ORIGIN:setMass(MASS)
+    ORIGIN:propGravity(0)
+    ORIGIN:setAlpha(0)
     
-    if(Space){
-        if(Traction <= 30){
-            Traction=Traction+0.1
-              
+    SEAT:parentTo(ORIGIN)
+    lightCreate(1,SEAT:pos() + vec(10,5,30),vec(0, 60, 255),45,0)
+    lightParent(1,SEAT)
+    
+}
+if (clk("third")) {
+
+    HOLO_ORIGIN = do_holocreate_key(HI, ORIGIN, vec(0,0,0), ang(0,90,0), KeyAlpha) HI++
+
+    #do_holocreate(HI, HOLO_ORIGIN, "models/props_combine/combine_intwallunit.mdl", vec(0,0,0), ang(0,0,0), vec(1), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_ORIGIN, "models/props_combine/combine_intwallunit.mdl", vec(10,4,10), ang(90,-90,0), vec(1), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_ORIGIN, "models/props_combine/combine_intwallunit.mdl", vec(10,-2,10), ang(90,-90,0), vec(-1,1,-1), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_ORIGIN, "models/props_combine/breendesk.mdl", "phoenix_storms/metalset_1-2", vec(3,0,10), ang(0,180,0), vec(0.45,0.15,0.2), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_ORIGIN, "models/props_combine/combine_interface002.mdl", vec(5,15,10), ang(0,-70,0), vec(0.2,0.4,0.4), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_ORIGIN, "models/props_combine/combine_interface002.mdl", vec(5,-15,10), ang(0,70,0), vec(0.2,0.4,0.4), vec(255), 255) HI++
+    
+    #effects/combineshield/comshieldwall3
+    #do_holocreate(HI, HOLO_ORIGIN, "models/hunter/plates/plate1x2.mdl", "models/alyx/emptool_glow", vec(5,-15,50), ang(0,90,90), vec(0.5), vec(180,255,200), 60) HI++
+    #do_holocreate(HI, HOLO_ORIGIN, "models/hunter/tubes/tube1x1x1d.mdl", "models/alyx/emptool_glow", vec(45,12,13), ang(190,0,90), vec(0.6, 1.1, 0.5), vec(200,200,255), 30) HI++
+    #do_holocreate(HI, HOLO_ORIGIN, "models/hunter/plates/plate1x2.mdl", "models/alyx/emptool_glow", vec(26,0,54), ang(0,90,35), vec(0.47, 0.6, 0.2), vec(200,200,255), 30) HI++
+    local W1 = do_holocreate(HI, HOLO_ORIGIN, "models/hunter/tubes/tube1x1x1d.mdl", "effects/combine_binocoverlay", vec(45,12,13), ang(190,0,90), vec(0.6, 1.1, 0.5), Window_color, Window_alpha) HI++
+    local W2 = do_holocreate(HI, HOLO_ORIGIN, "models/hunter/plates/plate1x2.mdl", "effects/combine_binocoverlay", vec(26,0,54), ang(0,90,35), vec(0.55, 0.6, 0.2), Window_color, Window_alpha) HI++
+    do_holocreate(HI, HOLO_ORIGIN, "models/props_combine/tprotato1.mdl", vec(-20,0,65), ang(-85,0,0), vec(0.3,0.6,0.3), vec(255,255,255), 255) HI++
+    do_holocreate(HI, HOLO_ORIGIN, "models/props_combine/combine_interface003.mdl", vec(-37,0,10), ang(30,0,0), vec(0.8,0.7,1), vec(255,255,255), 255)
+    do_holoclip(HI, 1, vec(0,0,14), vec(0,0,1)) HI++
+    do_holocreate(HI, HOLO_ORIGIN, "models/props_combine/combine_train02a.mdl", vec(-10,2,18), ang(-140,0,0), vec(0.2,0.05,0.07), vec(255,255,255), 255) HI++
+    do_holocreate(HI, HOLO_ORIGIN, "models/props_combine/combine_train02a.mdl", vec(-43,2,30), ang(-150,0,0), vec(0.1,0.05,0.03), vec(255,255,255), 255) HI++
+    do_holocreate(HI, HOLO_ORIGIN, "models/props_combine/combinethumper002.mdl", vec(-30,-4,45), ang(-0,90,-100), vec(0.4,0.3,0.5), vec(255,255,255), 255) HI++
+    do_holocreate(HI, HOLO_ORIGIN, "models/props_c17/pulleywheels_large01.mdl", "phoenix_storms/Future_vents", vec(-150,0,15), ang(-0,90,-0), vec(1), vec(150,150,150), 255) HI++
+    do_holocreate(HI, HOLO_ORIGIN, "models/combine_room/combine_wire002.mdl", vec(-80,0,34), ang(110,0,-90), vec(0.3, 0.6,0.8), vec(255), 255) HI++
+    
+    
+    
+    HOLO_LEFT_DOOR = do_holocreate_key(HI, ORIGIN, vec(-18,16,10), ang(0,140,0), KeyAlpha) HI++
+    do_holocreate(HI, HOLO_LEFT_DOOR, "models/props_combine/combineinnerwall001c.mdl", vec(20,0,4), ang(15,70,-90), vec(0.15,0.05,0.06), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_LEFT_DOOR, "models/props_combine/tprotato1_chunk01.mdl", vec(25,-2,-3), ang(90,0,0), vec(0.2,0.5,0.4), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_LEFT_DOOR, "models/props_combine/combine_smallmonitor001.mdl", vec(30,2,0), ang(240,90,0), vec(0.4,0.8,0.4), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_LEFT_DOOR, "models/props_combine/combineinnerwall001c.mdl", "phoenix_storms/trains/track_plateside", vec(32,-15.5,-2), ang(100,180,0), vec(0.02, 0.03,0.03), vec(215, 255, 255), 255) HI++
+    do_holocreate(HI, HOLO_LEFT_DOOR, "models/props_combine/combine_fence01a.mdl", vec(39,-5,18), ang(180,35,0), vec(0.5,0.3,0.15), vec(255, 255, 255), 255) HI++
+    
+    HOLO_RIGHT_DOOR = do_holocreate_key(HI, ORIGIN, vec(18,16,10), ang(0,40,0), KeyAlpha) HI++
+    do_holocreate(HI, HOLO_RIGHT_DOOR, "models/props_combine/combineinnerwall001c.mdl", vec(20,0,4), ang(15,-70,90), vec(0.15,0.05,0.06), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_RIGHT_DOOR, "models/props_combine/tprotato1_chunk01.mdl", vec(10,5,-3), ang(90,180,0), vec(0.2,0.5,0.4), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_RIGHT_DOOR, "models/props_combine/combine_barricade_bracket02b.mdl", vec(10,2,-3), ang(30,0,230), vec(1,0.6,0.5), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_RIGHT_DOOR, "models/props_combine/combine_smallmonitor001.mdl", vec(5,2,0), ang(90,90,0), vec(0.4), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_RIGHT_DOOR, "models/props_combine/combine_fence01b.mdl", vec(39,5,18), ang(180,-35,0), vec(0.5,0.3,0.15), vec(255, 255, 255), 255) HI++
+    
+    HOLO_ROOF = do_holocreate_key(HI, ORIGIN, vec(0,-25,55), ang(-60,90,0), KeyAlpha) HI++
+    #do_holocreate(HI, HOLO_ROOF, "models/hunter/blocks/cube025x2x025.mdl", "models/props_c17/metalladder001", vec(47,17,0), ang(0,90,35), vec(0.5,0.7,0.3), vec(150, 180, 200), 255) HI++
+    #do_holocreate(HI, HOLO_ROOF, "models/hunter/blocks/cube025x2x025.mdl", "models/props_c17/metalladder001", vec(47,-10,0), ang(0,90,35), vec(0.5,0.7,0.3), vec(150, 180, 200), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/props_combine/combine_fence01a.mdl", vec(37,16,7), ang(125,-5,0), vec(0.5,0.3,0.35), vec(255, 255, 255), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/props_combine/combine_fence01b.mdl", vec(37,-16,7), ang(125,5,0), vec(0.5,0.3,0.35), vec(255, 255, 255), 255) HI++
+    #do_holocreate(HI, HOLO_ROOF, "models/hunter/blocks/cube025x2x025.mdl", "models/props_c17/metalladder001", vec(47,-10,0), ang(0,90,35), vec(0.5,0.7,0.3), vec(150, 180, 200), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/props_combine/combine_light002a.mdl", vec(38,19,-28), ang(-90,170,0), vec(1), vec(255, 255, 255), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/props_combine/combine_light002a.mdl", vec(38,-19,-28), ang(-90,190,0), vec(1), vec(255, 255, 255), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/props_combine/combine_fence01a.mdl", vec(42,20,-25), ang(-0,95,-90), vec(0.5,0.3,0.16), vec(255, 255, 255), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/props_combine/combine_fence01b.mdl", vec(42,-20,-25), ang(-0,-95,90), vec(0.5,0.3,0.16), vec(255, 255, 255), 255) HI++
+    local W3 = do_holocreate(HI, HOLO_ROOF, "models/hunter/plates/plate1x1.mdl", "effects/combine_binocoverlay", vec(35,-17,-8), ang(10,-5,85), vec(0.7,0.7,0.1), Window_color, Window_alpha)
+    do_holoclip(HI, 1, vec(40,0,0), -vec(1,3,0)) HI++
+    local W4 = do_holocreate(HI, HOLO_ROOF, "models/hunter/plates/plate1x1.mdl", "effects/combine_binocoverlay", vec(35,17,-8), ang(10,5,95), vec(0.7,0.7,0.1), Window_color, Window_alpha)
+    do_holoclip(HI, 2, vec(40,0,0), -vec(1,3,0)) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/XQM/quad1.mdl", "models/props_c17/metalladder001", vec(36,20,-39), ang(130,-13,90), vec(1.2,1,1.5), vec(140, 160, 180), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/XQM/quad1.mdl", "models/props_c17/metalladder001", vec(36,-20,-39), ang(130,13,90), vec(1.2,1,1.5), vec(140, 160, 180), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/props_combine/combine_smallmonitor001.mdl", vec(60,-15,-35), ang(0,100,30), vec(0.3,1,1), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/props_combine/combine_smallmonitor001.mdl", vec(60,15,-35), ang(0,-100,-30), vec(0.3,1,1), vec(255), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/props_combine/combinethumper002.mdl", vec(26,15,16), ang(0,90,125), vec(0.1,0.15,0.2), vec(255, 255, 255), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/props_combine/combinethumper002.mdl", vec(26,-17,16), ang(0,90,125), vec(0.1,0.15,0.2), vec(255, 255, 255), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/props_combine/combinethumper002.mdl", vec(14,-17,-25), ang(3,90,10), vec(0.1,0.1,0.16), vec(255, 255, 255), 255) HI++
+    do_holocreate(HI, HOLO_ROOF, "models/props_combine/combinethumper002.mdl", vec(14,17,-25), ang(-3,90,10), vec(0.1,0.1,0.16), vec(255, 255, 255), 255) HI++
+    
+    HOLO_AIRSCREW_MAIN = do_holocreate_key(HI, ORIGIN, vec(0,-20,80), ang(0,90,0), KeyAlpha) HI++
+
+    do_holocreate(HI, HOLO_AIRSCREW_MAIN, "models/items/combine_rifle_cartridge01.mdl", vec(0,0,0), ang(0,0,90), vec(1.5, 2.0, 1.5), vec(255, 255, 255), 255) HI++
+    #do_holocreate(HI, HOLO_AIRSCREW_MAIN, "models/items/combine_rifle_ammo01.mdl", vec(0,0,-10), ang(0,0,0), vec(3.5, 3.5, 0.8), vec(255, 255, 255), 255) HI++
+    do_holocreate(HI, HOLO_AIRSCREW_MAIN, "models/props_combine/combine_tptimer.mdl", vec(27,0,-12), ang(-90,0,0), vec(0.3, 0.4, 0.4), vec(255, 255, 255), 255)
+    do_holoclip(HI, 1, vec(0,0,40), vec(0,0,-1))
+    do_holoclip(HI, 2, vec(0,0,17), vec(0,0,1)) HI++
+
+
+    HOLO_AIRSCREW_MAIN_1 = do_holocreate_key(HI, HOLO_AIRSCREW_MAIN, vec(0,0,0), ang(0,0,0), KeyAlpha) HI++
+    SCREW_QUAD = HOLO_AIRSCREW_MAIN_1:drawQuad("particle/warp_ripple", HOLO_AIRSCREW_MAIN_1:pos(),ang(0),vec(255),0,320,320)
+    HOLO_SCREW_MAIN_0 = do_holocreate(HI, HOLO_AIRSCREW_MAIN_1, "models/props_combine/combine_fence01b.mdl", vec(-0,-2,-2), ang(-90,-0,0), vec(0.6,0.3,0.75), vec(255, 255, 255), 255)
+    do_holoclip(HI, 3, vec(1,0,0), vec(-1,0,0))
+    do_holoclip(HI, 4, vec(0,0,0), vec(0,0,1)) HI++
+    HOLO_SCREW_MAIN_1 = do_holocreate(HI, HOLO_AIRSCREW_MAIN_1, "models/props_combine/combine_fence01b.mdl", vec(-0,-2,-2), ang(-90,0,0), vec(0.6,0.3,0.75), vec(255, 255, 255), 255)
+    do_holoclip(HI, 4, vec(1,0,0), vec(-1,0,0))
+    do_holoclip(HI, 3, vec(0,0,0), vec(0,0,1)) HI++
+    HOLO_AIRSCREW_MAIN_2 = do_holocreate_key(HI, HOLO_AIRSCREW_MAIN, vec(0,0,0), ang(0,0,0), KeyAlpha) HI++
+    HOLO_SCREW_MAIN_2 = do_holocreate(HI, HOLO_AIRSCREW_MAIN_2, "models/props_combine/combine_fence01a.mdl", vec(-0,2,1), ang(-90,-0,0), vec(0.6,0.3,0.75), vec(255, 255, 255), 255)
+    do_holoclip(HI, 3, vec(1,0,0), vec(-1,0,0))
+    do_holoclip(HI, 4, vec(0,0,0), vec(0,0,1)) HI++
+    HOLO_SCREW_MAIN_3 = do_holocreate(HI, HOLO_AIRSCREW_MAIN_2, "models/props_combine/combine_fence01a.mdl", vec(-0,2,1), ang(-90,0,0), vec(0.6,0.3,0.75), vec(255, 255, 255), 255)
+    do_holoclip(HI, 4, vec(1,0,0), vec(-1,0,0))
+    do_holoclip(HI, 3, vec(0,0,0), vec(0,0,1)) HI++
+    
+    HOLO_LEFT_CHASSIS = do_holocreate_key(HI, ORIGIN, vec(-16,12,10), ang(0,90,0), KeyAlpha) HI++
+    do_holocreate(HI, HOLO_LEFT_CHASSIS, "models/props_combine/plazafallingmonitor.mdl", vec(-5,30,-5), ang(-0,-120,0), vec(0.35,0.3,0.10), vec(200), 255) HI++
+    HOLO_RIGHT_CHASSIS = do_holocreate_key(HI, ORIGIN, vec(16,12,10), ang(0,90,0), KeyAlpha) HI++
+    do_holocreate(HI, HOLO_RIGHT_CHASSIS, "models/props_combine/plazafallingmonitor.mdl", vec(-5,-30,-5), ang(-0,55,0), vec(0.35,0.3,0.10), vec(200), 255) HI++
+    
+
+    WINDOWS:pushEntity(W1)
+    WINDOWS:pushEntity(W2)
+    WINDOWS:pushEntity(W3)
+    WINDOWS:pushEntity(W4)
+    
+    HOLO_ORIGIN:soundPlay("main1", 9000, "npc/manhack/mh_engine_loop1.wav")
+    HOLO_AIRSCREW_MAIN:soundPlay("main2", 9000, "npc/manhack/mh_engine_loop1.wav")
+    HOLO_AIRSCREW_MAIN_1:soundPlay("main3", 9000, "npc/manhack/mh_engine_loop1.wav")
+    HOLO_AIRSCREW_MAIN_2:soundPlay("main4", 9000, "npc/manhack/mh_engine_loop1.wav")
+    HOLO_SCREW_MAIN_0:soundPlay("main5", 9000, "npc/manhack/mh_engine_loop1.wav")
+    HOLO_SCREW_MAIN_1:soundPlay("main6", 9000, "npc/manhack/mh_engine_loop1.wav")
+    HOLO_SCREW_MAIN_2:soundPlay("main7", 9000, "npc/manhack/mh_engine_loop1.wav")
+    HOLO_SCREW_MAIN_3:soundPlay("main8", 9000, "npc/manhack/mh_engine_loop1.wav")
+    soundPitch("main1", 0)
+    soundPitch("main2", 0)
+    soundPitch("main3", 0)
+    soundPitch("main4", 0) 
+    soundPitch("main5", 0)
+    soundPitch("main6", 0)
+    soundPitch("main7", 0)
+    soundPitch("main8", 0)
+    
+    #[holoCreate(500)
+    holoScale(500, vec(0.2))
+    holoAlpha(500, 50)
+    local Beam = holoEntity(500):drawBeam("trails/laser",holoEntity(500):pos(),ORIGIN:pos(),vec(255,100,100),255,10,1,1)
+    Beam:setBeamEndEnt(ORIGIN)
+    
+    holoCreate(501)
+    holoScale(501, vec(0.2))
+    holoAlpha(501, 50)
+    local Beam = holoEntity(501):drawBeam("trails/laser",holoEntity(501):pos(),ORIGIN:pos(),vec(100,255,100),255,10,1,1)
+    Beam:setBeamEndEnt(ORIGIN)]#
+}
+
+local DRIVER = SEAT:driver()
+if (DRIVER) {
+    SEAT:printDriver(_HUD_PRINTCENTER, THRUST:toString())
+    local W = DRIVER:keyForward()
+    local A = DRIVER:keyLeft()
+    local S = DRIVER:keyBack()
+    local D = DRIVER:keyRight()
+    local L = DRIVER:keyPressed("PAD_1")
+    local R = DRIVER:keyPressed("PAD_3")
+    local Pro = DRIVER:keyJump()
+    local Up = DRIVER:keySprint()
+    local Down = DRIVER:keyWalk()
+    local N = DRIVER:keyPressed("N")
+    
+    local PitchDelta = S + W*-1
+    local RollDelta = D + A*-1
+    local YawDelta = L + R*-1    
+    local ThrustDelta = Up + Down*-1
+    
+    if (PitchDelta || RollDelta || YawDelta) {
+        local QuatTarget = quat(HOLO_TARGET:angles()) * qRotation(vec(PitchDelta,RollDelta,YawDelta))
+        HOLO_TARGET:setAng(QuatTarget:toAngle())
+    }
+    if (Pro) {
+        local Angles = HOLO_TARGET:angles()
+        HOLO_TARGET:setAng(Angles:setPitch(0):setRoll(0))
+        THRUST = 50
+    }
+    if (ThrustDelta) {        
+        THRUST += ThrustDelta*0.1
+        THRUST = clamp(THRUST, 0, 100)
+    }
+    local Quat_slave = quat(HOLO_SLAVE)
+    local Quat_target = quat(HOLO_TARGET)
+    local Slerp = slerp(Quat_slave, Quat_target, 0.01)
+    HOLO_SLAVE:setAng(Slerp:toAngle())
+
+    if (changed(N) && N) {
+        LAZY_MODE = !LAZY_MODE
+        if (LAZY_MODE) {
+            G = 7
+            AIR_RESISTANCE = 0.01
+        } else {
+            G = 9.8
+            AIR_RESISTANCE = 0.005
         }
     }
-    if(Shift){
-        if(Traction >= -1){
-            Traction=Traction-0.1
-        }
-    }
-    if(Traction==0){
-        Board:setVel(Board:vel()*0.3)    
+    
+} else {
+
+    
+}
+if (changed(DRIVER) & DRIVER) {
+    stoptimer("windows")
+    stoptimer("doors_1")
+    stoptimer("doors_2")
+    stoptimer("screws_0")
+    stoptimer("screws_1")
+    stoptimer("screws_2")
+    
+    TIMER_SCREWS = 0
+    TIMER_DOORS = 0
+    timer("doors_1", 1)
+    timer("windows", 4000)
+    timer("screws_1", 200)
+    SCREW_ANG_I = 0.5
+    
+    lightBrightness(1, 80)
+    soundStop("doors")
+    playSound("doors", "ambient/machines/machine3.wav", 255, 3)
+    soundVolume("doors", 0.7)
+    playSound("screw_1", "npc/dog/dog_servo12.wav",35, 1)
+}
+if (changed(DRIVER) & !DRIVER & !first()) {
+    THRUST = 0
+    foreach(I, Window:entity = WINDOWS) {
+        Window:setAlpha(0)
     }
     
-    if(Traction > 0) {
-        Board:setPos(Board:pos()+Board:up()*Traction/10 )    
+    HOLO_AIRSCREW_MAIN_1:setAng( (quat(HOLO_AIRSCREW_MAIN) * qRotation(vec(0,0,0))):toAngle() )    
+    HOLO_AIRSCREW_MAIN_2:setAng( (quat(HOLO_AIRSCREW_MAIN) * qRotation(vec(0,0,0))):toAngle() )
+    
+    stoptimer("windows")
+    stoptimer("doors_1")
+    stoptimer("doors_2")
+    stoptimer("screws_1")
+    stoptimer("screws_2")
+    TIMER_SCREWS = 0
+    TIMER_DOORS = 0
+    timer("screws_0", 1)
+    timer("doors_2", 1)
+    print("asdasdads")
+    soundStop("doors")
+    playSound("doors", "ambient/machines/machine3.wav", 255, 3)
+    soundVolume("doors", 0.7)
+    
+}
+if (clk("windows")) {
+    foreach(I, Window:entity = WINDOWS) {
+        Window:setAlpha(255)
+    }
+    playSound("windows1", "npc/scanner/combat_scan1.wav", 133, 30)
+    #playSound("windows1", "TripmineGrenade.Activate", 133, 2)
+}
+
+if (clk("doors_1")) {
+    TIMER_DOORS++
+    HOLO_ROOF:setAng( slerp(quat(HOLO_ROOF), quat(ORIGIN) * qRotation(vec(0,0,90)), 0.03):toAngle() )
+    HOLO_LEFT_DOOR:setAng( slerp(quat(HOLO_LEFT_DOOR), quat(ORIGIN) * qRotation(vec(0,0,90)), 0.03):toAngle() )
+    HOLO_RIGHT_DOOR:setAng( slerp(quat(HOLO_RIGHT_DOOR), quat(ORIGIN) * qRotation(vec(0,0,90)), 0.03):toAngle() )
+    soundPitch("doors",255-TIMER_DOORS*30/200)
+    if (TIMER_DOORS < 200) {
+        timer("doors_1", 1)
+    } else {
+        soundStop("doors")
+        playSound("doors1", "d3_citadel.small_elevator_stop", 140, 3)
+        #playSound("doors1", "Buttons.snd3", 140, 3)
+        TIMER_DOORS = 0
     }
 }
-#Board:setVel(Board:vel()*0.95 + Board:up() * Traction)
-if(W){
-    Prop:setAng(ang(30,0,0))
+if (clk("doors_2")) {
+    TIMER_DOORS++
+    HOLO_ROOF:setAng( slerp(quat(HOLO_ROOF), quat(ORIGIN:angles()) * qRotation(vec(-0,0,1), 90) * qRotation(vec(0,-60,0)), 0.02):toAngle() )
+    HOLO_LEFT_DOOR:setAng( slerp(quat(HOLO_LEFT_DOOR), quat(ORIGIN) * qRotation(vec(0,0,140)), 0.02):toAngle() )
+    HOLO_RIGHT_DOOR:setAng( slerp(quat(HOLO_RIGHT_DOOR), quat(ORIGIN) * qRotation(vec(0,0,40)), 0.02):toAngle() )
+    soundPitch("doors",255-TIMER_DOORS*30/200)
+    if (TIMER_DOORS < 200) {
+        timer("doors_2", 1)    
+    } else {
+        soundStop("doors")
+        print("done")
+        TIMER_DOORS = 0
+    }
 }
-if(!W){
-    Prop:setAng(ang(0,0,0))
+
+if (clk("screws_0")) {
+    TIMER_SCREWS++
+    HOLO_SCREW_MAIN_0:setAng( slerp(quat(HOLO_SCREW_MAIN_0), quat(HOLO_AIRSCREW_MAIN_1) * qRotation(vec(0, -89, 0)) * qRotation(vec(0, 0, 0)), 0.02):toAngle() )
+    HOLO_SCREW_MAIN_1:setAng( slerp(quat(HOLO_SCREW_MAIN_1), quat(HOLO_AIRSCREW_MAIN_1) * qRotation(vec(0, -89, 0)) * qRotation(vec(-0, 0, 0)), 0.02):toAngle() )
+    HOLO_SCREW_MAIN_2:setAng( slerp(quat(HOLO_SCREW_MAIN_2), quat(HOLO_AIRSCREW_MAIN_2) * qRotation(vec(0, -91, 0)) * qRotation(vec(0, 0, 0)), 0.02):toAngle() )
+    HOLO_SCREW_MAIN_3:setAng( slerp(quat(HOLO_SCREW_MAIN_3), quat(HOLO_AIRSCREW_MAIN_2) * qRotation(vec(0, -91, 0)) * qRotation(vec(-0, 0, 0)), 0.02):toAngle() )
+    if (TIMER_SCREWS < 300) {
+        timer("screws_0", 1)    
+    } else {
+        TIMER_SCREWS = 0
+        lightBrightness(1, 0)
+        playSound("steam", "npc/dog/dog_pneumatic2.wav", 100, 1)
+        for(I=1, randint(5,10)){
+            local Rand = toString(randint(10,15))
+            particle(random(0.5,1.5),0,random(20,40),"particle/smokesprites_00"+Rand,vec(255),ORIGIN:toWorld(vec(-20,-20,50)) ,vec(random(-10,-10), random(-10,10), random(-40,-80)),random(-1,1),random(-1,1),150,0)
+        }
+    }
 }
+
+if (clk("screws_1")) {
+    TIMER_SCREWS++
+
+    HOLO_SCREW_MAIN_0:setAng( slerp(quat(HOLO_SCREW_MAIN_0), quat(HOLO_AIRSCREW_MAIN_1) * qRotation(vec(0, -89, 0)) * qRotation(vec(-120, 0, 0)), 0.1):toAngle() )
+    
+    
+    soundPitch("screw_1",65-TIMER_DOORS*3/70)
+    if (TIMER_SCREWS < 70) {
+        timer("screws_1", 1)    
+    } else {
+
+        timer("screws_2", 100)
+        TIMER_SCREWS = 0
+    }
+}
+if (clk("screws_2")) {
+    TIMER_SCREWS++
+
+    HOLO_SCREW_MAIN_0:setAng( slerp(quat(HOLO_SCREW_MAIN_0), quat(HOLO_AIRSCREW_MAIN_1) * qRotation(vec(0, -89, 0)) * qRotation(vec(180, 0, 0)) * qRotation(vec(-0, 0, 20)), 0.1):toAngle() )
+    HOLO_SCREW_MAIN_1:setAng( slerp(quat(HOLO_SCREW_MAIN_1), quat(HOLO_AIRSCREW_MAIN_1) * qRotation(vec(0, -89, 0)) * qRotation(vec(0, 0, 0)) * qRotation(vec(-0, 0, 20)), 0.1):toAngle() )
+    HOLO_SCREW_MAIN_2:setAng( slerp(quat(HOLO_SCREW_MAIN_2), quat(HOLO_AIRSCREW_MAIN_2) * qRotation(vec(0, -91, 0)) * qRotation(vec(90, 0, 0)) * qRotation(vec(-0, 0, -20)), 0.1):toAngle() )
+    HOLO_SCREW_MAIN_3:setAng( slerp(quat(HOLO_SCREW_MAIN_3), quat(HOLO_AIRSCREW_MAIN_2) * qRotation(vec(0, -91, 0)) * qRotation(vec(-90, 0, 0)) * qRotation(vec(-0, 0, -20)), 0.1):toAngle() )
+
+    if (TIMER_SCREWS == 1) {
+        playSound("screw_1", "npc/dog/dog_servo12.wav",35, 1)    
+    }
+    soundPitch("screw_1",65-TIMER_DOORS*3/70)
+    if (TIMER_SCREWS < 200) {
+        timer("screws_2", 1)    
+    } else {
+        #timer("screws_2", 2000) 
+    }
+}
+if (clk("chassis1")) {
+    TIMER_CHASSIS++
+
+    HOLO_LEFT_CHASSIS:setAng( slerp(quat(HOLO_LEFT_CHASSIS), quat(ORIGIN) * qRotation(vec(-0, -0, 90)) * qRotation(vec(0, -0, 0)), 0.1):toAngle() )
+    HOLO_RIGHT_CHASSIS:setAng( slerp(quat(HOLO_RIGHT_CHASSIS), quat(ORIGIN) * qRotation(vec(-0, -0, 90)) * qRotation(vec(0, -0, 0)), 0.1):toAngle() )
+
+    soundPitch("chassis",65-TIMER_DOORS*3/70)
+    if (TIMER_CHASSIS < 70) {
+        timer("chassis1", 1)    
+    }
+}
+if (clk("chassis2")) {
+    TIMER_CHASSIS++
+
+    HOLO_LEFT_CHASSIS:setAng( slerp(quat(HOLO_LEFT_CHASSIS), quat(ORIGIN) * qRotation(vec(-0, -0, 90)) * qRotation(vec(-175, -0, 0)), 0.1):toAngle() )
+    HOLO_RIGHT_CHASSIS:setAng( slerp(quat(HOLO_RIGHT_CHASSIS), quat(ORIGIN) * qRotation(vec(-0, -0, 90)) * qRotation(vec(175, -0, 0)), 0.1):toAngle() )
+
+    soundPitch("chassis",65-TIMER_DOORS*3/70)
+    if (TIMER_CHASSIS < 70) {
+        timer("chassis2", 1)    
+    }
+}
+
+if (THRUST) {
+    HOLO_AIRSCREW_MAIN_1:setAng( (quat(HOLO_AIRSCREW_MAIN_1) * qRotation(vec(0,0,THRUST*0.5))):toAngle() )    
+    HOLO_AIRSCREW_MAIN_2:setAng( (quat(HOLO_AIRSCREW_MAIN_2) * qRotation(vec(0,0,THRUST*-0.5))):toAngle() )
+}
+if (changed(THRUST)) {
+    SCREW_QUAD:setAlpha(THRUST*1)
+    #SCREW_QUAD:quadSize(THRUST*2.5*1.5, THRUST*2.5*1.2)
+    for(I=1, 8) {
+        soundPitch("main"+I, THRUST)    
+    }
+}
+
+local Velocity_delta = ORIGIN:vel() - VELOCITY
+if (Velocity_delta:length() > 100 && !ORIGIN:isPlayerHolding()) {
+    HEALTH = max(0, HEALTH - Velocity_delta:length())
+}
+if (changed(HEALTH)) {
+    
+    if (HEALTH > 4000) {
+        playSound("alarm", "k_lab.teleport_alarm", 80, 3)
+    } elseif (HEALTH > 2000) {
+        playSound("alarm", "k_lab.teleport_alarm", 130, 2.8)
+    } elseif (HEALTH <= 2000) {
+        playSound("alarm", "k_lab.teleport_alarm", 185, 3)
+        playSound("alarm2", "ep2_outland_12.base_alarm_loop", 200, 60)
+        soundVolume("alarm2", 0.15)
+    }
+    if (!HEALTH) {
+        effectSpawn("explosion", ORIGIN:pos(), 1)
+        
+        SEAT:ejectPod()
+        HEALTH = 5000
+        soundStop("alarm2")
+    }
+}
+if (HEALTH < 5000) {
+
+    if (HEALTH < 4700 && PARTICLE_TICK%20==0 % randint(-1,1)) {
+        effectSpawn("ManhackSparks", ORIGIN:toWorld(vec(-20,0,40)), 1)
+    }
+    if (HEALTH <= 4000 && PARTICLE_TICK%4==0) {
+        local Rand=toString(randint(10,15))
+        particle(random(0.5,2), random(10,20), random(50,120),"particle/smokesprites_00"+Rand,vec(25,30,35),ORIGIN:toWorld(vec(-0,-25,50)) + randvec(-10,10) + vec(),ORIGIN:vel()*0.5 + vec(0,0,100) + randvec(-5,5),random(0,0), randint(-1,1), 255, 0)
+    }
+    if (HEALTH <= 2000 && PARTICLE_TICK%8==0) {
+        local Rand=toString(randint(1,5))
+        particle(random(0.5,1.5), random(10,20), random(40,60),"particles/flamelet"+Rand,vec(180,180,200),ORIGIN:toWorld(vec(-0,-25,50)) + randvec(-10,10) + vec(),ORIGIN:vel()*0.5 + vec(0,0,70) + randvec(-5,5),random(0,0), randint(-1,1), 255, 0)
+    }
+    PARTICLE_TICK = PARTICLE_TICK > 1000 ? 0 : PARTICLE_TICK+1
+}
+
+holoPos(500, ORIGIN:pos() + ORIGIN:vel())
+holoPos(501, ORIGIN:pos() + VELOCITY)
+
+rangerFilter(ORIGIN)
+local Ranger_chassis = rangerOffsetHull(60,ORIGIN:pos(), ORIGIN:toWorld(vec(0,0,-1)),vec(10))
+Ranger_hit = Ranger_chassis:hit()
+
+if (changed(Ranger_hit)) {
+
+    playSound("chassis", "npc/dog/dog_servo5.wav",35, 1)    
+
+    TIMER_CHASSIS = 0
+    if (Ranger_hit) {
+        stoptimer("chassis2")
+        timer("chassis1", 1)
+    }
+    if (!Ranger_hit) {
+        stoptimer("chassis1")
+        timer("chassis2", 1)
+    }
+}
+
+local Total_force = ORIGIN:up()*MASS*THRUST/100*G*2 + vec(0,0,-1)*MASS*G - ORIGIN:vel()*MASS*AIR_RESISTANCE
+VELOCITY = Total_force/MASS + ORIGIN:vel()
+
+ORIGIN:applyAngForce( ORIGIN:toLocal(quat(HOLO_SLAVE):toAngle()) * ORIGIN:mass()*5 - ORIGIN:angVel() * ORIGIN:mass()*0.5)
+ORIGIN:applyForce(Total_force)
 
 
 
-if(changed(Traction)&Traction<-47 & Traction>-49){
-    E:soundPlay("1",900,"vehicles/airboat/fan_motor_idle_loop1.wav")
-}
-soundPitch("1",(Traction+50)*2+50)
-holoAng(2, holoEntity(2):toWorld(ang(0,0,(Traction+50)/3)))

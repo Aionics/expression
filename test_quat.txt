@@ -1,0 +1,14 @@
+@name 
+@inputs 
+@outputs 
+@persist [HOLO]:entity
+@trigger 
+
+
+if (first()) {
+    HOLO = holoCreate(1)
+    holoPos(1, entity():pos() + vec(0,0,30))
+    runOnTick(1)
+}
+
+HOLO:setAng(HOLO:angles() + ang(1,1,0))

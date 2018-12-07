@@ -4,5 +4,6 @@
    # owner():setSubMaterial(5,"models/effects/splode_sheet")
     owner():setSubMaterial(5,"phoenix_storms/scrnspace")
     owner():setSubMaterial(5,"models/props_combine/portalball001_sheet")
+    owner():setSubMaterial(5,"")
 
 #interval(100)

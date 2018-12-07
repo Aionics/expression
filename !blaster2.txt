@@ -2,40 +2,101 @@
 @inputs 
 @outputs 
 @persist [OW]:entity I
- 
-
+@persist BEAMS:table
+@persist COLOR:vector
+@persist Hue
 if (first()) {
     runOnTick(1)    
     OW = owner()
     I = 0
+    BEAMS = table()
+    COLOR = vec(0,30,100)
+    Hue = 0
+    
+    function do_dissolve (Here:vector) {
+        findIncludeClass("player")
+        findIncludeClass("NPC")
+        findIncludeClass("prop_physics")
+        findIncludeClass("vehicle")
+        findInSphere(Here, 30)
+        Arr=findToArray()
+        for(I=1,Arr:count()){
+            #explosion(100,50,Here)
+            Arr[I,entity]:takeDamage(150,"dissolve")
+            Arr[I,entity]:propFreeze(0)
+            Arr[I,entity]:setVel((Arr[I,entity]:pos() - Here)*Arr[I,entity]:mass()*2 + vec(0,0,0.1)*Arr[I,entity]:mass())
+        } 
+    }
     
     function void do_fire() {
+        
+        COLOR = COLOR:setX(Hue)
+        #Hue = Hue >= 360 ? 0 : Hue + 30
+        #Hue = randint(0,360)
+        Hue = 220
+        print(COLOR)
+        local ShootPos = OW:shootPos()
+        particle(0.2, random(30,5), 1,"particle/warp1_warp",vec(255,255,255),ShootPos,vec(0),0, 0, 200, 0)
+        particle(0.2, random(80,30), 1,"sprites/glow1_noz",hsv2rgb(COLOR:setY(5)),ShootPos,vec(0),0, 0, 255, 0)  
         rangerFilter(OW)
         local Ranger=rangerOffsetHull(10000,OW:shootPos(), OW:eye(),vec(10))
         local TargetEntity = Ranger:entity()
         if (TargetEntity) {
             print(TargetEntity)
         }
-        local Smooth = OW:shootPos():distance(Ranger:pos())/50
-        AimPos=Ranger:pos() + randvec(-Smooth,Smooth)
-        
-        #Beam=drawBeam("sprites/laser", OW:shootPos(),AimPos,vec(100,100,255),255,15,1,1)
-        #Beam:remove(1)
-        local Coeff = randint(0,5) * 25 + 100
+        #local Smooth = OW:shootPos():distance(Ranger:pos())/50
+        #AimPos=Ranger:pos() + randvec(-Smooth,Smooth)
+        AimPos=Ranger:pos()
+        local Beam = table(
+            "ent"=drawBeam("sprites/laser", OW:shootPos(),AimPos,hsv2rgb(COLOR),255,15,1,1),
+            "alpha"=255
+        )
+        BEAMS:pushTable(Beam)        
+        local Coeff = randint(0,5) * 15 + 100
         for (I=1, Ranger:distance() / Coeff) {
-            particle(randint(1,5),50,1,"sprites/light_ignorez",vec(100,100,255), OW:shootPos() + (AimPos - OW:shootPos()):normalized() * I * Coeff,vec(0,0,-30),1,0,255,0)
+            particle(randint(0.5,2.5),30,1,"sprites/light_ignorez",hsv2rgb(COLOR:setY(10)), ShootPos + (AimPos - OW:shootPos()):normalized() * I * Coeff,vec(0,0,random(-30,30)+5),1,0,255,0)
         }
+        Ranger:drawPaint("fadingscorch")
+        
+        
+        particle(0.4, random(150,60), 1,"particle/warp1_warp",vec(255,255,255),AimPos,vec(0),0, 0, 200, 0)
+        particle(0.4, random(200,120), 1,"sprites/glow1_noz",hsv2rgb(COLOR:setY(5)),AimPos,vec(0),0, 0, 255, 0)            
+        effectSpawn("StunstickImpact",AimPos,2)            
+        for(K=1,randint(3,7)){
+            Rand=toString(randint(10,15))                
+            particle(random(0.05,1), random(10,20), random(40,60),"particle/smokesprites_00"+Rand,hsv2rgb(COLOR),AimPos,randvec(-50,50)+vec(0,0,50),random(-40,40), randint(-1,1), 35, 0)              
+        }
+        
+        local TempStr="NPC_Hunter.FlechetteExplode"
+        
+        OW:soundPlay(I,1,TempStr)
+        OW:soundPlay(I+1,2,"k_lab.teleport_discharge")
+        soundPitch(I,random(140,170))
+        soundPitch(I+1,random(120,140)) 
+        
+        do_dissolve(AimPos)
     }
 }
 
 At2 = OW:keyAttack2()
 
 if (changed(At2)&&!At2) {
-    I = 0
+    do_fire()
 }
-if (At2) {
-    I++
-    if (I%10==0) {
-        do_fire()
-    }    
+
+
+if (BEAMS:count()) {
+    for (I=1, BEAMS:count()) {
+        local Beam = BEAMS[I, table]
+        local Alpha = Beam["alpha", number]
+        Alpha -= 3
+        if (Alpha <= 0) {
+            Beam["ent", entity]:remove()
+            BEAMS:remove(I)    
+        } else {
+            Beam["ent", entity]:setAlpha(Alpha)
+            Beam["ent", entity]:setBeamWidth((255-Alpha)/4)
+            Beam["alpha", number] = Alpha
+        }
+    }
 }

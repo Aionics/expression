@@ -21,7 +21,7 @@ if(first()){
     Height4=50
     
     E:constraintBreak()      
-    E:propNotSolid(1) 
+    #E:propNotSolid(1) 
     
     Board:setMass(5)
     Board:propGravity(0) 
@@ -44,7 +44,7 @@ if(first()){
     
 
     #E:setPos(vec(0,0,5999))
-    E:setPos(O:pos())
+    #E:setPos(O:pos())
 
 
     function do_Enter (){
@@ -154,6 +154,8 @@ for(I=101,105){
 }]#
 
 }
+
+
 Part=(Part+1)%5
 if(Part==1){
     particle(2,3,0,"effects/blueflare1",Color,holoEntity(holoIndex(H1_3)):toWorld(vec(0,0,4)),holoEntity(holoIndex(H1_5)):toWorld(vec(0,0,4)),1)
@@ -184,18 +186,16 @@ RangMain=rangerOffset(200,Board:toWorld(vec(0,0,-2)),Board:up()*-1)
 holoPos(105,Board:toWorld(vec(0,0,-2)))
 holoPos(110,RangMain:position())
 
+
+
 #if(RangMain:distance() == Height){Board:setVel(Board:vel()*-1)}
 
 W=Driver:keyPressed("W")
-
-
-  
-
  
-    Board:applyOffsetForce(Board:up() * Board:mass() / 4 * (Height1*1.69 - RangFL:distance())/5,Board:toWorld(vec(20,-30,-2)))
-    Board:applyOffsetForce(Board:up() * Board:mass() / 4 * (Height2*1.69 - RangFR:distance())/5,Board:toWorld(vec(-20,-30,-2)))
-    Board:applyOffsetForce(Board:up() * Board:mass() / 4 * (Height3*1.69 - RangBL:distance())/5,Board:toWorld(vec(20,30,-2)))
-    Board:applyOffsetForce(Board:up() * Board:mass() / 4 * (Height4*1.69 - RangBR:distance())/5,Board:toWorld(vec(-20,30,-2)))
+Board:applyOffsetForce(Board:up() * Board:mass() / 4 * (Height1*1.69 - RangFL:distance())/5,Board:toWorld(vec(20,-30,-2)))
+Board:applyOffsetForce(Board:up() * Board:mass() / 4 * (Height2*1.69 - RangFR:distance())/5,Board:toWorld(vec(-20,-30,-2)))
+Board:applyOffsetForce(Board:up() * Board:mass() / 4 * (Height3*1.69 - RangBL:distance())/5,Board:toWorld(vec(20,30,-2)))
+Board:applyOffsetForce(Board:up() * Board:mass() / 4 * (Height4*1.69 - RangBR:distance())/5,Board:toWorld(vec(-20,30,-2)))
 
 
 
@@ -218,7 +218,7 @@ if(Active){
         }
     D=Driver:keyJump()
     if(D){
-        Board:applyOffsetForce(Board:up() * 4,Board:toWorld(vec(0,-80,-2)))
+        Board:applyOffsetForce(Board:up() * 20,Board:toWorld(vec(0,-80,-2)))
         }
     if(Driver:keyPressed("A")){
         Board:applyOffsetForce(Board:forward() * 2,Board:toWorld(vec(0,-70,-2)))

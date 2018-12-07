@@ -31,7 +31,7 @@ if (first()) {
         if (Form == "human") {
             Ow:setMaterial("")
             Ow:drawShadow(1)
-            #noCollideAll(Ow, 0)
+            noCollideAll(Ow, 0)
             Ow:playerNoclip(0)
             Ow:setColor(vec(255))
             Ow:weapon():setAlpha(255)
@@ -43,7 +43,7 @@ if (first()) {
         if (Form == "crow") {
             Ow:setMaterial("Models/effects/vol_light001")
             Ow:drawShadow(0)
-            #noCollideAll(Ow, 1)
+            noCollideAll(Ow, 1)
             Ow:weapon():setAlpha(0)
             Ow:setColor(vec(10))
             CrownProp = propSpawn("models/hunter/blocks/cube025x025x025.mdl",Ow:pos() + vec(0,0,0),Ow:eyeAngles(),0)
@@ -51,9 +51,9 @@ if (first()) {
             CrownProp:setAlpha(0)
             CrownProp:propNotSolid(1)
             CrownHolo = holoCreate(1, CrownProp:pos(), vec(2), CrownProp:angles(), vec(255), "models/crow.mdl")
-            #holoAnim(1, 6)
+            holoAnim(1, 6)
             holoParent(1, owner())
-            #noCollideAll(Ow, 1)
+            noCollideAll(Ow, 1)
             Ow:playerNoclip(1)            
             print(2)
             timer("anim",2000)
@@ -103,20 +103,20 @@ if(clk("anim")){
 
           if(!Ow:isOnGround()){  
             if (Ow:vel():length() >= 100) {
-                #holoAnim(1, 6)
+                holoAnim(1, 6)
                 timer("anim",random(1500,4000))
             } else {
-                #holoAnim(1, 10)                
+                holoAnim(1, 10)                
                 timer("anim",400)
             }
         }else{
-            #holoAnim(1, 1)                
+            holoAnim(1, 1)                
             timer("anim",400)
         }
     }    
 }
 if (changed(Ow:isOnGround()) & Ow:isOnGround()) {
-    #holoAnim(1, 1)  
+    holoAnim(1, 1)  
 }
 
 if (changed(E) & E ) {

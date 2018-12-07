@@ -25,7 +25,7 @@ N++
 E=entitySpawn("npc_grenade_frag",O:shootPos()+O:eye()*30,1)
 #E=propSpawn("models/props_junk/glassjug01.mdl",O:shootPos(),1)
 E:setKeyValue("colide","0")
-E:setModel("models/headcrabclassic.mdl")
+#E:setModel("models/headcrabclassic.mdl")
 E:setKeyValue("trail","trailS/laser")
 E:setMass(10)
 

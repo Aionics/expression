@@ -64,6 +64,7 @@ if(clk("spawnFloorItem")){
         while(GameObjects["floor", table]["y_left", number] >= 0) {
             local Xleft = GameObjects["floor", table]["x_left", number]
             local Yleft = GameObjects["floor", table]["y_left", number]
+            #Prop = noentity()
             Prop = propSpawn("models/hunter/blocks/cube8x8x025.mdl", Center + vec(Xleft*380,Yleft*380,0) - vec(15*380,15*380,0) / 2, ang(0), 1)
             GameObjects["floor", table]["entitys", array]:pushEntity(Prop)
             timer("spawnFloorItem", 200)

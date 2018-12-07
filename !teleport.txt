@@ -107,14 +107,14 @@ if (changed(T) && T && !IsTeleportationActive) {
 }
 
 if (IsTeleportationActive) {    
-    #local Anim = OW:getAnimID()
+    local Anim = OW:getAnimID()
 
-    #[if (changed(Anim)) {
+    if (changed(Anim)) {
         holoAnim(1, Anim, 1, 1)
         holoAnim(4, Anim, 1, 1)
         holoSetPose(1, "move_x", 1)
         holoSetPose(4, "move_x", 1)  
-    }]#
+    }
     holoPos(1, OW:pos() + Offset)      
     holoAng(1, OW:angles())
     
@@ -122,10 +122,10 @@ if (IsTeleportationActive) {
     holoAng(4, OW:angles())
     
     local Ang = (OW:aimPos() - OW:shootPos()):normalized():toAngle()
-    #holoSetPose(1, "aim_pitch", Ang:pitch())
-    #holoSetPose(1, "aim_yaw", Ang:yaw())
-    #holoSetPose(4, "aim_pitch", Ang:pitch())
-    #holoSetPose(4, "aim_yaw", Ang:yaw())
+    holoSetPose(1, "aim_pitch", Ang:pitch())
+    holoSetPose(1, "aim_yaw", Ang:yaw())
+    holoSetPose(4, "aim_pitch", Ang:pitch())
+    holoSetPose(4, "aim_yaw", Ang:yaw())
     
     Tick++
     

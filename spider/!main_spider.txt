@@ -137,7 +137,8 @@ if (first()) {
             "step_progress" = 0,
             "waiting_timer" = 0
         )
-        LEGS:pushTable(Leg)        
+        LEGS:pushTable(Leg)
+        return Leg
     }
     
     function void table:do_kinemize(I) {

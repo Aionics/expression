@@ -30,7 +30,7 @@ if(changed(O:weapon())){
         O:playerSetBoneAng(15,ang(-35,-20,0))
         O:playerSetBoneAng(8,ang(120,0,0))
         O:playerSetBoneAng(10,ang(0,75,0))
-        soundURLload(1:toString(),"https://bit.ly/2KCPdqX",255,0,O)
+        soundURLload(1:toString(),"https://clck.ru/Epvm2",255,0,O)
         O:plyRunSpeed(900)
         O:plyJumpPower(500)
         
@@ -87,7 +87,7 @@ R=O:keyPressed("R")
 if(changed(R)&R){
     T_cur=0
     N_gou=0
-    soundURLload(1:toString(),"http://clc.to/b5aJNg",1,0,O)
+    soundURLload(1:toString(),"https://clck.ru/EpxBE",1,0,O)
 
     
     for (I=1, 7 ){

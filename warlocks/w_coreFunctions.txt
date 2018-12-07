@@ -170,7 +170,7 @@ function void do_joinPlayer(GameState:table, PlayerToJoin:entity) {
         if (PlayerToJoin!=owner()) {
             local HudEntity = entitySpawn("gmod_wire_egp_hud",entity():pos(),1)
             HudEntity:setModel("models/props_lab/monitor02.mdl")
-            HudEntity:setAlpha(0)
+            HudEntity:setAlpha(200)
             
             local Holo = holoCreate(GameState["global_counters", table]["holoindex", number])
             GameState["global_counters", table]["holoindex", number] = GameState["global_counters", table]["holoindex", number] + 1

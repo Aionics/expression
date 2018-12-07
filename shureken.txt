@@ -89,6 +89,9 @@ N++
     
 }
 elseif(N==300){
+    for(I=1, randint(20,30)) {
+        particle(random(0.1, 0.8), random(50,30), 1,"particle/bloodsplash/blood_core",vec(20,20,20),owner():pos()+ vec(0,0,30) + vec(random(-20,10), random(-20,20), random(-30,30)),randvec(-10,10) - vec(0,0,10),1, 2, 255, 0)
+    }
     N++
         holoCreate(2)
         holoCreate(3)

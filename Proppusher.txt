@@ -37,8 +37,8 @@ if (first()) {
     }
     holoVisible(1, Ow, 1)
     holoVisible(2, Ow, 1)
-    holoVisible(1, findPlayerByName("KOM"), 1)
-    holoVisible(2, findPlayerByName("KOM"), 1)
+    holoVisible(1, findPlayerByName("Hero"), 1)
+    holoVisible(2, findPlayerByName("Hero"), 1)
     timer("hide", 3000)
     holoParent(2, 1)
     holoParent(1, Prop)

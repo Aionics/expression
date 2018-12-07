@@ -1,8 +1,27 @@
 @name holo_create_function
+##include "libs/HoloCreate"
+#do_holocreate(HoloIndex, Body, "models/props_combine/combine_intwallunit.mdl", vec(0,0,-5), ang(90,0,0), vec(1.2), vec(255), 255) HoloIndex++
+#LeftWeapon = do_holocreate_key(HoloIndex, Cabine, vec(0,50,12), ang(0,0,0), 0) HoloIndex++
+#do_holoclip(HoloIndex, 1, vec(-2,0,0), vec(1,0,0)) HoloIndex++
 
 function entity do_holocreate (HoloIndex, ParentTo:entity, Model:string, Pos:vector, Ang:angle, Scale:vector, Color:vector, Alpha:number) {
     holoCreate(HoloIndex)
     holoModel(HoloIndex, Model)
+    holoPos(HoloIndex, ParentTo:toWorld(Pos))
+    holoAng(HoloIndex, ParentTo:toWorld(Ang))
+    holoScale(HoloIndex, Scale)
+    holoParent(HoloIndex, ParentTo)
+    
+    holoColor(HoloIndex, Color)
+    holoAlpha(HoloIndex, Alpha)
+    
+    return holoEntity(HoloIndex)
+}
+
+function entity do_holocreate (HoloIndex, ParentTo:entity, Model:string, Material:string, Pos:vector, Ang:angle, Scale:vector, Color:vector, Alpha:number) {
+    holoCreate(HoloIndex)
+    holoModel(HoloIndex, Model)
+    holoMaterial(HoloIndex, Material)
     holoPos(HoloIndex, ParentTo:toWorld(Pos))
     holoAng(HoloIndex, ParentTo:toWorld(Ang))
     holoScale(HoloIndex, Scale)
